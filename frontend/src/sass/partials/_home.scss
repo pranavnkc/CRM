@@ -1,0 +1,155 @@
+@import '../base/_variables.scss';
+@import '../utils/_flex';
+
+$info-box-height: 90px;
+$widget-action-button-size: 22px;
+
+.home{
+
+    .mat-card{
+
+      .mat-card-title{
+        .widget-header{
+            @include flexbox();
+            align-items: center;
+        }
+      }
+    }
+
+    .info-card{
+
+        background-color: #607d8b !important;
+        color: #ffffff;
+        padding: 0;
+
+        &.info-card-link{
+          cursor: pointer;
+        }
+
+        .info-card-icon{
+            color: #607d8b;
+            background-color: #455a64;
+            border-radius: 2px 0 0 2px;
+
+            display: block;
+            float: left;
+            height: $info-box-height;
+            width: $info-box-height;
+            text-align: center;
+            line-height: $info-box-height;
+
+            .mat-icon{
+                height: $info-box-height;
+                width: $info-box-height;
+                font-size: 48px;
+                line-height: $info-box-height;
+            }
+        }
+
+        .info-card-content{
+            padding: 12px 10px 10px;
+            margin-left: 90px;
+            color: currentColor!important;
+            text-transform: uppercase;
+            font-weight: 400;
+
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            h3 {
+              font-family: $heading-font-family;
+              font-weight: 300;
+              font-size: 32px;
+              margin: 0 0 12px 0;
+            }
+        }
+
+        &.info-card-green{
+            background-color: #4caf50 !important;
+
+            .info-card-icon{
+                color: #4caf50;
+                background-color: #43A047;
+            }
+        }
+
+        &.info-card-red{
+            background-color: #e53935 !important;
+
+            .info-card-icon{
+                color: #E53935;
+                background-color: #d32f2f;
+            }
+        }
+
+        &.info-card-blue{
+            background-color: #039be5 !important;
+
+            .info-card-icon{
+                color: #29B6F6;
+                background-color: #0288d1;
+            }
+        }
+    }
+
+    .chart{
+        padding: 16px;
+
+        .mat-card-title {
+            font-size: 18px;
+        }
+    }
+
+    canvas {
+        width: 100% !important;
+    }
+
+    .first-chart{
+        canvas {
+            min-height: 150px;
+            max-height: 150px;
+        }
+    }
+
+    .horizontal-bar{
+        canvas {
+            min-height: 400px;
+            max-height: 400px;
+        }
+    }
+
+    .pie-charts{
+        canvas {
+            min-height: 160px;
+            max-height: 160px;
+        }
+    }
+
+    .progress-metrics{
+        h3{
+            font-weight: 400;
+            font-size: 18px;
+        }
+
+        .progress-wrapper {
+            position: relative;
+            margin: 20px auto;
+            font-size: 24px;
+            max-width: 160px;
+
+            .progress-label {
+                font-family: $heading-font-family;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                -webkit-transform: translate(-50%,-50%);
+                -moz-transform: translate(-50%,-50%);
+                color: currentColor;
+                opacity: 0.3;
+                font-size: 32px;
+            }
+        }
+    }
+}

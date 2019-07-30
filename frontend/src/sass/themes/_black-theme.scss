@@ -1,0 +1,81 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+$toolbar-border-color: #424242;
+
+$primary-black:     mat-palette($mat-blue-grey, 600);
+$accent-black:      mat-palette($mat-blue-grey, 800);
+$warn-black:        mat-palette($mat-red, 900);
+
+.black-theme {
+
+  $black-theme:     mat-dark-theme($primary-black, $accent-black, $warn-black);
+  @include angular-material-theme($black-theme);
+
+  &.theme-indicator {
+    color: #111111 !important;
+  }
+
+  .mat-sidenav-container {
+    background: #252525 !important;
+
+    .mat-toolbar {
+      background: #222222 !important;
+      border-bottom: 1px solid $toolbar-border-color;
+    }
+
+    .mat-sidenav-content {
+
+      a {
+        color: #ffffff;
+        text-decoration: none;
+        transition: color 0.2s;
+      
+        &:hover {
+          color: #dadada;
+          text-decoration: none;
+        }
+      }
+
+      .mat-card {
+        background: #313131 !important;
+
+        .info-card-icon{
+            background-color: inherit !important;
+          }
+      }
+    }
+    
+    .mat-sidenav {
+      background: #222222 !important;
+      border-right: 1px solid $toolbar-border-color;
+
+      .sidenav {
+        a {
+          color: #ffffff !important;
+
+          &.active,
+          &.active:hover,
+          &.active:focus,
+          &.active:active {
+            background: #1d1c1c !important;
+            color: #ffffff !important;
+          }
+        }
+      }
+    }
+  }
+  
+  ///////////////////////////////////////////////
+  // Tables
+  //////////////////////////////////////////////
+  .table{
+    tr{
+        border-bottom: 1px solid #262827;
+    }
+
+    &.table-bordered{
+      border: 1px solid #262827;
+    }
+  }
+}

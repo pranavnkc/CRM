@@ -1,0 +1,28 @@
+<div class="sidenav">
+  <div class="logo"></div>
+  <mat-nav-list>
+    <a mat-list-item routerLink="/home" routerLinkActive="active">
+      <mat-icon>dashboard</mat-icon>
+      <span>Dashboard</span>
+    </a>
+    <a mat-list-item routerLink="/users" routerLinkActive="active">
+      <mat-icon>people</mat-icon>
+      <span>Users</span>
+    </a>
+    <ul>
+      <li [ngClass]="{'expanded-parent': ngInit.value}">
+
+        <a (click)="ngInit.value = !ngInit.value" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">
+          <mat-icon>devices</mat-icon>
+          <span fill>Layout</span><mat-icon class="expand-icon" [ngClass]="{'expand':!ngInit.value, 'collapse': ngInit.value}"></mat-icon>
+        </a>
+        <ul [ngClass]="{'collapsed':!ngInit.value, 'expanded': ngInit.value}">
+          <li><a mat-list-item routerLink="/layout/base" routerLinkActive="active"><span>Grid</span></a></li>
+          <li><a mat-list-item routerLink="/layout/alerts" routerLinkActive="active"><span>Alerts</span></a></li>
+          <li><a mat-list-item routerLink="/layout/buttons" routerLinkActive="active"><span>Buttons</span></a></li>
+          <li><a mat-list-item routerLink="/layout/typography" routerLinkActive="active"><span>Typography</span></a></li>
+        </ul>
+      </li>
+    </ul>
+  </mat-nav-list>
+</div>

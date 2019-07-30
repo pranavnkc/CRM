@@ -1,0 +1,54 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+@import '../base/_variables.scss';
+
+$primary-light:     mat-palette($mat-blue);
+$accent-light:      mat-palette($mat-light-blue);
+$warn-light:        mat-palette($mat-red);
+
+.light-theme{
+
+  $light-theme:     mat-light-theme($primary-light, $accent-light, $warn-light);
+  @include angular-material-theme($light-theme);
+  
+  &.theme-indicator{
+    color: #cccccc!important;
+  }
+
+  .mat-toolbar{
+    background: #03A9F4!important;
+    color: #ffffff!important;
+  }
+
+  .mat-sidenav{
+
+    background-color: #fafafa!important;
+
+    .sidenav {
+      a{
+        color: currentColor!important;
+
+        &.active,
+        &.active:hover,
+        &.active:focus,
+        &.active:active{
+          background-color: #c5c5c59f!important;
+        }
+      }
+    }
+  }
+
+  ///////////////////////////////////////////////
+  // Tables
+  //////////////////////////////////////////////
+  .table{
+    tr{
+        border-bottom: 1px solid $light-border-color;
+    }
+
+    &.table-bordered{
+      border: 1px solid $light-border-color;
+    }
+  }
+}

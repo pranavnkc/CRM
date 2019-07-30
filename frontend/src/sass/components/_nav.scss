@@ -1,0 +1,100 @@
+@import '../themes/_theme.scss';
+
+$expand-icon-size: 16px;
+
+body{
+  // If .full-width is not set on main container, add logo to sidenav
+  :not(.full-width){
+    .sidenav{
+      .logo{
+        margin: 0 auto;
+        margin-top: 20px;
+        width: 100px;
+        height: 100px;
+        
+        background-image: url('/assets/logos.png');
+        background-repeat: no-repeat;
+        background-position-y: -90px;
+      }
+    }
+  }
+}
+
+.mat-sidenav-container{
+  .mat-sidenav{
+    background-color: #37474C;
+    
+    .sidenav {
+      width: $sidenav-width !important;
+
+      .mat-icon{
+        height: 22px;
+        width: 22px;
+        font-size: 22px;
+      }
+
+      a{
+        font-size: 14px!important;
+        color: #ffffff;
+        
+        span{
+          margin-left: 10px;
+        }
+
+        &.active,
+        &.active:hover,
+        &.active:focus,
+        &.active:active{
+          background-color: $accent-color;
+          color: #ffffff;
+        }
+      }
+
+      ul, li{
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        .expand-icon{
+          transition: all 500ms ease;
+          height: $expand-icon-size;
+          width: $expand-icon-size;
+          font-size: $expand-icon-size;
+
+          &::after{
+            content: 'add';
+          }
+
+          &.collapse{
+            // Using expand_more icon with rotation
+            // -webkit-transform: rotate(-180deg);
+            // -moz-transform: rotate(-180deg);
+            // transform: rotate(-180deg);
+
+            &::after{
+              content: 'remove';
+            }
+          }
+        }
+
+        ul{
+          text-indent:  22px;
+          
+          &.collapsed{
+            display: none;
+            
+            // transition: max-height 0.1s; 
+            // max-height: 0;
+            // overflow: hidden;
+          }
+          &.expanded{
+            display: block;
+            
+            // transition: max-height 0.5s; 
+            // max-height: 100vh;
+          }
+        }
+      }
+    }
+  }
+}

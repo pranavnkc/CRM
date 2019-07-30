@@ -1,0 +1,14 @@
+<ng-progress [showSpinner]="false" [color]="'#039BE5'"></ng-progress>
+<mat-sidenav-container fullscreen [ngClass]="{ 'sidenav-closed': !isSidenavOpen }">
+
+  <app-toolbar header="App Title" (toggleMenu)="toggleSidenav()"></app-toolbar>
+
+  <mat-sidenav #sidenav [mode]="sidenavMode">
+    <app-navbar></app-navbar>
+  </mat-sidenav>
+
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+
+</mat-sidenav-container>

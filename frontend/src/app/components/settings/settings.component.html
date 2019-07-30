@@ -1,0 +1,22 @@
+<section>
+  <h2>Toolbar layout</h2>
+  <mat-slide-toggle (change)="setFullWidth($event.checked)" [checked]="isFullWidth">Full width</mat-slide-toggle>
+</section>
+
+<section>
+  <h2>Theme ({{ selectedTheme.name }})</h2>
+  <!-- <mat-form-field class="margin-bottom-20">
+    <mat-select (change)="onThemeSelected($event.value)" [(ngModel)]="selectedTheme">
+      <mat-option *ngFor="let theme of themes" [value]="theme">
+        {{ theme.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field> -->
+  <div class="margin-bottom-20">
+    <mat-button-toggle-group #group="matButtonToggleGroup" [(ngModel)]="selectedTheme" class="theme-selector-button">
+      <mat-button-toggle [matTooltip]="theme.name" *ngFor="let theme of themes" [value]="theme" (click)="onThemeSelected(theme)">
+        <mat-icon class="theme-indicator" [ngClass]="theme.cssClass">fiber_manual_record</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+</section>

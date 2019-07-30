@@ -1,0 +1,242 @@
+env/
+# Created by https://www.gitignore.io/api/python
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+/backend/__pycache__/
+/backend/*.py[cod]
+/backend/*$py.class
+
+# C extensions
+/backend/*.so
+
+# Distribution / packaging
+/backend/.Python
+/backend/build/
+/backend/develop-eggs/
+/backend/dist/
+/backend/downloads/
+/backend/eggs/
+/backend/.eggs/
+/backend/lib/
+/backend/lib64/
+/backend/parts/
+/backend/sdist/
+/backend/var/
+/backend/wheels/
+/backend/*.egg-info/
+/backend/.installed.cfg
+/backend/*.egg
+/backend/MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+/backend/*.manifest
+/backend/*.spec
+
+# Installer logs
+/backend/pip-log.txt
+/backend/pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+/backend/htmlcov/
+/backend/.tox/
+/backend/.nox/
+/backend/.coverage
+/backend/.coverage.*
+/backend/.cache
+/backend/nosetests.xml
+/backend/coverage.xml
+/backend/*.cover
+/backend/.hypothesis/
+/backend/.pytest_cache/
+
+# Translations
+/backend/*.mo
+/backend/*.pot
+
+# Django stuff:
+/backend/*.log
+/backend/local_settings.py
+/backend/db.sqlite3
+
+# Flask stuff:
+instance/
+/backend/.webassets-cache
+
+# Scrapy stuff:
+/backend/.scrapy
+
+# Sphinx documentation
+/backend/docs/_build/
+
+# PyBuilder
+/backend/target/
+
+# Jupyter Notebook
+/backend/.ipynb_checkpoints
+
+# IPython
+/backend/profile_default/
+/backend/ipython_config.py
+
+# pyenv
+/backend/.python-version
+
+# celery beat schedule file
+/backend/celerybeat-schedule
+
+# SageMath parsed files
+/backend/*.sage.py
+
+# Environments
+/backend/.env
+/backend/.venv
+/backend/env/
+/backend/venv/
+/backend/ENV/
+/backend/env.bak/
+/backend/venv.bak/
+
+# Spyder project settings
+/backend/.spyderproject
+/backend/.spyproject
+
+# Rope project settings
+/backend/.ropeproject
+
+# mkdocs documentation
+/backend//site
+
+# mypy
+/backend/.mypy_cache/
+/backend/.dmypy.json
+/backend/dmypy.json
+
+### Python Patch ###
+/backend/.venv/
+
+### Python.VirtualEnv Stack ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+/backend/pyvenv.cfg
+/backend/pip-selfcheck.json
+
+
+# End of https://www.gitignore.io/api/python
+
+
+
+
+
+
+
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
+/.vs
+
+
+
+
+
+
+
+
+
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/frontend/dist
+/frontend/tmp
+/frontend/out-tsc
+
+# dependencies
+/frontend/node_modules
+
+# IDEs and editors
+/frontend/.idea
+/frontend/.project
+/frontend/.classpath
+/frontend/.c9/
+/frontend/*.launch
+/frontend/.settings/
+/frontend/*.sublime-workspace
+
+# IDE - VSCode
+/frontend/.vscode/*
+/frontend/!.vscode/settings.json
+/frontend/!.vscode/tasks.json
+/frontend/!.vscode/launch.json
+/frontend/!.vscode/extensions.json
+
+# misc
+/frontend/.sass-cache
+/frontend/connect.lock
+/frontend/coverage
+/frontend/libpeerconnection.log
+/frontend/npm-debug.log
+/frontend/testem.log
+/frontend/typings
+
+# e2e
+/frontend/e2e/*.js
+/frontend/e2e/*.map
+
+# System Files
+/frontend.DS_Store
+/frontend/Thumbs.db
+/frontend/.vs
+
+
+
+
+

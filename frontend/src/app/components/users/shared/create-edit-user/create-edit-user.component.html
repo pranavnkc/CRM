@@ -1,0 +1,47 @@
+<form [formGroup]="form" (ngSubmit)="form.valid && createUser()">
+    <div fxLayout="column" class="padded-form">
+        <mat-form-field>
+            <input matInput class="white-text f20" placeholder="First Name" formControlName="first_name">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput class="white-text f20" placeholder="Last Name" formControlName="last_name">
+        </mat-form-field>
+        <mat-form-field >
+            <input matInput class="white-text f20" [mask]="'(000) 900-0000'" placeholder="Phone Number"
+                   formControlName="phone_number">
+        </mat-form-field>
+        <mat-form-field>
+            <input matInput class="white-text f20" placeholder="Email" formControlName="username">
+            <mat-error *ngIf="form.controls.username.hasError('username')">
+                {{form.controls.username.errors['username']}}</mat-error>
+        </mat-form-field>
+        <mat-form-field *ngIf="!editMode">
+            <mat-icon matSuffix class="white-text cursor-pointer"
+                      (click)="authService.viewPassword('signUpPassword')">visibility</mat-icon>
+            <input id="signUpPassword" matInput class="white-text f20" placeholder="Password" type="password"
+                   formControlName="password">
+            <mat-error *ngIf="form.controls.password.hasError('pattern')">Password must contain - minimum 8
+                characters, 1-uppercase, 1-lowercase, 1-special character, and 1-digit</mat-error>
+        </mat-form-field>
+        <mat-form-field *ngIf="!editMode">
+            <mat-icon matSuffix class="white-text cursor-pointer"
+                      (click)="authService.viewPassword('signUpConfirmPassword')">visibility</mat-icon>
+            <input id="signUpConfirmPassword" matInput class="white-text f20" placeholder="Confirm Password"
+                   type="password" formControlName="confirm_password">
+            <mat-error *ngIf="form.controls.confirm_password.hasError('matchOther')">Your password and confirm
+                password do not match.</mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-block">
+            <mat-select placeholder="Role*" formControlName="role">
+                <mat-option value="sales-person">Sales person</mat-option>
+                <mat-option value="team-manager">Team Manager</mat-option>
+                <mat-option value="company-head"> Company Head</mat-option>
+                <mat-option value="admin">Admin</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <br />
+    <div fxLayout="row" fxLayoutGap="30px" fxLayout.xs="column">
+        <button mat-raised-button type="submit" color="primary">Create</button>
+    </div>
+</form>

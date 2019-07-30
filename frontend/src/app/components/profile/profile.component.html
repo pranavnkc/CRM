@@ -1,0 +1,22 @@
+<section>
+  <mat-tab-group [@.disabled]="true">
+    <mat-tab label="My profile">
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="First name">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Last name">
+        </mat-form-field>
+      </div>
+      <div>
+        <mat-form-field>
+          <input matInput placeholder="Email" type="email">
+        </mat-form-field> 
+      </div>
+    </mat-tab>
+    <mat-tab label="Settings">
+      <app-settings></app-settings>
+    </mat-tab>
+  </mat-tab-group>
+</section>

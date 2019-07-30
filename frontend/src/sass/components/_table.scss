@@ -1,0 +1,52 @@
+@import '../themes/_theme.scss';
+
+.table {
+    width: 100%;
+    max-width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+
+    &>caption+thead>tr:first-child>td,
+    &>caption+thead>tr:first-child>th,
+    &>colgroup+thead>tr:first-child>td,
+    &>colgroup+thead>tr:first-child>th,
+    &>thead:first-child>tr:first-child>td,
+    &>thead:first-child>tr:first-child>th {
+        border-top: 0;
+        text-align: left;
+    }
+
+    &>tbody>tr>td,
+    &>tbody>tr>th,
+    &>tfoot>tr>td,
+    &>tfoot>tr>th,
+    &>thead>tr>td,
+    &>thead>tr>th {
+        padding: 12px 8px;
+        line-height: 1.4em;
+        vertical-align: top;
+    }
+
+    tr{
+        border-bottom: 1px solid $light-border-color;
+    }
+
+    &.table-bordered{
+      border: 1px solid $light-border-color;
+    }
+}
+
+@media (max-width: 991px){
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        tr{
+            td{
+                white-space: nowrap;            
+            }
+        }
+    }
+}

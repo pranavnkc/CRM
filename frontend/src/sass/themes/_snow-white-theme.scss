@@ -1,0 +1,80 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+@import '../base/_variables.scss';
+
+$primary-white:     mat-palette($mat-blue, 700);
+$accent-white:      mat-palette($mat-light-blue, 600);
+$warn-white:        mat-palette($mat-red);
+
+$foreground: #444444;
+
+.snow-white-theme{
+
+  $snow-theme:      mat-light-theme($primary-white, $accent-white, $warn-white);
+  @include angular-material-theme($snow-theme);
+
+  &.theme-indicator{
+    color: #ffffff!important;
+    border-color: #efefef!important;
+  }
+
+  .mat-sidenav-container{
+    background: white!important;
+
+    .mat-toolbar{
+      background: white!important;
+      color: $foreground!important;
+      border-bottom: 1px solid $light-border-color;
+
+      .logo{
+        background-position-y: 0!important;
+      }
+    }
+
+    .mat-sidenav-content{
+      .mat-card{
+        &.info-card{
+          background-color: inherit !important;
+          color: inherit !important;
+
+          .info-card-icon{
+            background-color: inherit !important;
+          }
+        }
+      }
+    }
+
+    .mat-sidenav{
+      border-right: 1px solid $light-border-color;
+      background: white!important;
+
+      .sidenav {
+        a{
+          color: #444444!important;
+
+          &.active,
+          &.active:hover,
+          &.active:focus,
+          &.active:active{
+            background-color: rgba(0,0,0,0.1)!important;
+            color: #111111!important;
+          }
+        }
+      }
+    }
+  }
+
+  ///////////////////////////////////////////////
+  // Tables
+  //////////////////////////////////////////////
+  .table{
+    tr{
+        border-bottom: 1px solid $light-border-color;
+    }
+
+    &.table-bordered{
+        border: 1px solid $light-border-color;
+    }
+  }
+}
