@@ -3,7 +3,7 @@ env/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
-/backend/__pycache__/
+/backend/**/__pycache__/
 /backend/*.py[cod]
 /backend/*$py.class
 
@@ -235,8 +235,3 @@ Thumbs.db
 /frontend.DS_Store
 /frontend/Thumbs.db
 /frontend/.vs
-
-
-
-
-
