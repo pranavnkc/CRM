@@ -51,6 +51,10 @@ import { LoginComponent } from './components/login/login.component';
 import { UserListComponent } from './components/users/list/user-list.component';
 import { UserDetailsComponent } from './components/users/details/user-details.component';
 import { CreateEditUserComponent } from './components/users/shared/create-edit-user/create-edit-user.component';
+import { LeadListComponent } from './components/lead/list/lead-list.component';
+import { LeadDetailsComponent } from './components/lead/details/lead-details.component';
+import { CreateEditLeadComponent } from './components/lead/shared/create-edit-lead/create-edit-lead.component';
+
 import { SettingsComponent } from './components/settings/settings.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { LayoutComponent } from './components/layout/base/layout.component';
@@ -73,6 +77,10 @@ const appRoutes: Routes = [
       { path: 'users/new', component: CreateEditUserComponent, data: { title: 'New user' } },
       { path: 'users/edit/:id', component: CreateEditUserComponent, data: { title: 'Edit user' } },
       { path: 'users/details/:id', component: UserDetailsComponent, data: { title: 'User details' } },
+      { path: 'leads', component: LeadListComponent, data: { title: 'Leads' } },
+      { path: 'leads/new', component: CreateEditLeadComponent, data: { title: 'New Lead' } },
+      { path: 'leads/edit/:id', component: CreateEditLeadComponent, data: { title: 'Edit Lead' } },
+      { path: 'leads/details/:id', component: LeadDetailsComponent, data: { title: 'Lead details' } },
       { path: 'settings', component: SettingsComponent, data: { title: 'Settings' } },
       { path: 'profile', component: ProfileComponent, data: { title: 'Profile' } },
       {
@@ -109,18 +117,20 @@ const appRoutes: Routes = [
     LoginLayoutComponent,
     LoginComponent,
     UserListComponent,
-    UserListComponent,
+    LeadListComponent,
     ToolbarComponent,
     UserDetailsComponent,
+    LeadDetailsComponent,
     SettingsComponent,
     ProfileComponent,
     NgInitDirective,
     LayoutComponent,
     CreateEditUserComponent,
+    CreateEditLeadComponent,
     AlertsLayoutComponent,
     ButtonsLayoutComponent,
     TypographyComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

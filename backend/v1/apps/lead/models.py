@@ -17,8 +17,7 @@ class Lead(models.Model):
     STATUS_RAW = "raw"
     STATUS_CALLBACK = "callback"
     STATUS_PROSPECT = "prospect"
-    STATUS_SALE = "sale"
-    
+    STATUS_SALE = "sale"    
     STATUS_CHOICES = (
         (STATUS_RAW, 'Raw Lead'),
         (STATUS_CALLBACK, "Lead For Callback"),
@@ -27,10 +26,10 @@ class Lead(models.Model):
     )
     lead_id = models.SlugField(max_length=140, unique=True, default=get_unique_slug)
     created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
     lead_hash  = models.CharField(max_length=40, null=True, blank=True)
     status = models.CharField(choices=STATUS_CHOICES, max_length=30, default=STATUS_RAW)
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
-    comment = models.TextField(null=True, blank=True)
 
 class LeadBusinessDetails(models.Model):
     MR = "Mr."
@@ -49,13 +48,13 @@ class LeadBusinessDetails(models.Model):
         (PROF, PROF),
         (REV, REV)
     )
-    lead = models.OneToOneField(Lead, on_delete=models.CASCADE)
+    lead = models.OneToOneField(Lead, on_delete=models.CASCADE, related_name="business_detail")
     busines_name = models.CharField(max_length=50, null=True, blank=True)
     salutation = models.CharField(choices=SALUTATION_CHOICES, max_length=30, null=True, blank=True)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     middle_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
-    phone_number = PhoneNumberField(null=True, blank=True)
+    phone_number = models.CharField(null=True, blank=True, max_length=10)
     email = models.EmailField(null=True, blank=True)
     building_name = models.CharField(max_length=100)
     subb = models.CharField(max_length=100, null=True, blank=True)
@@ -66,7 +65,7 @@ class LeadBusinessDetails(models.Model):
     county = models.CharField(max_length=100, null=True, blank=True)
 
 class LeadSupplyDetails(models.Model):
-    lead = models.OneToOneField(Lead, on_delete=models.CASCADE)
+    lead = models.OneToOneField(Lead, on_delete=models.CASCADE, related_name="supply_detail")
     meter_type = models.CharField(max_length=100, null=True, blank=True)
     meter_type_code = models.CharField(max_length=100, null=True, blank=True)
     domestic_meter = models.CharField(max_length=100, null=True, blank=True)
@@ -79,6 +78,13 @@ class LeadSupplyDetails(models.Model):
     
     
 class Callback(models.Model):
-    lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE,default=None, null=True)
+    lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()
     scheduled_by = models.ForeignKey(User, related_name='scheduled_callbacks', on_delete=models.CASCADE)
+
+
+class Comment(models.Model):
+    lead = models.ForeignKey(Lead, related_name='comments', on_delete=models.CASCADE, default=None, null=True)
+    comment = models.TextField(null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE,default=None, null=True)
+    created_on = models.DateTimeField(auto_now_add=True) 

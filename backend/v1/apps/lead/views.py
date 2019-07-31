@@ -4,6 +4,6 @@ from . import serializers
 from . import models
 
 
-class LeadViewSet(viewsets.ReadOnlyModelViewSet):
+class LeadViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LeadSerializer
     queryset = models.Lead.objects.all().order_by('created_on')
