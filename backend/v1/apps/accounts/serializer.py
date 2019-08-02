@@ -15,6 +15,8 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.CharField(write_only=True)
+    groups = GroupSerializer(many=True, read_only=True)
+
     def validate_role(self, value):
         return Group.objects.filter(name=value).first()
     

@@ -12,6 +12,15 @@ INTERNAL_IPS = [
 DATABASES = {
     'default': config('DATABASE_URL', default='sqlite:///db.sqlite3', cast=db_url),
 }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'crm',
+        'USER': 'ods',
+        'PASSWORD': 'weroiuw4rog3bg345',
+        'HOST': 'localhost',   
+    },
+}
 
 INSTALLED_APPS.append('debug_toolbar')
 

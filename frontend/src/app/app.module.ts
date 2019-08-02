@@ -64,6 +64,7 @@ import { TypographyComponent } from './components/layout/typography/typography.c
 import { ConfirmDialogComponent } from './components/dialogs/confirm-dialog/confirm-dialog.component';
 import { AuthGuard } from './services/auth.guard';
 import { AuthService, UsernameAlreadyExistsValidator } from './services/auth.service';
+import { UserResolver } from './components/users/services/user.service';
 
 const appRoutes: Routes = [
   {
@@ -74,7 +75,7 @@ const appRoutes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: '/home' },
       { path: 'home', component: HomeComponent, data: { title: 'Dashboard' } },
       { path: 'users', component: UserListComponent, data: { title: 'Users' } },
-      { path: 'users/new', component: CreateEditUserComponent, data: { title: 'New user' } },
+      { path: 'users/new', component: CreateEditUserComponent, data: { title: 'New user' }, resolve: { "users": UserResolver } },
       { path: 'users/edit/:id', component: CreateEditUserComponent, data: { title: 'Edit user' } },
       { path: 'users/details/:id', component: UserDetailsComponent, data: { title: 'User details' } },
       { path: 'leads', component: LeadListComponent, data: { title: 'Leads' } },
@@ -172,6 +173,7 @@ const appRoutes: Routes = [
     HttpService,
     AuthService,
     AuthGuard,
+    UserResolver,
     UsernameAlreadyExistsValidator,
     Title,
     {

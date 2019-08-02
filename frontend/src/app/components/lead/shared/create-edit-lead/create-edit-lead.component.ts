@@ -16,7 +16,7 @@ export enum EditMode {
   providers: [LeadService]
 })
 export class CreateEditLeadComponent implements OnInit {
-  user: any;
+  lead: any;
   editMode: EditMode = EditMode.Create;
   form: FormGroup;
   constructor(private route: ActivatedRoute,
@@ -34,7 +34,7 @@ export class CreateEditLeadComponent implements OnInit {
         this.form.removeControl('password');
         this.form.removeControl('confirm_password');
         this.editMode = EditMode.Edit;
-        this.getUser(id);
+        this.getLead(id);
       }
       else {
         this.editMode = EditMode.Create;
@@ -44,15 +44,19 @@ export class CreateEditLeadComponent implements OnInit {
     console.log('EditMode', EditMode[this.editMode], this.editMode);
   }
 
-  private setUserData() {
-    for (let field in this.form.controls) {
-      this.form.controls[field].setValue(this.user[field]);
+  private setLeadData() {
+    for (let field in this.form.controls.business_detail['controls']) {
+      this.form.controls['business_detail']['controls'][field].setValue(this.lead['business_detail'][field]);
     }
+    for (let field in this.form.controls.supply_detail['controls']) {
+      this.form.controls['supply_detail']['controls'][field].setValue(this.lead['supply_detail'][field]);
+    }
+    this.form.controls.lead_hash.setValue(this.lead.lead_hash);
   }
-  private getUser(id: any) {
-    this.service.getUser(id).subscribe((data) => {
-      this.user = data
-      this.setUserData();
+  private getLead(id: any) {
+    this.service.getLead(id).subscribe((data) => {
+      this.lead = data
+      this.setLeadData();
     });
   }
 
@@ -89,7 +93,7 @@ export class CreateEditLeadComponent implements OnInit {
   }
 
   createLead() {
-    (this.editMode ? this.service.updateLead(this.user.id, this.form.value) : this.service.createLead(this.form.value)).subscribe((res) => {
+    (this.editMode ? this.service.updateLead(this.lead.id, this.form.value) : this.service.createLead(this.form.value)).subscribe((res) => {
       this.router.navigate([this.route.parent.url]);
     }, (error) => {
       console.log(error)

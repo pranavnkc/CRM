@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { UserService } from '../../services';
+import { AuthService } from '../../../../services/auth.service';
 import { UsernameAlreadyExistsValidator } from '../../../../services/auth.service';
 import { matchValidator } from '../../../../validators';
 import { constants } from '../../../../constants';
@@ -19,12 +20,26 @@ export class CreateEditUserComponent implements OnInit {
   user: any;
   editMode: EditMode = EditMode.Create;
   form: FormGroup;
+  userOptions: any;
+  roleFilterOptions = [
+    { 'key': 'sales-person', 'value': 'Sales Person' },
+    { 'key': 'team-manager', 'value': 'Team Manager' },
+    { 'key': 'company-head', 'value': 'Company Head' },
+    { 'key': 'admin', 'value': 'Admin' }
+  ]
   constructor(private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private service: UserService,
+    private authService: AuthService,
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator) {
     this.createForm();
+    if (this.authService.role == 'company-head') {
+      this.roleFilterOptions = this.roleFilterOptions.slice(0, 2);
+    }
+    else if (this.authService.role == 'team-manager') {
+      this.roleFilterOptions = this.roleFilterOptions.slice(0, 1);
+    }
   }
 
   ngOnInit() {
@@ -38,10 +53,26 @@ export class CreateEditUserComponent implements OnInit {
       }
       else {
         this.editMode = EditMode.Create;
+        this.form.controls.role.valueChanges.subscribe((val) => {
+          if (['sales-person', 'team-manager'].indexOf(val) != -1) {
+            this.form.addControl('parent', new FormControl(null));
+          }
+          else {
+            this.form.removeControl('parent');
+          }
+        })
+        this.userOptions = this.route.snapshot.data.users.results;
       }
     });
-
-    console.log('EditMode', EditMode[this.editMode], this.editMode);
+    this.form.controls.role.valueChanges.subscribe((val) => {
+      if (val == 'sales-person') {
+        this.userOptions = this.route.snapshot.data.users.results.filter(u => u.groups[0].name == 'team-manager')
+      }
+      else if (val == 'team-manager') {
+        this.userOptions = this.route.snapshot.data.users.results.filter(u => u.groups[0].name == 'company-head')
+      }
+    })
+    console.log('EditMode', this);
   }
 
   private setUserData() {
@@ -64,8 +95,7 @@ export class CreateEditUserComponent implements OnInit {
       username: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)]), this.usernameAlreadyExistsValidator.checkUsername.bind(this.usernameAlreadyExistsValidator)],
       role: [null, Validators.required],
       password: [null, Validators.compose([Validators.required, Validators.pattern(constants.PASSWORD_REGEX)])],
-      confirm_password: [null, Validators.compose([Validators.required, matchValidator("password")])]
-
+      confirm_password: [null, Validators.compose([Validators.required, matchValidator("password")])],
     })
   }
 

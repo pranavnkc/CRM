@@ -32,3 +32,13 @@ class LeadSerializer(serializers.ModelSerializer):
         lead.business_detail = LeadBusinessDetails.objects.create(**business_detail)
         lead.supply_detail = LeadSupplyDetails.objects.create(**supply_detail)
         return lead
+    
+    def update(self, instance, validated_data):
+        business_detail = validated_data.pop("business_detail")
+        supply_detail = validated_data.pop("supply_detail")
+        instance = super(LeadSerializer, self).update(instance, validated_data)
+        business_detail = LeadBusinessDetailsSerializer(instance, data=business_detail)
+        business_detail.save()
+        supply_detail = LeadSupplyDetailsDetailsSerializer(instance, data=supply_detail)
+        supply_detail.save()
+        return instance

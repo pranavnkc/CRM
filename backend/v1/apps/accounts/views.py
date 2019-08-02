@@ -7,7 +7,7 @@ from rest_framework.decorators import list_route
 from django.contrib.auth.models import Group
 from . import serializer
 from . import models
-
+from .filters import UserFilter
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializer.GroupSerializer
@@ -16,8 +16,17 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     primission_classes = (permissions.IsAuthenticated, )
     serializer_class = serializer.UserSerializer
-    queryset = models.User.objects.all().order_by('-date_joined')
-
+    filter_class = UserFilter
+    queryset = models.User.objects.all().order_by('-date_joined').prefetch_related('groups')
+    
+    def get_queryset(self):
+        qs = models.User.objects.all().order_by('-date_joined').prefetch_related('groups')
+        if self.request.user.groups.filter(name='sales-person').exists():
+            return qs.filter(id=self.request.user.id)
+        elif self.request.user.groups.filter(name__in=['team-manager', 'company-head']).exists():
+            return qs.filter(parent=self.request.user) | qs.filter(id=self.request.user.id) 
+        return qs
+   
     @list_route(url_path="validate_username", methods=['get', ], permission_classes=[permissions.AllowAny])
     def validate_username(self, request):
         username = request.query_params.get('username')

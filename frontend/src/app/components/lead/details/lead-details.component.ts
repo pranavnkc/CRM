@@ -22,7 +22,7 @@ export class LeadDetailsComponent implements OnInit {
   }
 
   private getUser(id: any) {
-    this.service.getUser(id).subscribe(data => this.user = data);
+    this.service.getLead(id).subscribe(data => this.user = data);
   }
 
   onDelete(): void {
@@ -31,7 +31,7 @@ export class LeadDetailsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      this.service.deleteUser(this.user.id).subscribe((res) => {
+      this.service.deleteLead(this.user.id).subscribe((res) => {
         this.router.navigate([this.route.parent.url]);
       })
     });

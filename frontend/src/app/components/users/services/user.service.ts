@@ -25,3 +25,16 @@ export class UserService {
   }
 
 }
+
+
+
+import { Resolve } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
+
+@Injectable()
+export class UserResolver implements Resolve<any> {
+  constructor(private httpService: HttpService) { }
+  resolve(route: ActivatedRouteSnapshot) {
+    return this.httpService.get(`api/users/?groups=team-manager,company-head`);
+  }
+}
