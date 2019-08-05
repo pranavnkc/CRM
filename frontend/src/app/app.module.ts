@@ -65,7 +65,7 @@ import { ConfirmDialogComponent } from './components/dialogs/confirm-dialog/conf
 import { AuthGuard } from './services/auth.guard';
 import { AuthService, UsernameAlreadyExistsValidator } from './services/auth.service';
 import { UserResolver } from './components/users/services/user.service';
-
+import { SharedDataService } from './services/sharedData.service';
 const appRoutes: Routes = [
   {
     path: '',
@@ -175,6 +175,7 @@ const appRoutes: Routes = [
     AuthGuard,
     UserResolver,
     UsernameAlreadyExistsValidator,
+    SharedDataService,
     Title,
     {
       provide: HTTP_INTERCEPTORS,

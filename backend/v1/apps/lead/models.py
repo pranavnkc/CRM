@@ -13,22 +13,16 @@ def get_unique_slug():
         unique_id = uuid.uuid4()
     return unique_id
 
+class Status(models.Model):
+    key = models.CharField(max_length=100)
+    display = models.CharField(max_length=100)
+    
 class Lead(models.Model):
-    STATUS_RAW = "raw"
-    STATUS_CALLBACK = "callback"
-    STATUS_PROSPECT = "prospect"
-    STATUS_SALE = "sale"    
-    STATUS_CHOICES = (
-        (STATUS_RAW, 'Raw Lead'),
-        (STATUS_CALLBACK, "Lead For Callback"),
-        (STATUS_PROSPECT, "Prospect Lead"),
-        (STATUS_SALE, "Lead For Sale"),
-    )
     lead_id = models.SlugField(max_length=140, unique=True, default=get_unique_slug)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
     lead_hash  = models.CharField(max_length=40, null=True, blank=True)
-    status = models.CharField(choices=STATUS_CHOICES, max_length=30, default=STATUS_RAW)
+    status = models.ForeignKey(Status, null=True, on_delete=models.SET_NULL)
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
 
 class LeadBusinessDetails(models.Model):
@@ -75,7 +69,6 @@ class LeadSupplyDetails(models.Model):
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
     supply_number = models.CharField(max_length=100, null=True, blank=True)
-    
     
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
