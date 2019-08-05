@@ -89,6 +89,10 @@
                             <td *ngFor="let field of getSelectedFields()">
                                 {{lead[field.field] || lead['business_detail'][field.field] ||  lead['supply_detail'][field.field]}}
                             </td>
+
+                            <td *ngFor="let field of getSelectedFields()">
+                                {{lead[field.field] || lead['business_detail'][field.field] ||  lead['supply_detail'][field.field]}}
+                            </td>
                             <td>
                                 <button mat-icon-button [matMenuTriggerFor]="menu">
                                     <mat-icon>more_vert</mat-icon>
