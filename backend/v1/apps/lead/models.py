@@ -81,8 +81,8 @@ class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()
     scheduled_by = models.ForeignKey(User, related_name='scheduled_callbacks', on_delete=models.CASCADE)
-
-
+    is_dialed = models.BooleanField(default=False)
+    
 class Comment(models.Model):
     lead = models.ForeignKey(Lead, related_name='comments', on_delete=models.CASCADE, default=None, null=True)
     comment = models.TextField(null=True, blank=True)

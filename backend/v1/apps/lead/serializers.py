@@ -37,8 +37,6 @@ class LeadSerializer(serializers.ModelSerializer):
         business_detail = validated_data.pop("business_detail")
         supply_detail = validated_data.pop("supply_detail")
         instance = super(LeadSerializer, self).update(instance, validated_data)
-        business_detail = LeadBusinessDetailsSerializer(instance, data=business_detail)
-        business_detail.save()
-        supply_detail = LeadSupplyDetailsDetailsSerializer(instance, data=supply_detail)
-        supply_detail.save()
+        instance.business_detail = LeadBusinessDetailsSerializer().update(instance.business_detail, business_detail)
+        instance.supply_detail = LeadSupplyDetailsDetailsSerializer().update(instance.supply_detail, supply_detail)
         return instance
