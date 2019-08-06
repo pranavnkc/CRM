@@ -11,12 +11,13 @@ INTERNAL_IPS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'xxxxxxxxxxxxxxxxxxx',
-        'NAME': 'xxx',
-        'USER': 'xxx',
-        'PASSWORD': 'xxx',
-        'HOST': 'xxx.xxxxxx.xxx',
-        'PORT': 'xxxx',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'defaultdb',
+        'USER': 'doadmin',
+        'PASSWORD': 'x26fsuuis53jgb4o',
+        'HOST': 'db-postgresql-blr1-41581-do-user-5955133-0.db.ondigitalocean.com',
+        'PORT': '25060',
+        'OPTIONS': {'sslmode': 'require'},
     }
 }
 
