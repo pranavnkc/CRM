@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTableDataSource } from '@angular/material';
 import { LeadService } from '../services';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
-
+import * as moment from 'moment';
 @Component({
   selector: 'app-lead-details',
   templateUrl: './lead-details.component.html',
@@ -11,20 +11,27 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dia
 })
 export class LeadDetailsComponent implements OnInit {
   user: any;
-
+  displayedColumns = ['created_on', 'created_by', 'comment'];
+  dataSource = new MatTableDataSource();
+  moment = moment
   constructor(private route: ActivatedRoute, private router: Router, private service: LeadService, private dialog: MatDialog) { }
 
   ngOnInit() {
+    console.log(this);
     this.route.params.subscribe(params => {
       let id = params['id'];
       this.getUser(id);
+      this.getComments(id);
     });
   }
 
   private getUser(id: any) {
     this.service.getLead(id).subscribe(data => this.user = data);
   }
-
+  private getComments(id: any) {
+    this.service.getComments(id).subscribe(data => this.dataSource.data = data);
+  }
+  
   onDelete(): void {
     let dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: { title: 'Delete user', message: 'Are you sure you want to delete selected user?' }

@@ -26,4 +26,11 @@ export class LeadService {
   getLeadStatus() {
     return this.http.get(`api/leads/status/`);
   }
+  addComment(id:any, data:any){
+    return this.http.post(`api/leads/${id}/comment/`, data);
+  }
+  getComments(id:any){
+    return this.http.get(`api/leads/${id}/comment/`);
+  }
+   
 }

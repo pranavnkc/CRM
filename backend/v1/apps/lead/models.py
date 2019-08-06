@@ -22,7 +22,7 @@ class Lead(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
     lead_hash  = models.CharField(max_length=40, null=True, blank=True)
-    status = models.ForeignKey(Status, null=True, on_delete=models.SET_NULL)
+    status = models.CharField(max_length=40)
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
 
 class LeadBusinessDetails(models.Model):

@@ -48,7 +48,27 @@
             </form>
 
             <div class="table-responsive clearfix" *ngIf="leads">
-                <mat-checkbox *ngFor="let field of fields" [(ngModel)]="field.selected"> {{field.display}} </mat-checkbox>
+                <div fxLayout="column">
+                    <div fxLayout="row" fxLayoutGap="5%">
+                        <mat-checkbox fxFlex="15%" style="margin-right:10px" *ngFor="let field of fields.slice(0,5)" [(ngModel)]="field.selected" (ngModelChange)="selectedFieldsChanged()"> {{field.display}} </mat-checkbox>
+                    </div>
+                    <div fxLayout="row" fxLayoutGap="5%">
+                        <mat-checkbox fxFlex="15%" style="margin-right:10px" *ngFor="let field of fields.slice(5,10)" [(ngModel)]="field.selected" (ngModelChange)="selectedFieldsChanged()"> {{field.display}} </mat-checkbox>
+                    </div>
+                    <div fxLayout="row" fxLayoutGap="5%">
+                        <mat-checkbox fxFlex="15%" style="margin-right:10px" *ngFor="let field of fields.slice(10,15)" [(ngModel)]="field.selected" (ngModelChange)="selectedFieldsChanged()"> {{field.display}} </mat-checkbox>
+                    </div>
+                    <div fxLayout="row" fxLayoutGap="5%">
+                        <mat-checkbox fxFlex="15%" style="margin-right:10px" *ngFor="let field of fields.slice(15,20)" [(ngModel)]="field.selected" (ngModelChange)="selectedFieldsChanged()"> {{field.display}} </mat-checkbox>
+                    </div>
+                    <div fxLayout="row" fxLayoutGap="5%">
+                        <mat-checkbox fxFlex="15%" style="margin-right:10px" *ngFor="let field of fields.slice(20,25)" [(ngModel)]="field.selected" (ngModelChange)="selectedFieldsChanged()"> {{field.display}} </mat-checkbox>
+                    </div>
+
+                    <div fxLayout="row" fxLayoutGap="5%">
+                        <mat-checkbox fxFlex="15%" style="margin-right:10px" *ngFor="let field of fields.slice(25,30)" [(ngModel)]="field.selected" (ngModelChange)="selectedFieldsChanged()"> {{field.display}} </mat-checkbox>
+                    </div>
+                </div>
                 <br/>
                 <br/>
                 <br/>
@@ -75,7 +95,10 @@
                             <th width="30">
                                 <mat-checkbox (click)="checkAll()"></mat-checkbox>
                             </th>
-                            <th *ngFor="let field of getSelectedFields()">{{field.display}}</th>
+                            <th *ngFor="let field of selectedFields">{{field.display}}</th>
+                            <th *ngIf="fields[3].selected">
+                                Status
+                            </th>
                             <th>
                                 Actions
                             </th>
@@ -86,27 +109,34 @@
                             <td width="30">
                                 <mat-checkbox [checked]="lead.selected"></mat-checkbox>
                             </td>
-                            <td *ngFor="let field of getSelectedFields()">
+                            <td *ngFor="let field of selectedFields">
                                 {{lead[field.field] || lead['business_detail'][field.field] ||  lead['supply_detail'][field.field]}}
                             </td>
-
-                            <td *ngFor="let field of getSelectedFields()">
-                                {{lead[field.field] || lead['business_detail'][field.field] ||  lead['supply_detail'][field.field]}}
+                            <td *ngIf="fields[3].selected">
+                                <mat-form-field class="mat-block">
+                                    <mat-select placeholder="Status*" [(value)]="lead.status" (selectionChange)='changeStatus(lead)'>
+                                        <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                             </td>
                             <td>
                                 <button mat-icon-button [matMenuTriggerFor]="menu">
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
                                 <mat-menu #menu="matMenu">
+                                    <a routerLink="/leads/details/{{lead.id}}"><button mat-menu-item (click)="null">
+                                        Details
+                                    </button></a>
                                     <button mat-menu-item (click)="null">
                                         <span>Assign</span>
                                     </button>
-                                    <button mat-menu-item (click)="null">
+                                    <button mat-menu-item (click)="comment(lead)">
                                         <span>Comment</span>
                                     </button>
-                                    <button mat-menu-item (click)="null">
-                                        <a routerLink="/leads/edit/{{lead.id}}">Edit</a>
-                                    </button>
+                                    <a routerLink="/leads/edit/{{lead.id}}"><button mat-menu-item (click)="null">
+                                        Edit
+                                    </button></a>
+
                                 </mat-menu>
                             </td>
                         </tr>

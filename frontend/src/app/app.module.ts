@@ -29,7 +29,8 @@ import {
   MatDialogModule,
   MatTabsModule,
   MatChipsModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatTableModule,
 } from '@angular/material';
 
 import { ChartsModule } from 'ng2-charts';
@@ -62,6 +63,7 @@ import { AlertsLayoutComponent } from './components/layout/alerts-layout/alerts-
 import { ButtonsLayoutComponent } from './components/layout/buttons-layout/buttons-layout.component';
 import { TypographyComponent } from './components/layout/typography/typography.component';
 import { ConfirmDialogComponent } from './components/dialogs/confirm-dialog/confirm-dialog.component';
+import { PromptDialogComponent } from './components/dialogs/prompt-dialog/prompt-dialog.component';
 import { AuthGuard } from './services/auth.guard';
 import { AuthService, UsernameAlreadyExistsValidator } from './services/auth.service';
 import { UserResolver } from './components/users/services/user.service';
@@ -132,6 +134,7 @@ const appRoutes: Routes = [
     ButtonsLayoutComponent,
     TypographyComponent,
     ConfirmDialogComponent,
+    PromptDialogComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -164,6 +167,7 @@ const appRoutes: Routes = [
     MatProgressBarModule,
     MatTabsModule,
     MatChipsModule,
+    MatTableModule,
     ChartsModule,
     FlexLayoutModule,
     RoundProgressModule,
@@ -184,6 +188,6 @@ const appRoutes: Routes = [
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent]
+  entryComponents: [ConfirmDialogComponent, PromptDialogComponent]
 })
 export class AppModule { }

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-
+import { MatDialog } from '@angular/material';
 import { LeadService } from '../services';
+import { SharedDataService } from '../../../../app/services/sharedData.service';
+import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-lead-list',
@@ -10,12 +13,13 @@ import { LeadService } from '../services';
 export class LeadListComponent implements OnInit {
 
   private allUsersChecked: boolean = false;
-
+  moment = moment;
   leads: Array<any>;
   isAdvancedSearchEnabled: boolean = false;
   email: string;
   startDate: Date = null;
   endDate: Date = null;
+  selectedFields = [];
   fields = [
     { "field": "lead_id", "display": "Lead ID", "selected": true },
     { "field": "created_on", "display": "Created Date", "selected": false },
@@ -44,14 +48,18 @@ export class LeadListComponent implements OnInit {
     { "field": "meter_serial_number", "display": "Meter Serial", "selected": false },
     { "field": "supply_number", "display": "Supply Number", "selected": false },
   ]
-  constructor(private service: LeadService) { }
+  constructor(private dialog: MatDialog,
+              private service: LeadService,
+              private sharedDataService:SharedDataService) { }
 
   ngOnInit() {
     console.log(this);
     this.loadLeads();
+    this.selectedFieldsChanged();
   }
-  public getSelectedFields() {
-    return this.fields.filter((f) => f.selected);
+  private selectedFieldsChanged() {
+    console.log("helo");
+    this.selectedFields = this.fields.filter((f) => f.selected && f.field!='status');
   }
 
   private loadLeads(): void {
@@ -70,5 +78,23 @@ export class LeadListComponent implements OnInit {
     for (let i in this.leads) {
       this.leads[i].selected = this.allUsersChecked;
     }
+  }
+  changeStatus(lead){
+    this.service.updateLead(lead.id, {'status':lead.status}).subscribe((res)=>{
+       console.log('status changed');
+    })
+  }
+  comment(lead){
+    let dialogRef = this.dialog.open(PromptDialogComponent, {
+      width:"50%",
+      data: { okButtonText:'Add Comment', cancelButtonText:'Cancel', title: 'Add Comment', message: 'Add a comment about this lead.' }
+    });
+    dialogRef.afterClosed().subscribe((data)=>{
+        if(data){
+            this.service.addComment(lead.id, {"comment":data}).subscribe((res)=>{
+
+            })
+        }
+    })
   }
 }
