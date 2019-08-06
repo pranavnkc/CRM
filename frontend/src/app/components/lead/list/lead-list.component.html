@@ -89,7 +89,7 @@
                     </mat-chip-list>
                 </div>
 
-                <table class="table">
+                <table class="table" *ngIf="false">
                     <thead>
                         <tr>
                             <th width="30">
@@ -143,6 +143,47 @@
                     </tbody>
                 </table>
             </div>
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
+                    <mat-header-cell *matHeaderCellDef> {{ column.display }} </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <span *ngIf="column.field!='status'">
+                                {{ column.cell?column.cell(element):element[column.field] ||  element['business_detail'][column.field] || element['supply_detail'][column.field]}}
+                            </span> 
+                            <mat-form-field *ngIf="column.field=='status'">
+                                    <mat-select placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(lead)'>
+                                        <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                            </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef fxFlex="5%"> Action </mat-header-cell>
+                        <mat-cell *matCellDef="let element" fxFlex="5%"> 
+                            <button mat-icon-button [matMenuTriggerFor]="menu">
+                                    <mat-icon>more_vert</mat-icon>
+                                </button>
+                                <mat-menu #menu="matMenu">
+                                    <a routerLink="/leads/details/{{element.id}}"><button mat-menu-item (click)="null">
+                                        Details
+                                    </button></a>
+                                    <button mat-menu-item (click)="null">
+                                        <span>Assign</span>
+                                    </button>
+                                    <button mat-menu-item (click)="comment(element)">
+                                        <span>Comment</span>
+                                    </button>
+                                    <a routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
+                                        Edit
+                                    </button></a>
+
+                                </mat-menu>
+                        </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
         </mat-card-content>
     </mat-card>
 

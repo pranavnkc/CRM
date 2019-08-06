@@ -48,6 +48,7 @@ export class CreateEditUserComponent implements OnInit {
       if (id) {
         this.form.removeControl('password');
         this.form.removeControl('confirm_password');
+        this.form.controls.username.disable();
         this.editMode = EditMode.Edit;
         this.getUser(id);
       }

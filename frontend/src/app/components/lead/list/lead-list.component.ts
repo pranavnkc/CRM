@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTableDataSource} from '@angular/material';
 import { LeadService } from '../services';
 import { SharedDataService } from '../../../../app/services/sharedData.service';
 import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
 import * as moment from 'moment';
-
+import { constants } from '../../../../app/constants';
 @Component({
   selector: 'app-lead-list',
   templateUrl: './lead-list.component.html',
@@ -29,7 +29,7 @@ export class LeadListComponent implements OnInit {
     { "field": "busines_name", "display": "Business Name", "selected": true },
     { "field": "salutation", "display": "Salutation", "selected": false },
     { "field": "name", "display": "Name", "selected": false },
-    { "field": "phone_number", "display": "Phone Number", "selected": true },
+    { "field": "phone_number", "display": "Phone Number", "selected": true, "cell": (element: any) => `${constants.formatPhone(element.business_detail.phone_number)}` },
     { "field": "email", "display": "Email", "selected": false },
     { "field": "building_name", "display": "Building Name", "selected": false },
     { "field": "subb", "display": "Subb", "selected": false },
@@ -48,22 +48,34 @@ export class LeadListComponent implements OnInit {
     { "field": "meter_serial_number", "display": "Meter Serial", "selected": false },
     { "field": "supply_number", "display": "Supply Number", "selected": false },
   ]
+  displayedColumns = [];
+  dataSource = new MatTableDataSource();
   constructor(private dialog: MatDialog,
               private service: LeadService,
-              private sharedDataService:SharedDataService) { }
+              private sharedDataService:SharedDataService) {}
 
   ngOnInit() {
-    console.log(this);
     this.loadLeads();
-    this.selectedFieldsChanged();
+    let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
+    if(selectedItems.length){
+      for(let field of this.fields){
+        if(selectedItems.indexOf(field.field)!=-1){
+          field.selected = true;
+        }
+      }
+    }
+    this.displayedColumns = selectedItems;
   }
+  
   private selectedFieldsChanged() {
-    console.log("helo");
-    this.selectedFields = this.fields.filter((f) => f.selected && f.field!='status');
+    this.displayedColumns = this.fields.filter(field=> field.selected).map(field=>field.field);
+    this.displayedColumns.push('actions');
+    localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
   }
 
   private loadLeads(): void {
     this.service.getLeads().subscribe(data => {
+      this.dataSource.data = data.results;
       this.leads = data.results;
     });
   }

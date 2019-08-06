@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { UserService } from '../services';
-
+import { constants } from '../../../../app/constants';
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
@@ -17,6 +17,7 @@ export class UserListComponent implements OnInit {
   startDate: Date = null;
   endDate: Date = null;
   state: string;
+  constants = constants;
   states = [
     'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware',
     'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky',
