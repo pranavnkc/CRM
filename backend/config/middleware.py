@@ -8,6 +8,7 @@ class IPAddressCheckMiddleware(object):
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called
+        print(dir(request))
         if not IPAddress.objects.filter(ip=request.META['REMOTE_ADDR'], active=True).exists() and False:
             return HttpResponseForbidden()
         response = self.get_response(request)

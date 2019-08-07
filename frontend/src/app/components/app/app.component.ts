@@ -11,7 +11,7 @@ import { constants } from '../../constants';
 })
 export class AppComponent {
   constants = constants;
-  constructor(private themeService: ThemeService, private sharedDataService: SharedDataService, private spinnerService: SpinnerService) {
+  constructor(private themeService: ThemeService, private sharedDataService: SharedDataService, public spinnerService: SpinnerService) {
     themeService.loadSavedTheme();
   }
 }
