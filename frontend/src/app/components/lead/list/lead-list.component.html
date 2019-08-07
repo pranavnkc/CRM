@@ -93,7 +93,7 @@
                     </mat-chip-list>
                 </div>
 
-                <button color="primary" mat-raised-button
+                <button *ngIf="role!='sales-person'" color="primary" mat-raised-button
                         [disabled]="false" (click)="assign()">Assign</button>
             </div>
             <mat-table #table [dataSource]="dataSource">
