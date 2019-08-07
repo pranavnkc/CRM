@@ -53,7 +53,7 @@ class LeadSerializer(serializers.ModelSerializer):
 
     def to_representation(self, obj):
         ret = super(LeadSerializer, self).to_representation(obj)
-        ret['assigned_to'] = obj.assigned_to.get_full_name()
+        ret['assigned_to'] = obj.assigned_to.get_full_name() if obj.assigned_to else None
         return ret
 
 class CommentSerializer(serializers.ModelSerializer):
