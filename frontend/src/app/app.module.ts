@@ -31,6 +31,8 @@ import {
   MatChipsModule,
   MatSnackBarModule,
   MatTableModule,
+  MatPaginatorModule,
+  MatProgressSpinnerModule,
 } from '@angular/material';
 
 import { ChartsModule } from 'ng2-charts';
@@ -38,6 +40,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
 import { HttpService } from './services';
+import { SnackBarService, SpinnerService } from './services';
 
 import { NgInitDirective } from './directives/ng-init.directive';
 
@@ -68,6 +71,7 @@ import { AuthGuard } from './services/auth.guard';
 import { AuthService, UsernameAlreadyExistsValidator } from './services/auth.service';
 import { UserResolver } from './components/users/services/user.service';
 import { SharedDataService } from './services/sharedData.service';
+import { LeadAssignComponent } from './components/lead/lead-assign/lead-assign.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -135,6 +139,7 @@ const appRoutes: Routes = [
     TypographyComponent,
     ConfirmDialogComponent,
     PromptDialogComponent,
+    LeadAssignComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -168,6 +173,8 @@ const appRoutes: Routes = [
     MatTabsModule,
     MatChipsModule,
     MatTableModule,
+    MatProgressSpinnerModule,
+    MatPaginatorModule,
     ChartsModule,
     FlexLayoutModule,
     RoundProgressModule,
@@ -175,6 +182,8 @@ const appRoutes: Routes = [
   ],
   providers: [
     HttpService,
+    SnackBarService,
+    SpinnerService,
     AuthService,
     AuthGuard,
     UserResolver,
@@ -188,6 +197,6 @@ const appRoutes: Routes = [
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, PromptDialogComponent]
+  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, LeadAssignComponent]
 })
 export class AppModule { }

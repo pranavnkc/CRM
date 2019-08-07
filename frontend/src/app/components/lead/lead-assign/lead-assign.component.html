@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Assign Sales Person</h1>
+<div mat-dialog-content>
+
+    <div fxLayout="column" fxLayoutGap="5%">
+        <form [formGroup]="form">
+            <mat-form-field class="mat-block">
+                <mat-select placeholder="Sales Persons*" formControlName="assignee">
+                    <mat-option *ngFor="let salesPerson of salesPersons" [value]="salesPerson.id">{{salesPerson.first_name + " " + salesPerson.last_name}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </form>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button color="primary" mat-button mat-raised-button  (click)="form.valid && assign()" tabindex="2">Assign</button>
+    <button mat-button mat-raised-button  [mat-dialog-close]="false" tabindex="-1" color="warn">Cancel</button>
+</div>

@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatTableDataSource} from '@angular/material';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 import { LeadService } from '../services';
+import { SnackBarService, SpinnerService } from '../../../services'
 import { SharedDataService } from '../../../../app/services/sharedData.service';
 import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
+import { LeadAssignComponent } from '../lead-assign/lead-assign.component';
 import * as moment from 'moment';
 import { constants } from '../../../../app/constants';
+
 @Component({
   selector: 'app-lead-list',
   templateUrl: './lead-list.component.html',
   providers: [LeadService]
 })
 export class LeadListComponent implements OnInit {
-
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   private allUsersChecked: boolean = false;
   moment = moment;
   leads: Array<any>;
@@ -20,6 +24,8 @@ export class LeadListComponent implements OnInit {
   startDate: Date = null;
   endDate: Date = null;
   selectedFields = [];
+  constants = constants;
+  selection = new SelectionModel<any>(true, []);
   fields = [
     { "field": "lead_id", "display": "Lead ID", "selected": true },
     { "field": "created_on", "display": "Created Date", "selected": false },
@@ -51,24 +57,29 @@ export class LeadListComponent implements OnInit {
   displayedColumns = [];
   dataSource = new MatTableDataSource();
   constructor(private dialog: MatDialog,
-              private service: LeadService,
-              private sharedDataService:SharedDataService) {}
+    private service: LeadService,
+    private sharedDataService: SharedDataService,
+    private snackBarService: SnackBarService,
+    private spinnerService: SpinnerService) { }
 
   ngOnInit() {
     this.loadLeads();
     let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
-    if(selectedItems.length){
-      for(let field of this.fields){
-        if(selectedItems.indexOf(field.field)!=-1){
+    if (selectedItems && selectedItems.length) {
+      for (let field of this.fields) {
+        if (selectedItems.indexOf(field.field) != -1) {
           field.selected = true;
         }
       }
     }
+    else {
+      selectedItems = ['select'].concat(this.fields.filter(field => field.selected).map((field) => field.field));
+    }
     this.displayedColumns = selectedItems;
   }
-  
+
   private selectedFieldsChanged() {
-    this.displayedColumns = this.fields.filter(field=> field.selected).map(field=>field.field);
+    this.displayedColumns = ['select'].concat(this.fields.filter(field => field.selected).map(field => field.field));
     this.displayedColumns.push('actions');
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
   }
@@ -77,12 +88,15 @@ export class LeadListComponent implements OnInit {
     this.service.getLeads().subscribe(data => {
       this.dataSource.data = data.results;
       this.leads = data.results;
+      this.paginator.length = data["count"];
+      this.paginator.pageIndex = 0;
     });
   }
 
   onRefresh() {
     this.leads = null;
     this.loadLeads();
+    this.selection.clear();
   }
 
   checkAll() {
@@ -91,22 +105,50 @@ export class LeadListComponent implements OnInit {
       this.leads[i].selected = this.allUsersChecked;
     }
   }
-  changeStatus(lead){
-    this.service.updateLead(lead.id, {'status':lead.status}).subscribe((res)=>{
-       console.log('status changed');
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => {
+        this.selection.select(row)
+      });
+  }
+  changeStatus(lead) {
+    this.service.updateLead(lead.id, { 'status': lead.status }).subscribe((res) => {
+      console.log('status changed');
     })
   }
-  comment(lead){
+  comment(lead) {
     let dialogRef = this.dialog.open(PromptDialogComponent, {
-      width:"50%",
-      data: { okButtonText:'Add Comment', cancelButtonText:'Cancel', title: 'Add Comment', message: 'Add a comment about this lead.' }
+      width: "50%",
+      data: { okButtonText: 'Add Comment', cancelButtonText: 'Cancel', title: 'Add Comment', message: 'Add a comment about this lead.' }
     });
-    dialogRef.afterClosed().subscribe((data)=>{
-        if(data){
-            this.service.addComment(lead.id, {"comment":data}).subscribe((res)=>{
+    dialogRef.afterClosed().subscribe((data) => {
+      this.spinnerService.showSpinner = true;
+      if (data) {
+        this.service.addComment(lead.id, { "comment": data }).subscribe((res) => {
+          this.spinnerService.showSpinner = false;
+          this.snackBarService.open("Comment added successfully.")
+        }, (err) => {
+          this.spinnerService.showSpinner = false;
+        })
+      }
+    })
+  }
 
-            })
-        }
+  assign() {
+    let dialogRef = this.dialog.open(LeadAssignComponent, {
+      width: "50%",
+      data: { selectedleads: this.selection.selected }
+    });
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
+        this.onRefresh();
+      }
     })
   }
 }

@@ -39,9 +39,10 @@ export class HttpService {
    * Executes GET request for specified url.
    * @param url Url to execute.
    */
-  get(url: string): Observable<any> {
+  get(url: string, params?: any): Observable<any> {
     return this.http.get(`${this.baseUrl}${url}`, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
+      params: params
     }).catch(error => this.onError(error));
   }
   delete(url: string): Observable<any> {

@@ -46,7 +46,6 @@
                     </div>
                 </div>
             </form>
-
             <div class="table-responsive clearfix" *ngIf="leads">
                 <div fxLayout="column">
                     <div fxLayout="row" fxLayoutGap="5%">
@@ -89,6 +88,8 @@
                     </mat-chip-list>
                 </div>
 
+                <button color="primary" mat-raised-button
+                        [disabled]="false" (click)="assign()">Assign</button>
                 <table class="table" *ngIf="false">
                     <thead>
                         <tr>
@@ -144,12 +145,26 @@
                 </table>
             </div>
             <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef>
+                        <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                        <mat-checkbox class="inline" color="primary" (click)="$event.stopPropagation()"
+                                      (change)="$event ? selection.toggle(row) : null"
+                                      [checked]="selection.isSelected(row)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
                 <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
                     <mat-header-cell *matHeaderCellDef> {{ column.display }} </mat-header-cell>
                         <mat-cell *matCellDef="let element">
                             <span *ngIf="column.field!='status'">
                                 {{ column.cell?column.cell(element):element[column.field] ||  element['business_detail'][column.field] || element['supply_detail'][column.field]}}
-                            </span> 
+                            </span>
                             <mat-form-field *ngIf="column.field=='status'">
                                     <mat-select placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(lead)'>
                                         <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
@@ -160,7 +175,7 @@
                 </ng-container>
                 <ng-container matColumnDef="actions">
                     <mat-header-cell *matHeaderCellDef fxFlex="5%"> Action </mat-header-cell>
-                        <mat-cell *matCellDef="let element" fxFlex="5%"> 
+                        <mat-cell *matCellDef="let element" fxFlex="5%">
                             <button mat-icon-button [matMenuTriggerFor]="menu">
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
@@ -184,6 +199,11 @@
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                 <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
             </mat-table>
+            <mat-paginator #paginator
+                           [pageSize]="constants.defaultPageSize"
+                           [pageSizeOptions]="constants.pageSizeOptions"
+                           [showFirstLastButtons]="true">
+            </mat-paginator>
         </mat-card-content>
     </mat-card>
 

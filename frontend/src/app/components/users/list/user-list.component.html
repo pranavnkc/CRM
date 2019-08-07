@@ -38,35 +38,64 @@
           </div>
         </div>
       </form>
-      <div class="table-responsive clearfix" *ngIf="users">
-        <table class="table">
-          <thead>
-            <tr>
-              <th width="30">
-                <mat-checkbox (click)="checkAll()"></mat-checkbox>
-              </th>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Username</th>
-              <th>Phone Number</th>
-              <th>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let user of users">
-              <td width="30">
-                <mat-checkbox [checked]="user.selected"></mat-checkbox>
-              </td>
-              <td>{{user.id}}</td>
-              <td>
-                <a routerLink="/users/details/{{user.id}}">{{user.first_name + " " + user.last_name }}</a>
-              </td>
-              <td>{{user.username}}</td>
-              <td>{{constants.formatPhone(user.phone_number)}}</td>
-              <td>{{user.role}}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-responsive clearfix">
+          <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef fxFlex="5%">
+                        <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()">
+                        </mat-checkbox>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row" fxFlex="5%">
+                        <mat-checkbox class="inline" color="primary" (click)="$event.stopPropagation()"
+                                      (change)="$event ? selection.toggle(row) : null"
+                                      [checked]="selection.isSelected(row)">
+                        </mat-checkbox>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef fxFlex="5%"> ID </mat-header-cell>
+                        <mat-cell *matCellDef="let element" fxFlex="5%">
+                            {{element.id}}
+                        </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.name}}
+                        </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="username">
+                    <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.username}}
+                        </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="phone_number">
+                    <mat-header-cell *matHeaderCellDef> Phone Number </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.phone_number}}
+                        </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="role">
+                    <mat-header-cell *matHeaderCellDef> Role </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{element.role}}
+                        </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          </mat-table>
+        <mat-paginator #paginator
+                       [pageSize]="constants.defaultPageSize"
+                       [pageSizeOptions]="constants.pageSizeOptions"
+                       [showFirstLastButtons]="true">
+        </mat-paginator>
       </div>
     </mat-card-content>
   </mat-card>

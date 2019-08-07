@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 from django.contrib.auth.models import Group
+from v1.apps.utils.pagination import StandardResultsSetPagination 
 from . import serializer
 from . import models
 from .filters import UserFilter
@@ -18,7 +19,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializer.UserSerializer
     filter_class = UserFilter
     queryset = models.User.objects.all().order_by('-date_joined').prefetch_related('groups')
-    
+    pagination_class = StandardResultsSetPagination
     def get_queryset(self):
         qs = models.User.objects.all().order_by('-date_joined').prefetch_related('groups')
         if self.request.user.groups.filter(name='sales-person').exists():

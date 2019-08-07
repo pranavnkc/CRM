@@ -50,6 +50,12 @@ class LeadSerializer(serializers.ModelSerializer):
         if supply_detail:
             instance.supply_detail = LeadSupplyDetailsDetailsSerializer().update(instance.supply_detail, supply_detail)
         return instance
+
+    def to_representation(self, obj):
+        ret = super(LeadSerializer, self).to_representation(obj)
+        ret['assigned_to'] = obj.assigned_to.get_full_name()
+        return ret
+
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment

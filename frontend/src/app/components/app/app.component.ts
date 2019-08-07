@@ -1,15 +1,17 @@
 import { Component, Inject } from '@angular/core';
-import { ThemeService } from '../../services';
+import { ThemeService, SpinnerService } from '../../services';
 import { SharedDataService } from '../../services/sharedData.service';
-console.log(SharedDataService)
+import { constants } from '../../constants';
 @Component({
   selector: 'app-root',
-  template: '<router-outlet></router-outlet>',
+  template: `<div *ngIf="spinnerService.showSpinner" class='app-spinner'>
+<mat-spinner diameter="75" ></mat-spinner>
+  </div><router-outlet></router-outlet> `,
   providers: [ThemeService]
 })
 export class AppComponent {
-
-  constructor(private themeService: ThemeService, private sharedDataService: SharedDataService) {
+  constants = constants;
+  constructor(private themeService: ThemeService, private sharedDataService: SharedDataService, private spinnerService: SpinnerService) {
     themeService.loadSavedTheme();
   }
 }

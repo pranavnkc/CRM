@@ -39,6 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     def to_representation(self, obj):
      ret = super(UserSerializer, self).to_representation(obj)
-     ret['role'] = Group.objects.first()
+     ret['role'] = obj.groups.first()
+     ret['name'] = obj.get_full_name()
      ret['role']  = ret['role'].name if ret['role'] else ret['role'] 
      return ret
