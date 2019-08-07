@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatTableDataSource } from '@angular/material';
 import { LeadService } from '../services';
+import { AuthService } from '../../../../app/services/auth.service';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 import * as moment from 'moment';
 @Component({
@@ -13,11 +14,14 @@ export class LeadDetailsComponent implements OnInit {
   user: any;
   displayedColumns = ['created_on', 'created_by', 'comment'];
   dataSource = new MatTableDataSource();
-  moment = moment
-  constructor(private route: ActivatedRoute, private router: Router, private service: LeadService, private dialog: MatDialog) { }
+  moment = moment;
+  role:any;
+  constructor(private route: ActivatedRoute, private router: Router, private service: LeadService, private dialog: MatDialog,
+    private authService:AuthService) { }
 
   ngOnInit() {
     console.log(this);
+    this.role = this.authService.role;
     this.route.params.subscribe(params => {
       let id = params['id'];
       this.getUser(id);

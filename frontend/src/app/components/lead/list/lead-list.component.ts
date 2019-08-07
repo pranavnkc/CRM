@@ -8,7 +8,7 @@ import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog
 import { LeadAssignComponent } from '../lead-assign/lead-assign.component';
 import * as moment from 'moment';
 import { constants } from '../../../../app/constants';
-
+import { AuthService } from '../../../../app/services/auth.service';
 @Component({
   selector: 'app-lead-list',
   templateUrl: './lead-list.component.html',
@@ -54,15 +54,18 @@ export class LeadListComponent implements OnInit {
     { "field": "meter_serial_number", "display": "Meter Serial", "selected": false },
     { "field": "supply_number", "display": "Supply Number", "selected": false },
   ]
+  role:any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();
   constructor(private dialog: MatDialog,
     private service: LeadService,
     private sharedDataService: SharedDataService,
     private snackBarService: SnackBarService,
-    private spinnerService: SpinnerService) { }
+    private spinnerService: SpinnerService,
+    private authService:AuthService) { }
 
   ngOnInit() {
+    this.role = this.authService.role;
     this.loadLeads();
     let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
     if (selectedItems && selectedItems.length) {

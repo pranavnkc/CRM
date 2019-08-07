@@ -1,10 +1,10 @@
 <button mat-raised-button routerLink="/leads">
   <mat-icon>arrow_back</mat-icon> Back to list
 </button>
-<button mat-raised-button routerLink="/leads/edit/{{user?.id}}">
+<button *ngIf="role!='sales-person'" mat-raised-button routerLink="/leads/edit/{{user?.id}}">
   <mat-icon aria-label="Edit">edit</mat-icon>
 </button>
-<button mat-raised-button color="warn" (click)="onDelete()">
+<button *ngIf="role!='sales-person'"  mat-raised-button color="warn" (click)="onDelete()">
   <mat-icon aria-label="Delete">delete</mat-icon>
 </button>
 

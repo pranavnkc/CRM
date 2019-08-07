@@ -2,10 +2,10 @@
     <button mat-raised-button (click)="onRefresh()">
         <mat-icon>cached</mat-icon>
     </button>
-    <button mat-raised-button routerLink="/leads/new">
+    <button *ngIf="role!='sales-person'" mat-raised-button routerLink="/leads/new">
         <mat-icon>person_add</mat-icon>
     </button>
-    <button mat-raised-button color="warn">
+    <button *ngIf="role!='sales-person'" mat-raised-button color="warn">
         <mat-icon>delete</mat-icon>
     </button>
 
@@ -90,59 +90,6 @@
 
                 <button color="primary" mat-raised-button
                         [disabled]="false" (click)="assign()">Assign</button>
-                <table class="table" *ngIf="false">
-                    <thead>
-                        <tr>
-                            <th width="30">
-                                <mat-checkbox (click)="checkAll()"></mat-checkbox>
-                            </th>
-                            <th *ngFor="let field of selectedFields">{{field.display}}</th>
-                            <th *ngIf="fields[3].selected">
-                                Status
-                            </th>
-                            <th>
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let lead of leads">
-                            <td width="30">
-                                <mat-checkbox [checked]="lead.selected"></mat-checkbox>
-                            </td>
-                            <td *ngFor="let field of selectedFields">
-                                {{lead[field.field] || lead['business_detail'][field.field] ||  lead['supply_detail'][field.field]}}
-                            </td>
-                            <td *ngIf="fields[3].selected">
-                                <mat-form-field class="mat-block">
-                                    <mat-select placeholder="Status*" [(value)]="lead.status" (selectionChange)='changeStatus(lead)'>
-                                        <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </td>
-                            <td>
-                                <button mat-icon-button [matMenuTriggerFor]="menu">
-                                    <mat-icon>more_vert</mat-icon>
-                                </button>
-                                <mat-menu #menu="matMenu">
-                                    <a routerLink="/leads/details/{{lead.id}}"><button mat-menu-item (click)="null">
-                                        Details
-                                    </button></a>
-                                    <button mat-menu-item (click)="null">
-                                        <span>Assign</span>
-                                    </button>
-                                    <button mat-menu-item (click)="comment(lead)">
-                                        <span>Comment</span>
-                                    </button>
-                                    <a routerLink="/leads/edit/{{lead.id}}"><button mat-menu-item (click)="null">
-                                        Edit
-                                    </button></a>
-
-                                </mat-menu>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="select">
@@ -183,13 +130,13 @@
                                     <a routerLink="/leads/details/{{element.id}}"><button mat-menu-item (click)="null">
                                         Details
                                     </button></a>
-                                    <button mat-menu-item (click)="null">
+                                    <button *ngIf="role!='sales-person'" mat-menu-item (click)="null">
                                         <span>Assign</span>
                                     </button>
                                     <button mat-menu-item (click)="comment(element)">
                                         <span>Comment</span>
                                     </button>
-                                    <a routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
+                                    <a *ngIf="role!='sales-person'" routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
                                         Edit
                                     </button></a>
 
