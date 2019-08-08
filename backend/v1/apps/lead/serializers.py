@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Lead, LeadBusinessDetails, LeadSupplyDetails, Status, Comment
+from .models import Lead, LeadBusinessDetails, LeadSupplyDetails, Status, Comment, Callback
 
 class LeadBusinessDetailsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -54,6 +54,8 @@ class LeadSerializer(serializers.ModelSerializer):
     def to_representation(self, obj):
         ret = super(LeadSerializer, self).to_representation(obj)
         ret['assigned_to'] = obj.assigned_to.get_full_name() if obj.assigned_to else None
+        callback = obj.callbacks.order_by('datetime').last()
+        ret['latest_callback'] = callback.datetime if callback else None
         return ret
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -67,4 +69,18 @@ class CommentSerializer(serializers.ModelSerializer):
     def to_representation(self, obj):
         ret = super(CommentSerializer, self).to_representation(obj)
         ret['created_by'] = obj.created_by.get_full_name()
+        return ret
+
+
+class CallbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Callback
+        fields = '__all__'
+        extra_kwargs = {
+            "lead":{"required":False},
+            "created_by":{"required":False}
+        }
+    def to_representation(self, obj):
+        ret = super(CallbackSerializer, self).to_representation(obj)
+        ret['scheduled_by'] = obj.scheduled_by.get_full_name()
         return ret

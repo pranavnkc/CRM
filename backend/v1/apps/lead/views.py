@@ -25,10 +25,26 @@ class LeadViewSet(viewsets.ModelViewSet):
         if request.method.lower() == 'get':
             return Response(serializers.CommentSerializer(instance.comments.select_related('created_by').order_by('created_on'), many=True).data)
         else:
-            ser = serializers.CommentSerializer(data=request.data)
+            data = request.data
+            data['created_by'] = request.user.id
+            data['lead'] = instance.id
+            ser = serializers.CommentSerializer(data=data)
             ser.is_valid(raise_exception=True)
-            ser.validated_data['lead'] = instance
-            ser.validated_data['created_by'] = request.user
+            ser.save()
+            return Response(ser.data)
+
+    @detail_route(url_path='callback', methods=('post','get'))
+    def callback(self, request, pk):
+        instance = self.get_object()
+        print(instance)
+        if request.method.lower() == 'get':
+            return Response(serializers.CallbackSerializer(instance.comments.select_related('created_by').order_by('created_on'), many=True).data)
+        else:
+            data = request.data
+            data['lead'] = instance.id
+            data['scheduled_by'] = request.user.id
+            ser = serializers.CallbackSerializer(data=data)
+            ser.is_valid(raise_exception=True)
             ser.save()
             return Response(ser.data)
         

@@ -1,0 +1,48 @@
+<h1 mat-dialog-title>Schedule Next Callback</h1>
+<div mat-dialog-content>
+  <div fxLayout="row">
+    <form class="fullwidth" [formGroup]="dateTimePickerForm" (ngSubmit)="dateTimePickerForm.valid && setDateTime()">
+      <div fxLayout="row" fxLayoutGap="5%" fxLayoutAlign="start center">
+        <div fxFlex="15%">
+          <span>Date :</span>
+        </div>
+        <div fxFlex="40%">
+          <mat-form-field>
+            <input matInput [matDatepicker]="dp" [min]="data.minDate"  placeholder="Date" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+            <mat-datepicker #dp></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row" fxLayoutGap="5%" fxLayoutAlign="start center">
+        <div fxFlex="15%">
+          <span>Start Time :</span>
+        </div>
+        <div fxFlex="80%"  fxLayout="row" fxLayoutAlign="start center">
+          <mat-form-field fxFlex="20%">
+            <mat-select placeholder="Hour*" formControlName="hour">
+              <mat-option *ngFor="let hour of hourOptions;let index = index" [value]="index+1">
+                {{index+1<10?0:""}}{{ index +1 }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field fxFlex="20%" fxFlexOffset="10%">
+            <mat-select placeholder="Minute*" formControlName="minute">
+              <mat-option *ngFor="let minute of minuteOptions" [value]="minute">
+                {{minute<10?0:""}}{{ minute }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-radio-group fxFlexOffset="15%" fxFlex="30%"  fxLayout="row" fxLayoutGap="15%" formControlName="amPm">
+            <mat-radio-button color="primary" value="AM">AM</mat-radio-button>
+            <mat-radio-button color="primary" value="PM">PM</mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div mat-dialog-actions>
+    <button color="primary" mat-button mat-raised-button  (click)="dateTimePickerForm.valid && setCallback()" tabindex="2">Assign</button>
+    <button mat-button mat-raised-button  [mat-dialog-close]="false" tabindex="-1" color="warn">Cancel</button>
+</div>

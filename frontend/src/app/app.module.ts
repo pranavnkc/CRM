@@ -72,6 +72,7 @@ import { AuthService, UsernameAlreadyExistsValidator } from './services/auth.ser
 import { UserResolver } from './components/users/services/user.service';
 import { SharedDataService } from './services/sharedData.service';
 import { LeadAssignComponent } from './components/lead/lead-assign/lead-assign.component';
+import { CallbackComponent } from './components/lead/callback/callback.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -80,7 +81,7 @@ const appRoutes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: '/home' },
       { path: 'home', component: HomeComponent, data: { title: 'Dashboard' } },
-      { path: 'users', canActivate: [AuthGuard], component: UserListComponent, data: { title: 'Users' }},
+      { path: 'users', canActivate: [AuthGuard], component: UserListComponent, data: { title: 'Users' } },
       { path: 'users/new', canActivate: [AuthGuard], component: CreateEditUserComponent, data: { title: 'New user' }, resolve: { "users": UserResolver } },
       { path: 'users/edit/:id', canActivate: [AuthGuard], component: CreateEditUserComponent, data: { title: 'Edit user' } },
       { path: 'users/details/:id', canActivate: [AuthGuard], component: UserDetailsComponent, data: { title: 'User details' } },
@@ -140,6 +141,7 @@ const appRoutes: Routes = [
     ConfirmDialogComponent,
     PromptDialogComponent,
     LeadAssignComponent,
+    CallbackComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -197,6 +199,6 @@ const appRoutes: Routes = [
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, LeadAssignComponent]
+  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, LeadAssignComponent, CallbackComponent]
 })
 export class AppModule { }
