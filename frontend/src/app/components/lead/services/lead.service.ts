@@ -7,8 +7,8 @@ export class LeadService {
   constructor(private http: HttpService) {
   }
 
-  getLeads() {
-    return this.http.get('api/leads/');
+  getLeads(params: any) {
+    return this.http.get('api/leads/', params);
   }
 
   getLead(id: any) {
@@ -26,11 +26,11 @@ export class LeadService {
   getLeadStatus() {
     return this.http.get(`api/leads/status/`);
   }
-  addComment(id:any, data:any){
+  addComment(id: any, data: any) {
     return this.http.post(`api/leads/${id}/comment/`, data);
   }
-  getComments(id:any){
+  getComments(id: any) {
     return this.http.get(`api/leads/${id}/comment/`);
   }
-   
+
 }

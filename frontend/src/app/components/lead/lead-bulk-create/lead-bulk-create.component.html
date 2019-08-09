@@ -1,0 +1,10 @@
+<form fxFlex.gt-sm="100%">
+    <div fxLayout="row" class="pdt30">
+        <input type="file" #fileInput accept=".csv">
+    </div>
+    <p class="danger">{{officersUploaderror}}</p>
+    <div fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="2%">
+        <button type="button" class="pull-right" mat-button mat-raised-button (click)="cancel()"><b class="f20">Cancel</b></button>
+        <button type="submit"  mat-button mat-raised-button (click)="addMultipleOfficers()" color="primary">Upload</button>
+    </div>
+</form>

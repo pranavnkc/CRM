@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../services';
-import { constants } from '../../../../app/constants';
+import { constants } from '../../../../app/constants'
+import { SpinnerService } from '../../../services';
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
@@ -21,13 +22,13 @@ export class UserListComponent implements OnInit {
   displayedColumns = ['select', 'id', 'name', 'username', 'phone_number', 'role'];
   dataSource = new MatTableDataSource();
   selection = new SelectionModel<any>(true, []);
-  constructor(private service: UserService) { }
+  constructor(private service: UserService, private spinnerService: SpinnerService) { }
 
   ngOnInit() {
     console.log(this);
     this.loadUsers();
     this.paginator.page.subscribe((pageConfig) => {
-      console.log(pageConfig);
+      this.loadUsers();
     })
   }
 
@@ -43,12 +44,14 @@ export class UserListComponent implements OnInit {
         this.selection.select(row)
       });
   }
-  private loadUsers(): void {
-    this.service.getUsers({ 'page': this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize }).subscribe((data) => {
+  private loadUsers(pageIndex?: any): void {
+    this.spinnerService.showSpinner = true;
+    this.service.getUsers({ 'page': this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize }).finally(() => {
+      this.spinnerService.showSpinner = false;
+    }).subscribe((data) => {
       this.dataSource.data = data['results'];
-      console.log(this, this.paginator);
       this.paginator.length = data["count"];
-      this.paginator.pageIndex = 0;
+      this.paginator.pageIndex = pageIndex == undefined ? this.paginator.pageIndex : pageIndex || 0;
     });
   }
 

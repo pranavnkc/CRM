@@ -28,7 +28,7 @@ export class LeadListComponent implements OnInit {
   constants = constants;
   selection = new SelectionModel<any>(true, []);
   fields = [
-    { "field": "lead_id", "display": "Lead ID", "selected": true },
+    { "field": "id", "display": "Lead ID", "selected": true },
     { "field": "created_on", "display": "Created Date", "selected": false },
     { "field": "lead_hash", "display": "Lead Hash", "selected": false },
     { "field": "status", "display": "Status", "selected": true },
@@ -36,8 +36,8 @@ export class LeadListComponent implements OnInit {
     { "field": "busines_name", "display": "Business Name", "selected": true },
     { "field": "salutation", "display": "Salutation", "selected": false },
     { "field": "name", "display": "Name", "selected": false },
-    { "field": "latest_callback", "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A')}` },
-    { "field": "phone_number", "display": "Phone Number", "selected": true, "cell": (element: any) => `${constants.formatPhone(element.business_detail.phone_number)}` },
+    { "field": "latest_callback", "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+    { "field": "phone_number", "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
     { "field": "email", "display": "Email", "selected": false },
     { "field": "building_name", "display": "Building Name", "selected": false },
     { "field": "subb", "display": "Subb", "selected": false },
@@ -69,6 +69,9 @@ export class LeadListComponent implements OnInit {
   ngOnInit() {
     this.role = this.authService.role;
     this.loadLeads();
+    this.paginator.page.subscribe((pageConfig) => {
+      this.loadLeads();
+    })
     let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
     if (selectedItems && selectedItems.length) {
       for (let field of this.fields) {
@@ -89,12 +92,16 @@ export class LeadListComponent implements OnInit {
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
   }
 
-  private loadLeads(): void {
-    this.service.getLeads().subscribe(data => {
+  private loadLeads(pageIndex?: any): void {
+    this.spinnerService.showSpinner = true;
+    this.service.getLeads({ 'page': this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize }).finally(() => {
+      this.spinnerService.showSpinner = false;
+    }).subscribe(data => {
       this.dataSource.data = data.results;
       this.leads = data.results;
+      this.dataSource.data = data['results'];
       this.paginator.length = data["count"];
-      this.paginator.pageIndex = 0;
+      this.paginator.pageIndex = pageIndex == undefined ? this.paginator.pageIndex : pageIndex || 0;
     });
   }
 

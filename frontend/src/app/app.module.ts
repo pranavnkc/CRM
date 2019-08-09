@@ -40,7 +40,7 @@ import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
 import { HttpService } from './services';
-import { SnackBarService, SpinnerService } from './services';
+import { SnackBarService, SpinnerService, FileLoaderService } from './services';
 
 import { NgInitDirective } from './directives/ng-init.directive';
 
@@ -73,6 +73,7 @@ import { UserResolver } from './components/users/services/user.service';
 import { SharedDataService } from './services/sharedData.service';
 import { LeadAssignComponent } from './components/lead/lead-assign/lead-assign.component';
 import { CallbackComponent } from './components/lead/callback/callback.component';
+import { LeadBulkCreateComponent } from './components/lead/lead-bulk-create/lead-bulk-create.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -87,6 +88,7 @@ const appRoutes: Routes = [
       { path: 'users/details/:id', canActivate: [AuthGuard], component: UserDetailsComponent, data: { title: 'User details' } },
       { path: 'leads', component: LeadListComponent, data: { title: 'Leads' } },
       { path: 'leads/new', component: CreateEditLeadComponent, data: { title: 'New Lead' } },
+      { path: 'leads/bulk-create', component: LeadBulkCreateComponent, data: { title: ' Bulk Create Lead' } },
       { path: 'leads/edit/:id', component: CreateEditLeadComponent, data: { title: 'Edit Lead' } },
       { path: 'leads/details/:id', component: LeadDetailsComponent, data: { title: 'Lead details' } },
       { path: 'settings', component: SettingsComponent, data: { title: 'Settings' } },
@@ -142,6 +144,7 @@ const appRoutes: Routes = [
     PromptDialogComponent,
     LeadAssignComponent,
     CallbackComponent,
+    LeadBulkCreateComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -186,6 +189,7 @@ const appRoutes: Routes = [
     HttpService,
     SnackBarService,
     SpinnerService,
+    FileLoaderService,
     AuthService,
     AuthGuard,
     UserResolver,

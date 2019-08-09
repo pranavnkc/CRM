@@ -235,3 +235,4 @@ Thumbs.db
 /frontend.DS_Store
 /frontend/Thumbs.db
 /frontend/.vs
+/backend/static/media/reports/*.csv

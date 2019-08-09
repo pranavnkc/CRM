@@ -3,20 +3,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs/Rx';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-
+import { SpinnerService } from './spinner.service';
 import 'rxjs/Rx';
 
 @Injectable()
 export class HttpService {
 
   private baseUrl: string;
-
-  constructor(private http: HttpClient, private router: Router) {
+  public contentType: string;
+  constructor(private http: HttpClient, private router: Router, private spinnerService: SpinnerService) {
     this.baseUrl = environment.baseUrl;
   }
 
-  private getHeaders(): HttpHeaders {
-    let headers = new HttpHeaders().set('Content-Type', 'application/json');
+  private getHeaders(contentType?: any): HttpHeaders {
+    let headers = new HttpHeaders()
 
     let token = localStorage.getItem('token');
 
@@ -30,8 +30,9 @@ export class HttpService {
 
   private onError(error: any): Promise<any> {
     if (error.status === 401 || error.status === 403) {
-      this.router.navigate(['/login']);
+      //this.router.navigate(['/login']);
     }
+    this.spinnerService.showSpinner = false;
     return Promise.reject(error);
   }
 
@@ -45,6 +46,7 @@ export class HttpService {
       params: params
     }).catch(error => this.onError(error));
   }
+
   delete(url: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}${url}`, {
       headers: this.getHeaders()
@@ -56,9 +58,10 @@ export class HttpService {
    * @param url Request Url.
    * @param data Post data.
    */
-  post(url: string, data: any): Observable<any> {
+  post(url: string, data: any, contentType?: any): Observable<any> {
+
     return this.http.post(`${this.baseUrl}${url}`, data, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(contentType)
     }).catch(error => this.onError(error));
   }
   patch(url: string, data: any): Observable<any> {
