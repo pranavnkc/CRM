@@ -34,7 +34,7 @@ export class LeadBulkCreateComponent implements OnInit {
         this.fileLoader.downloadFile('/' + error.error.data_error[0]);
         this.officersUploaderror = "One or more rows has an error, please check the downloaded file for more details and upload again after correcting the errors."
       }
-      this.officersUploaderror = error.error['file'];
+      this.officersUploaderror = error.error['file'] || error.error['lead_hash'];
     });
 
   };
