@@ -9,7 +9,7 @@ User = get_user_model()
 
 def get_unique_slug():
     unique_id = uuid.uuid4()
-    while Lead.objects.filter(lead_id=unique_id).exists():
+    while Lead.objects.filter(lead_hash=unique_id).exists():
         unique_id = uuid.uuid4()
     return unique_id
 
@@ -18,10 +18,9 @@ class Status(models.Model):
     display = models.CharField(max_length=100)
     
 class Lead(models.Model):
-    lead_id = models.SlugField(max_length=140, unique=True, default=get_unique_slug)
+    lead_hash = models.SlugField(max_length=140, unique=True, default=get_unique_slug)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
-    lead_hash  = models.CharField(max_length=40, null=True, blank=True)
     status = models.CharField(max_length=40)
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
 
@@ -50,7 +49,7 @@ class LeadBusinessDetails(models.Model):
     last_name = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(null=True, blank=True, max_length=10)
     email = models.EmailField(null=True, blank=True)
-    building_name = models.CharField(max_length=100)
+    building_name = models.CharField(max_length=100, null=True, blank=True)
     subb = models.CharField(max_length=100, null=True, blank=True)
     building_number = models.CharField(max_length=50, null=True, blank=True)
     street_name = models.CharField(max_length=100, null=True, blank=True)

@@ -7,7 +7,6 @@ from v1.apps.utils.filters import SimpleArrayFilter
 class GroupFilter(django_filters.Filter):
     field_class = SimpleArrayField
     def filter(self, qs, value):
-        print(qs, value)
         if len(value) > 0:
             return qs.filter(groups__name__in=value)
         return qs

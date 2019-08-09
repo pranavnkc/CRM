@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework import permissions
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from v1.apps.utils.pagination import StandardResultsSetPagination
@@ -15,7 +16,7 @@ class LeadViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(assigned_to=self.request.user)
         return self.queryset
     
-    @list_route(url_path='status', methods=('get', ))
+    @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
     def status(self, request):
         return Response(models.Status.objects.values())
 
@@ -36,7 +37,6 @@ class LeadViewSet(viewsets.ModelViewSet):
     @detail_route(url_path='callback', methods=('post','get'))
     def callback(self, request, pk):
         instance = self.get_object()
-        print(instance)
         if request.method.lower() == 'get':
             return Response(serializers.CallbackSerializer(instance.comments.select_related('created_by').order_by('created_on'), many=True).data)
         else:
@@ -54,4 +54,11 @@ class LeadViewSet(viewsets.ModelViewSet):
         assinee = self.request.data.get('assignee')
         if assinee:
             leads.update(assigned_to_id=assinee)
+        return Response()
+
+    @list_route(url_path='bulk-create', methods=('post',))
+    def bulk_create(self, request):
+        ser = serializers.BulkLeadCreateSerrializer(data=request.data, context={"request":request})
+        ser.is_valid(raise_exception=True)
+        ser.create(ser.validated_data)
         return Response()
