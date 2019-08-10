@@ -74,6 +74,7 @@ export class LeadListComponent implements OnInit {
     })
     let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
     if (selectedItems && selectedItems.length) {
+      selectedItems = selectedItems.filter(f=>f!='lead_id')
       for (let field of this.fields) {
         if (selectedItems.indexOf(field.field) != -1) {
           field.selected = true;

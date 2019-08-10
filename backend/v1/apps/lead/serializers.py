@@ -131,7 +131,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
             raise serializers.ValidationError({"file": e})
         error_file_name = get_file_name()
         status_choices = list(Status.objects.values_list('key', flat=True))
-        lead_hash_list = []
+        supply_number_list = []
         with open(error_file_name, 'w', newline='') as csvfile:
             fieldnames = data['file'].fieldnames
             fieldnames.append('errors')
@@ -139,21 +139,19 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
             writer.writeheader()
             for row in data['file']:
                 lead_data = {}
-                
                 business_detail_data = {}
                 supply_detail_data = {}
                 for model_field, file_field in self.lead_field_mapping.items():
                     lead_data[model_field] = row.get(file_field)
-                if lead_data['lead_hash']=='fbff5c11-5c01-43a6-8e37-0cc3222934c3':
-                    print("found", lead_data['lead_hash'] in lead_hash_list)
-                if lead_data['lead_hash'] in lead_hash_list:
-                    raise serializers.ValidationError({"lead_hash":"Duplicate lead hash {}".format(lead_data['lead_hash'])})
-                lead_hash_list.append(lead_data['lead_hash'])
+                
                 for model_field, file_field in self.business_field_mapping.items():
                     row_data = row.get(file_field)
                     business_detail_data[model_field] = row_data if row_data!='NA' else None
                 for model_field, file_field in self.supply_field_mapping.items():
                     supply_detail_data[model_field] = row.get(file_field)
+                if supply_detail_data['supply_number'] in supply_number_list:
+                    raise serializers.ValidationError({"lead_hash":"Duplicate supply number {}".format(supply_detail_data['supply_number'])})
+                supply_number_list.append(supply_detail_data['supply_number'])
                 lead_data['business_detail'] = business_detail_data
                 lead_data['supply_detail'] = supply_detail_data
                 lead_ser = LeadSerializer(data=lead_data, context=self.context)
@@ -163,16 +161,17 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                     row['errors'] = lead_ser.errors
                     writer.writerow(row)
                 else:
-                    validated_data['lead_objects'].append(Lead(lead_hash=lead_ser.validated_data.get('lead_hash'), status=lead_ser.validated_data.get('status', 'raw')))
-                    validated_data['business_objects'][lead_ser.validated_data.get('lead_hash')] = LeadBusinessDetails(**lead_ser.validated_data.get('business_detail'))
-                    validated_data['supply_objects'][lead_ser.validated_data.get('lead_hash')] = LeadSupplyDetails(**lead_ser.validated_data.get('supply_detail'))
+                    lead_obj  = Lead(lead_hash=lead_ser.validated_data.get('lead_hash'), status=lead_ser.validated_data.get('status', 'raw'))
+                    validated_data['lead_objects'].append(lead_obj)
+                    validated_data['business_objects'][str(lead_obj.lead_internal_hash)] = LeadBusinessDetails(**lead_ser.validated_data.get('business_detail'))
+                    validated_data['supply_objects'][str(lead_obj.lead_internal_hash)] = LeadSupplyDetails(**lead_ser.validated_data.get('supply_detail'))
         if is_error:
             raise serializers.ValidationError({"data_error":error_file_name})
         return validated_data
 
     def create(self, validated_data):
         Lead.objects.bulk_create(validated_data['lead_objects'])
-        for l in Lead.objects.filter(lead_hash__in=validated_data['business_objects'].keys()).values_list('id', 'lead_hash'):
+        for index, l in enumerate(Lead.objects.filter(lead_internal_hash__in=validated_data['business_objects'].keys()).values_list('id', 'lead_internal_hash')):
             validated_data['business_objects'][l[1]].lead_id = l[0]
             validated_data['supply_objects'][l[1]].lead_id = l[0]
         LeadBusinessDetails.objects.bulk_create(validated_data['business_objects'].values())

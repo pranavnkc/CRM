@@ -13,17 +13,25 @@ def get_unique_slug():
         unique_id = uuid.uuid4()
     return unique_id
 
+def get_unique_internal_slug():
+    unique_id = uuid.uuid4()
+    while Lead.objects.filter(lead_internal_hash=unique_id).exists():
+        unique_id = uuid.uuid4()
+    return unique_id
+
 class Status(models.Model):
     key = models.CharField(max_length=100)
     display = models.CharField(max_length=100)
     
 class Lead(models.Model):
-    lead_hash = models.SlugField(max_length=140, unique=True, default=get_unique_slug)
+    lead_internal_hash = models.SlugField(max_length=140, default=get_unique_internal_slug)
+    lead_hash = models.SlugField(max_length=140, default=get_unique_slug)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
     status = models.CharField(max_length=40)
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
-
+    
+    
 class LeadBusinessDetails(models.Model):
     MR = "Mr."
     MRS = "Mrs."
@@ -67,7 +75,7 @@ class LeadSupplyDetails(models.Model):
     current_electricity_supplier =  models.CharField(max_length=100, null=True, blank=True)
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
-    supply_number = models.CharField(max_length=100, null=True, blank=True)
+    supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True)
     
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
