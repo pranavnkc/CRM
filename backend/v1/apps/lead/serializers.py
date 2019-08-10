@@ -1,3 +1,4 @@
+from django.db import transaction
 from io import StringIO
 from rest_framework import serializers
 from .models import Lead, LeadBusinessDetails, LeadSupplyDetails, Status, Comment, Callback
@@ -168,7 +169,8 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
         if is_error:
             raise serializers.ValidationError({"data_error":error_file_name})
         return validated_data
-
+    
+    @transaction.atomic
     def create(self, validated_data):
         Lead.objects.bulk_create(validated_data['lead_objects'])
         for index, l in enumerate(Lead.objects.filter(lead_internal_hash__in=validated_data['business_objects'].keys()).values_list('id', 'lead_internal_hash')):
