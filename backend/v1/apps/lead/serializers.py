@@ -162,7 +162,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                     row['errors'] = lead_ser.errors
                     writer.writerow(row)
                 else:
-                    lead_obj  = Lead(lead_hash=lead_ser.validated_data.get('lead_hash'), status=lead_ser.validated_data.get('status', 'raw'))
+                    lead_obj  = Lead(lead_hash=lead_ser.validated_data.get('lead_hash'), status=lead_ser.validated_data.get('status', 'raw'), created_by=self.context['request'].user)
                     validated_data['lead_objects'].append(lead_obj)
                     validated_data['business_objects'][str(lead_obj.lead_internal_hash)] = LeadBusinessDetails(**lead_ser.validated_data.get('business_detail'))
                     validated_data['supply_objects'][str(lead_obj.lead_internal_hash)] = LeadSupplyDetails(**lead_ser.validated_data.get('supply_detail'))
