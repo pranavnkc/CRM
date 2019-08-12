@@ -28,41 +28,45 @@ export class LeadListComponent implements OnInit {
   selectedFields = [];
   constants = constants;
   selection = new SelectionModel<any>(true, []);
-  filterForm:FormGroup;
-  conditions  = [{'key':'exact', 'val':'Exact'},
-  {'key':'iexact','val':'Insensitive Exact'},
-  {'key':'contains','val':'Contains'},
-  {'key':'icontains','val':'Insensitive Contains'},
-  {'key':'range','val':'Between'}];
+  filterForm: FormGroup;
+  allConditions = [
+    { 'key': 'exact', 'val': 'Exact' },
+    { 'key': 'iexact', 'val': 'Insensitive Exact' },
+    { 'key': 'contains', 'val': 'Contains' },
+    { 'key': 'icontains', 'val': 'Insensitive Contains' },
+    { 'key': 'range', 'val': 'Between' }
+  ];
+  conditions: any;
   fields = [
     { "field": "id", "display": "Lead ID", "selected": true },
-    { "field": "created_on", "display": "Created Date", "selected": false},
+    { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
     { "field": "lead_hash", "display": "Lead Hash", "selected": false },
     { "field": "status", "display": "Status", "selected": true },
     { "field": "assigned_to", "display": "Assigned To", "selected": true },
-    { "field": "busines_name", 'filterFiled':'business_detail__busines_name',"display": "Business Name", "selected": true},
-    { "field": "salutation", 'filterFiled':'business_detail__salutation',"display": "Salutation", "selected": false },
-    { "field": "name", 'filterFiled':'business_detail__full_name',"display": "Name", "selected": false , "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}`},
+    { "field": "busines_name", 'filterField': 'business_detail__busines_name', "display": "Business Name", "selected": true },
+    { "field": "salutation", 'filterField': 'business_detail__salutation', "display": "Salutation", "selected": false },
+    { "field": "name", 'filterField': 'business_detail__full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}` },
     { "field": "latest_callback", "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "phone_number", 'filterFiled':'business_detail__phone_numbar',"display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
-    { "field": "email", 'filterFiled':'business_detail__email',"display": "Email", "selected": false },
-    { "field": "building_name", 'filterFiled':'business_detail__building_name',"display": "Building Name", "selected": false },
-    { "field": "subb", 'filterFiled':'business_detail__subb',"display": "Subb", "selected": false },
-    { "field": "building_number", 'filterFiled':'business_detail__building_number',"display": "Building Number", "selected": false },
-    { "field": "street_name", 'filterFiled':'business_detail__street_name',"display": "Street Name", "selected": false },
-    { "field": "town", 'filterFiled':'business_detail__town',"display": "Town", "selected": false },
-    { "field": "city", 'filterFiled':'business_detail__city',"display": "City", "selected": false },
-    { "field": "county", 'filterFiled':'business_detail__county',"display": "County", "selected": false },
-    { "field": "meter_type", 'filterFiled':'supply_detail__meter_type',"display": "Meter Type", "selected": false },
-    { "field": "meter_type_code", 'filterFiled':'supply_detail__meter_type_code',"display": "Meter Type Code", "selected": false },
-    { "field": "domestic_meter", 'filterFiled':'supply_detail__domestic_meter',"display": "Domestic Meter", "selected": false },
-    { "field": "amr", 'filterFiled':'supply_detail__amr',"display": "AMR", "selected": false },
-    { "field": "related_meter", 'filterFiled':'supply_detail__related_meter',"display": "Related Meter", "selected": false },
-    { "field": "current_electricity_supplier", 'filterFiled':'supply_detail__current_electricity_supplier',"display": "Current Supplier", "selected": true },
-    { "field": "contract_end_date", 'filterFiled':'supply_detail__contract_end_date',"display": "Contract End Date", "selected": true },
-    { "field": "meter_serial_number", 'filterFiled':'supply_detail__meter_serial_number',"display": "Meter Serial", "selected": false },
-    { "field": "supply_number", 'filterFiled':'supply_detail__supply_number',"display": "Supply Number", "selected": false },
+    { "field": "phone_number", 'filterField': 'business_detail__phone_numbar', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
+    { "field": "email", 'filterField': 'business_detail__email', "display": "Email", "selected": false },
+    { "field": "building_name", 'filterField': 'business_detail__building_name', "display": "Building Name", "selected": false },
+    { "field": "subb", 'filterField': 'business_detail__subb', "display": "Subb", "selected": false },
+    { "field": "building_number", 'filterField': 'business_detail__building_number', "display": "Building Number", "selected": false },
+    { "field": "street_name", 'filterField': 'business_detail__street_name', "display": "Street Name", "selected": false },
+    { "field": "town", 'filterField': 'business_detail__town', "display": "Town", "selected": false },
+    { "field": "city", 'filterField': 'business_detail__city', "display": "City", "selected": false },
+    { "field": "county", 'filterField': 'business_detail__county', "display": "County", "selected": false },
+    { "field": "meter_type", 'filterField': 'supply_detail__meter_type', "display": "Meter Type", "selected": false },
+    { "field": "meter_type_code", 'filterField': 'supply_detail__meter_type_code', "display": "Meter Type Code", "selected": false },
+    { "field": "domestic_meter", 'filterField': 'supply_detail__domestic_meter', "display": "Domestic Meter", "selected": false },
+    { "field": "amr", 'filterField': 'supply_detail__amr', "display": "AMR", "selected": false },
+    { "field": "related_meter", 'filterField': 'supply_detail__related_meter', "display": "Related Meter", "selected": false },
+    { "field": "current_electricity_supplier", 'filterField': 'supply_detail__current_electricity_supplier', "display": "Current Supplier", "selected": true },
+    { "field": "contract_end_date", 'filterField': 'supply_detail__contract_end_date', "display": "Contract End Date", "selected": true },
+    { "field": "meter_serial_number", 'filterField': 'supply_detail__meter_serial_number', "display": "Meter Serial", "selected": false },
+    { "field": "supply_number", 'filterField': 'supply_detail__supply_number', "display": "Supply Number", "selected": false },
   ]
+  dateFields = ['created_on'];
   role: any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();
@@ -72,15 +76,34 @@ export class LeadListComponent implements OnInit {
     private sharedDataService: SharedDataService,
     private snackBarService: SnackBarService,
     private spinnerService: SpinnerService,
-    private authService: AuthService) { 
-      this.filterForm = this.fb.group({
-        'field':[null, Validators.required],
-        'condition':[null, Validators.required],
-        'value':[null, Validators.required]
-      })
-    }
+    private authService: AuthService) {
+    this.filterForm = this.fb.group({
+      'field': [null, Validators.required],
+      'condition': [null, Validators.required],
+      'value': [null, Validators.required]
+    });
+    this.conditions = this.allConditions;
+  }
 
   ngOnInit() {
+    this.filterForm.controls.field.valueChanges.subscribe((val) => {
+      if (this.dateFields.indexOf(val.toLowerCase()) != -1 && !this.filterForm.controls['start_date']) {
+        this.filterForm.addControl('start_date', new FormControl(null, Validators.required));
+        this.filterForm.addControl('end_date', new FormControl(null, Validators.required));
+        this.filterForm.removeControl('value');
+        this.conditions = [
+          { 'key': 'range', 'val': 'Between' }
+        ];
+      }
+      else {
+        if (this.filterForm.controls['start_date']) {
+          this.conditions = this.allConditions;
+          this.filterForm.removeControl('start_date');
+          this.filterForm.removeControl('end_date')
+          this.filterForm.addControl('value', new FormControl(null, Validators.required));
+        }
+      }
+    })
     this.role = this.authService.role;
     this.loadLeads();
     this.paginator.page.subscribe((pageConfig) => {
@@ -88,7 +111,7 @@ export class LeadListComponent implements OnInit {
     })
     let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
     if (selectedItems && selectedItems.length) {
-      selectedItems = selectedItems.filter(f=>f!='lead_id')
+      selectedItems = selectedItems.filter(f => f != 'lead_id')
       for (let field of this.fields) {
         if (selectedItems.indexOf(field.field) != -1) {
           field.selected = true;
@@ -107,9 +130,10 @@ export class LeadListComponent implements OnInit {
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
   }
 
-  private loadLeads(pageIndex?: any, param?:string) {
+  private loadLeads(pageIndex?: any, param?: string) {
+    param = param || this.buildFilterAndGetLeads();
     this.spinnerService.showSpinner = true;
-    this.service.getLeads({ 'page': this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize, 'q':param}).finally(() => {
+    this.service.getLeads({ 'page': pageIndex != undefined ? pageIndex + 1 : this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize, 'q': param }).finally(() => {
       this.spinnerService.showSpinner = false;
     }).subscribe(data => {
       this.dataSource.data = data.results;
@@ -190,9 +214,23 @@ export class LeadListComponent implements OnInit {
       }
     })
   }
-  buildFilterAndGetLeads(){
-    let filterField = this.filterForm.value.field + "__"+this.filterForm.value.condition;
-    let param = JSON.stringify({[filterField]:this.filterForm.value.value})
-    this.loadLeads(0, param);
+  buildFilterAndGetLeads() {
+    if (!this.filterForm.valid) {
+      return undefined;
+    }
+    let value;
+    let filterField;
+    if (this.dateFields.indexOf(this.filterForm.value.field) != -1) {
+      let start_date = moment(this.filterForm.value.start_date).format('YYYY-MM-DD')
+      let end_date = moment(this.filterForm.value.end_date).format('YYYY-MM-DD')
+      value = `${start_date},${end_date}`;
+      filterField = this.filterForm.value.field + "__date__" + this.filterForm.value.condition;
+    }
+    else {
+      filterField = this.filterForm.value.field + "__" + this.filterForm.value.condition;
+      value = this.filterForm.value.value;
+    }
+    let param = JSON.stringify({ [filterField]: value })
+    return param;
   }
 }
