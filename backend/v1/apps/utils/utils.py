@@ -2,7 +2,8 @@ import os
 import random
 import string
 from django.utils import timezone
-
+from django.forms.models import model_to_dict
+from django.core.serializers.json import DjangoJSONEncoder
 
 def get_file_name(file_type="lead-import", extension='csv'):                                                                                                   
     file_directory = os.path.join('static', 'media', 'reports')                                                                                            
@@ -15,3 +16,12 @@ def get_file_name(file_type="lead-import", extension='csv'):
     output_file = os.path.join(file_directory, file_name)
     return output_file
     
+def model_to_dict_v2(instance):
+    ret = model_to_dict(instance)
+    import json
+    json_data = json.loads(json.dumps(
+        ret,
+        sort_keys=True,
+        cls=DjangoJSONEncoder
+    ))
+    return json_data
