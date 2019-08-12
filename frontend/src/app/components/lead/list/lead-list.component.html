@@ -16,7 +16,7 @@
 
     <mat-card class="margin-top-10">
         <mat-card-content>
-            <form class="full-width">
+            <form class="full-width" *ngIf="false">
                 <mat-form-field class="full-width user-search">
                     <input type="text" matInput placeholder="Search" [(ngModel)]="email" [ngModelOptions]="{standalone: true}">
                     <mat-icon matSuffix>search</mat-icon>
@@ -75,6 +75,28 @@
                 </div>
                 <br/>
                 <br/>
+                <form fxLayout="row" fxLayoutGap="5%" [formGroup]="filterForm" (ngSubmit)="filterForm.valid && buildFilterAndGetLeads()">
+                <mat-form-field fxFlex="20%">
+                    <mat-select placeholder="Fields" formControlName="field">
+                        <mat-option *ngFor="let field of fields" [value]="field.filterFiled || field.field">
+                            {{ field.display }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex="20%">
+                    <mat-select placeholder="Condition" formControlName="condition">
+                        <mat-option *ngFor="let cond of conditions" [value]="cond.key">
+                            {{ cond.val }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field fxFlex="20%">
+                    <input matInput placeholder="Value" formControlName="value">
+                </mat-form-field>
+                <div fxFlex="10%">
+                    <button mat-raised-button type="submit" color="primary">Apply Filter</button>
+                </div>
+            </form>
                 <br/>
                 <div>
                     <mat-chip-list>
@@ -124,7 +146,7 @@
                                 {{ column.cell?column.cell(element):element[column.field] ||  element['business_detail'][column.field] || element['supply_detail'][column.field]}}
                             </span>
 
-                                    <mat-select *ngIf="column.field=='status'" placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(lead)'>
+                                    <mat-select *ngIf="column.field=='status'" placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(element)'>
                                         <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
                                     </mat-select>
 

@@ -5,12 +5,13 @@ from rest_framework.response import Response
 from v1.apps.utils.pagination import StandardResultsSetPagination
 from . import serializers
 from . import models
-
+from .filters import LeadFilter
 class LeadViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.LeadSerializer
     queryset = models.Lead.objects.all().select_related('assigned_to').order_by('created_on')
     pagination_class = StandardResultsSetPagination
+    filter_class = LeadFilter
     def get_queryset(self):
         if self.request.user.groups.filter(name='sales-person').exists():
             return self.queryset.filter(assigned_to=self.request.user)

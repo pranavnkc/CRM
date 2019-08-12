@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { LeadService } from '../services';
@@ -27,44 +28,57 @@ export class LeadListComponent implements OnInit {
   selectedFields = [];
   constants = constants;
   selection = new SelectionModel<any>(true, []);
+  filterForm:FormGroup;
+  conditions  = [{'key':'exact', 'val':'Exact'},
+  {'key':'iexact','val':'Insensitive Exact'},
+  {'key':'contains','val':'Contains'},
+  {'key':'icontains','val':'Insensitive Contains'},
+  {'key':'range','val':'Between'}];
   fields = [
     { "field": "id", "display": "Lead ID", "selected": true },
-    { "field": "created_on", "display": "Created Date", "selected": false },
+    { "field": "created_on", "display": "Created Date", "selected": false},
     { "field": "lead_hash", "display": "Lead Hash", "selected": false },
     { "field": "status", "display": "Status", "selected": true },
     { "field": "assigned_to", "display": "Assigned To", "selected": true },
-    { "field": "busines_name", "display": "Business Name", "selected": true },
-    { "field": "salutation", "display": "Salutation", "selected": false },
-    { "field": "name", "display": "Name", "selected": false },
+    { "field": "busines_name", 'filterFiled':'business_detail__busines_name',"display": "Business Name", "selected": true},
+    { "field": "salutation", 'filterFiled':'business_detail__salutation',"display": "Salutation", "selected": false },
+    { "field": "name", 'filterFiled':'business_detail__full_name',"display": "Name", "selected": false , "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}`},
     { "field": "latest_callback", "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "phone_number", "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
-    { "field": "email", "display": "Email", "selected": false },
-    { "field": "building_name", "display": "Building Name", "selected": false },
-    { "field": "subb", "display": "Subb", "selected": false },
-    { "field": "building_number", "display": "Building Number", "selected": false },
-    { "field": "street_name", "display": "Street Name", "selected": false },
-    { "field": "town", "display": "Town", "selected": false },
-    { "field": "city", "display": "City", "selected": false },
-    { "field": "county", "display": "County", "selected": false },
-    { "field": "meter_type", "display": "Meter Type", "selected": false },
-    { "field": "meter_type_code", "display": "Meter Type Code", "selected": false },
-    { "field": "domestic_meter", "display": "Domestic Meter", "selected": false },
-    { "field": "amr", "display": "AMR", "selected": false },
-    { "field": "related_meter", "display": "Related Meter", "selected": false },
-    { "field": "current_electricity_supplier", "display": "Current Supplier", "selected": true },
-    { "field": "contract_end_date", "display": "Contract End Date", "selected": true },
-    { "field": "meter_serial_number", "display": "Meter Serial", "selected": false },
-    { "field": "supply_number", "display": "Supply Number", "selected": false },
+    { "field": "phone_number", 'filterFiled':'business_detail__phone_numbar',"display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
+    { "field": "email", 'filterFiled':'business_detail__email',"display": "Email", "selected": false },
+    { "field": "building_name", 'filterFiled':'business_detail__building_name',"display": "Building Name", "selected": false },
+    { "field": "subb", 'filterFiled':'business_detail__subb',"display": "Subb", "selected": false },
+    { "field": "building_number", 'filterFiled':'business_detail__building_number',"display": "Building Number", "selected": false },
+    { "field": "street_name", 'filterFiled':'business_detail__street_name',"display": "Street Name", "selected": false },
+    { "field": "town", 'filterFiled':'business_detail__town',"display": "Town", "selected": false },
+    { "field": "city", 'filterFiled':'business_detail__city',"display": "City", "selected": false },
+    { "field": "county", 'filterFiled':'business_detail__county',"display": "County", "selected": false },
+    { "field": "meter_type", 'filterFiled':'supply_detail__meter_type',"display": "Meter Type", "selected": false },
+    { "field": "meter_type_code", 'filterFiled':'supply_detail__meter_type_code',"display": "Meter Type Code", "selected": false },
+    { "field": "domestic_meter", 'filterFiled':'supply_detail__domestic_meter',"display": "Domestic Meter", "selected": false },
+    { "field": "amr", 'filterFiled':'supply_detail__amr',"display": "AMR", "selected": false },
+    { "field": "related_meter", 'filterFiled':'supply_detail__related_meter',"display": "Related Meter", "selected": false },
+    { "field": "current_electricity_supplier", 'filterFiled':'supply_detail__current_electricity_supplier',"display": "Current Supplier", "selected": true },
+    { "field": "contract_end_date", 'filterFiled':'supply_detail__contract_end_date',"display": "Contract End Date", "selected": true },
+    { "field": "meter_serial_number", 'filterFiled':'supply_detail__meter_serial_number',"display": "Meter Serial", "selected": false },
+    { "field": "supply_number", 'filterFiled':'supply_detail__supply_number',"display": "Supply Number", "selected": false },
   ]
   role: any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();
   constructor(private dialog: MatDialog,
+    private fb: FormBuilder,
     private service: LeadService,
     private sharedDataService: SharedDataService,
     private snackBarService: SnackBarService,
     private spinnerService: SpinnerService,
-    private authService: AuthService) { }
+    private authService: AuthService) { 
+      this.filterForm = this.fb.group({
+        'field':[null, Validators.required],
+        'condition':[null, Validators.required],
+        'value':[null, Validators.required]
+      })
+    }
 
   ngOnInit() {
     this.role = this.authService.role;
@@ -93,9 +107,9 @@ export class LeadListComponent implements OnInit {
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
   }
 
-  private loadLeads(pageIndex?: any): void {
+  private loadLeads(pageIndex?: any, param?:string) {
     this.spinnerService.showSpinner = true;
-    this.service.getLeads({ 'page': this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize }).finally(() => {
+    this.service.getLeads({ 'page': this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize, 'q':param}).finally(() => {
       this.spinnerService.showSpinner = false;
     }).subscribe(data => {
       this.dataSource.data = data.results;
@@ -175,5 +189,10 @@ export class LeadListComponent implements OnInit {
         this.onRefresh();
       }
     })
+  }
+  buildFilterAndGetLeads(){
+    let filterField = this.filterForm.value.field + "__"+this.filterForm.value.condition;
+    let param = JSON.stringify({[filterField]:this.filterForm.value.value})
+    this.loadLeads(0, param);
   }
 }
