@@ -1,4 +1,5 @@
 import os
+import json
 import random
 import string
 from django.utils import timezone
@@ -25,3 +26,20 @@ def model_to_dict_v2(instance):
         cls=DjangoJSONEncoder
     ))
     return json_data
+
+def get_diff(old, new, json_loads=True, exempt_fields=[]):
+    old_ret = {}
+    new_ret = {}
+    for key, value in old.items():
+        if new.get(key)!=old.get(key) and key not in exempt_fields:
+            old_ret.update({key:old.get(key)})
+            new_ret.update({key:new.get(key)})
+    return (json.loads(json.dumps(
+        old_ret,
+        sort_keys=True,
+        cls=DjangoJSONEncoder
+    )), json.loads(json.dumps(
+        new_ret,
+        sort_keys=True,
+        cls=DjangoJSONEncoder
+    ))) if json_loads else (old_ret, new_ret)
