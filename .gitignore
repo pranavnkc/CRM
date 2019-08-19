@@ -236,3 +236,4 @@ Thumbs.db
 /frontend/Thumbs.db
 /frontend/.vs
 /backend/static/media/reports/*.csv
+/static/media/reports/*.csv

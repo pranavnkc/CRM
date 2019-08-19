@@ -3,6 +3,7 @@ import django_filters
 from django.db.models.functions import Concat
 from django.db.models import F, Value
 from .models import Lead
+
 class LeadFilter(django_filters.FilterSet):
     q = django_filters.CharFilter(method='q_filter')
         

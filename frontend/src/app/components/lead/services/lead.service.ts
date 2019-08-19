@@ -32,5 +32,8 @@ export class LeadService {
   getComments(id: any) {
     return this.http.get(`api/leads/${id}/comment/`);
   }
+  getHistory(params: any) {
+    return this.http.get(`api/leads/history/`, params);
+  }
 
 }

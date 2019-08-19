@@ -98,7 +98,7 @@ class LeadHistory(models.Model):
     ACTION_STATUS_CHANGE = 'status changed'
     ACTION_ASSIGN_CHANGED = "lead assign changed"
     ACTION_CALLBACk_SCHEDULED = "lead callback scheduled"
-    ACTION_COMMENT = "commnet"
+    ACTION_COMMENT = "comment"
     ACTION_CHOICES = (
         (ACTION_CREATED, "Lead Created"),
         (ACTION_EDIT_LEAD, 'Lead Edited'),

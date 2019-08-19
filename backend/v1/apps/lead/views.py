@@ -1,8 +1,12 @@
+import csv
+from django.contrib.postgres.forms import SimpleArrayField
+from django.forms import IntegerField
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from v1.apps.utils.pagination import StandardResultsSetPagination
+from v1.apps.utils.utils import get_file_name
 from . import serializers
 from . import models
 from .filters import LeadFilter
@@ -70,6 +74,27 @@ class LeadViewSet(viewsets.ModelViewSet):
         ser.is_valid(raise_exception=True)
         ser.create(ser.validated_data)
         return Response()
+    
+    @list_route(url_path='history', methods=('get',))
+    def history(self, request):
+        leads = request.query_params.get('leads', [])
+        leads_field = SimpleArrayField(IntegerField())
+        leads = leads_field.clean(leads)
+        history_objs = models.LeadHistory.objects.filter(lead_id__in=leads).order_by('lead_id', '-created_on')
+        file_name = get_file_name(file_type='history_export')
+        with open(file_name, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=['Lead ID', 'Action', 'Action Date', 'Created By', 'From', 'To'])
+            writer.writeheader()
+            for h in history_objs:
+                writer.writerow({
+                    "Lead ID":h.lead.id,
+                    "Action":h.action,
+                    "Action Date":h.created_on,
+                    "Created By":h.created_by.get_full_name(),
+                    "From":h.old_instance_meta,
+                    "To":h.new_instance_meta
+                })
+        return Response({'file':file_name})
 
 
     

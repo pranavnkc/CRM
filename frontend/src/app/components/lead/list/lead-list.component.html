@@ -124,15 +124,17 @@
                         </mat-chip>
                     </mat-chip-list>
                 </div>
-
                 <button *ngIf="role!='sales-person'" color="primary" mat-raised-button
-                        [disabled]="false" (click)="assign()">
+                        [disabled]="selection.selected.length==0?true:false" (click)="assign()">
                     Assign
                 </button>
                 <a *ngIf="role!='sales-person'" routerLink="/leads/bulk-create"><button color="primary" mat-raised-button (click)="null">
-                                        Bulk Create
-                                    </button></a>
+                    Bulk Create
+                </button></a>
 
+                <button *ngIf="role!='sales-person'" [disabled]="selection.selected.length==0?true:false" color="primary" mat-raised-button (click)="getHistory()">
+                    History
+                </button>
             </div>
             <mat-table #table [dataSource]="dataSource">
                 <ng-container matColumnDef="select">

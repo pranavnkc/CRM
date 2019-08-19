@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from
 import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { LeadService } from '../services';
-import { SnackBarService, SpinnerService } from '../../../services'
+import { SnackBarService, SpinnerService, FileLoaderService } from '../../../services'
 import { SharedDataService } from '../../../../app/services/sharedData.service';
 import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
 import { CallbackComponent } from '../callback/callback.component';
@@ -76,6 +76,7 @@ export class LeadListComponent implements OnInit {
     private sharedDataService: SharedDataService,
     private snackBarService: SnackBarService,
     private spinnerService: SpinnerService,
+    private fileLoader: FileLoaderService,
     private authService: AuthService) {
     this.filterForm = this.fb.group({
       'field': [null, Validators.required],
@@ -86,6 +87,7 @@ export class LeadListComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.selection)
     this.filterForm.controls.field.valueChanges.subscribe((val) => {
       if (this.dateFields.indexOf(val.toLowerCase()) != -1 && !this.filterForm.controls['start_date']) {
         this.filterForm.addControl('start_date', new FormControl(null, Validators.required));
@@ -201,6 +203,11 @@ export class LeadListComponent implements OnInit {
         this.onRefresh();
       }
     })
+  }
+  getHistory() {
+    this.service.getHistory({ 'leads': this.selection.selected.map((s) => s.id).join(",") }).subscribe((res) => {
+      this.fileLoader.downloadFile('/' + res.file);
+    });
   }
   scheduleCallback(lead) {
 
