@@ -1,8 +1,10 @@
+import csv
 from django.db import transaction
 from io import StringIO
 from rest_framework import serializers
-from .models import Lead, LeadBusinessDetails, LeadSupplyDetails, Status, Comment, Callback
-from v1.apps.utils.utils import get_file_name
+from .models import Lead, LeadBusinessDetails, LeadSupplyDetails, Status, Comment, Callback, LeadHistory
+from v1.apps.utils.utils import get_file_name, model_to_dict_v2, get_diff
+
 
 class LeadBusinessDetailsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,6 +49,11 @@ class LeadSerializer(serializers.ModelSerializer):
         return lead
     
     def update(self, instance, validated_data):
+        history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_EDIT_LEAD, created_by=self.context['request'].user)
+        history_obj.old_instance_meta = model_to_dict_v2(instance)
+        history_obj.old_instance_meta.update(model_to_dict_v2(instance.business_detail))
+        history_obj.old_instance_meta.update(model_to_dict_v2(instance.supply_detail))
+        
         business_detail = validated_data.pop("business_detail", None)
         supply_detail = validated_data.pop("supply_detail", None)
         instance = super(LeadSerializer, self).update(instance, validated_data)
@@ -54,6 +61,12 @@ class LeadSerializer(serializers.ModelSerializer):
             instance.business_detail = LeadBusinessDetailsSerializer().update(instance.business_detail, business_detail)
         if supply_detail:
             instance.supply_detail = LeadSupplyDetailsDetailsSerializer().update(instance.supply_detail, supply_detail)
+        history_obj.new_instance_meta = model_to_dict_v2(instance)
+        history_obj.new_instance_meta.update(model_to_dict_v2(instance.business_detail))
+        history_obj.new_instance_meta.update(model_to_dict_v2(instance.supply_detail))
+        history_obj.old_instance_meta, history_obj.new_instance_meta = get_diff(history_obj.old_instance_meta, history_obj.new_instance_meta)
+        if history_obj.new_instance_meta:
+            history_obj.save()
         return instance
 
     def to_representation(self, obj):
@@ -71,6 +84,15 @@ class CommentSerializer(serializers.ModelSerializer):
             "lead":{"required":False},
             "created_by":{"required":False}
         }
+
+    def create(self, validated_data):
+        instance = super(CommentSerializer, self).create(validated_data)
+        history_obj = LeadHistory(lead_id=instance.lead_id, action=LeadHistory.ACTION_COMMENT, created_by=self.context['request'].user)
+        history_obj.old_instance_meta = {'comment':str(getattr(Comment.objects.filter(lead=instance.lead).exclude(id=instance.id).last(), 'comment', None))}
+        history_obj.new_instance_meta = {'commnet':instance.comment}
+        history_obj.save()
+        return instance
+    
     def to_representation(self, obj):
         ret = super(CommentSerializer, self).to_representation(obj)
         ret['created_by'] = obj.created_by.get_full_name()
@@ -85,11 +107,20 @@ class CallbackSerializer(serializers.ModelSerializer):
             "lead":{"required":False},
             "created_by":{"required":False}
         }
+    def create(self, validated_data):
+        instance = super(CallbackSerializer, self).create(validated_data)
+        history_obj = LeadHistory(lead_id=instance.lead_id, action=LeadHistory.ACTION_EDIT_LEAD, created_by=self.context['request'].user)
+        history_obj.old_instance_meta = {'callback_time':str(getattr(Callback.objects.filter(lead=instance.lead).exclude(id=instance.id).last(), 'datetime', None))}
+        history_obj.new_instance_meta = {'callback_time':str(instance.datetime)}
+        history_obj.save()
+        return instance
+    
     def to_representation(self, obj):
         ret = super(CallbackSerializer, self).to_representation(obj)
         ret['scheduled_by'] = obj.scheduled_by.get_full_name()
         return ret
-import csv
+    
+
 class BulkLeadCreateSerrializer(serializers.Serializer):
     file = serializers.FileField()
     business_field_mapping = {
@@ -172,10 +203,16 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
     
     @transaction.atomic
     def create(self, validated_data):
+        history_objs = []
         Lead.objects.bulk_create(validated_data['lead_objects'])
-        for index, l in enumerate(Lead.objects.filter(lead_internal_hash__in=validated_data['business_objects'].keys()).values_list('id', 'lead_internal_hash')):
-            validated_data['business_objects'][l[1]].lead_id = l[0]
-            validated_data['supply_objects'][l[1]].lead_id = l[0]
+        for index, l in enumerate(Lead.objects.filter(lead_internal_hash__in=validated_data['business_objects'].keys())):
+            history_obj = LeadHistory(lead=l, action=LeadHistory.ACTION_CREATED, created_by=self.context['request'].user, old_instance_meta={})
+            history_obj.new_instance_meta = model_to_dict_v2(l)
+            history_obj.new_instance_meta.update(model_to_dict_v2(validated_data['business_objects'][l.lead_internal_hash]))
+            history_obj.new_instance_meta.update(model_to_dict_v2(validated_data['supply_objects'][l.lead_internal_hash]))
+            history_objs.append(history_obj)
+            validated_data['business_objects'][l.lead_internal_hash].lead_id = l.id
+            validated_data['supply_objects'][l.lead_internal_hash].lead_id = l.id
         LeadBusinessDetails.objects.bulk_create(validated_data['business_objects'].values())
         LeadSupplyDetails.objects.bulk_create(validated_data['supply_objects'].values())
-        
+        LeadHistory.objects.bulk_create(history_objs)

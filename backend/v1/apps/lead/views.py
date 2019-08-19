@@ -30,7 +30,7 @@ class LeadViewSet(viewsets.ModelViewSet):
             data = request.data
             data['created_by'] = request.user.id
             data['lead'] = instance.id
-            ser = serializers.CommentSerializer(data=data)
+            ser = serializers.CommentSerializer(data=data, context={'request':request})
             ser.is_valid(raise_exception=True)
             ser.save()
             return Response(ser.data)
@@ -44,7 +44,7 @@ class LeadViewSet(viewsets.ModelViewSet):
             data = request.data
             data['lead'] = instance.id
             data['scheduled_by'] = request.user.id
-            ser = serializers.CallbackSerializer(data=data)
+            ser = serializers.CallbackSerializer(data=data, context={'request':request})
             ser.is_valid(raise_exception=True)
             ser.save()
             return Response(ser.data)
@@ -52,9 +52,16 @@ class LeadViewSet(viewsets.ModelViewSet):
     @list_route(url_path='assign', methods=('post',))
     def assign(self, request):
         leads =self.queryset.filter(id__in=request.data.get('leads', []))
+        history_objs = []
         assinee = self.request.data.get('assignee')
         if assinee:
+            for l in leads:
+                history_obj = models.LeadHistory(lead=l, action=models.LeadHistory.ACTION_ASSIGN_CHANGED, created_by=request.user)
+                history_obj.old_instance_meta = {"assinee":l.assigned_to_id}
+                history_obj.new_instance_meta = {"assinee":assinee}
+                history_objs.append(history_obj)
             leads.update(assigned_to_id=assinee)
+            models.LeadHistory.objects.bulk_create(history_objs)
         return Response()
 
     @list_route(url_path='bulk-create', methods=('post',))
@@ -63,3 +70,6 @@ class LeadViewSet(viewsets.ModelViewSet):
         ser.is_valid(raise_exception=True)
         ser.create(ser.validated_data)
         return Response()
+
+
+    

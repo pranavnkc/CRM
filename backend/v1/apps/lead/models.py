@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import JSONField
 from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
@@ -88,3 +89,29 @@ class Comment(models.Model):
     comment = models.TextField(null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE,default=None, null=True)
     created_on = models.DateTimeField(auto_now_add=True) 
+
+
+class LeadHistory(models.Model):
+    ACTION_CREATED = 'created'
+    ACTION_EDIT_LEAD = 'edit'
+    ACTION_DELETE_LEAD = 'deleted'
+    ACTION_STATUS_CHANGE = 'status changed'
+    ACTION_ASSIGN_CHANGED = "lead assign changed"
+    ACTION_CALLBACk_SCHEDULED = "lead callback scheduled"
+    ACTION_COMMENT = "commnet"
+    ACTION_CHOICES = (
+        (ACTION_CREATED, "Lead Created"),
+        (ACTION_EDIT_LEAD, 'Lead Edited'),
+        (ACTION_STATUS_CHANGE, 'Lead Status Changed'),
+        (ACTION_ASSIGN_CHANGED, 'Lead Assign Changed'),
+        (ACTION_CALLBACk_SCHEDULED, 'Lead Callback Scheduled'),
+        (ACTION_DELETE_LEAD, 'Lead Deleted'),
+        (ACTION_COMMENT, 'Comment Added')
+    )
+    lead = models.ForeignKey(Lead, null=True, blank=True, on_delete=models.SET_NULL, related_name='lead_history')
+    action = models.CharField(
+        choices=ACTION_CHOICES, max_length=30)
+    created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    created_on = models.DateTimeField(auto_now=True, null=True)
+    old_instance_meta = JSONField(blank=True, null=True)
+    new_instance_meta = JSONField(blank=True, null=True)
