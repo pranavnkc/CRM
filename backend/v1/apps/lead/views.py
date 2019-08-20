@@ -102,7 +102,7 @@ class LeadViewSet(viewsets.ModelViewSet):
                     elif 'supply_detail__' in field:
                         row[field.split("__")[-1]] = getattr(l.supply_detail, field.split("__")[1])
                     elif field in ['latest_callback']:\
-                         row['latest_callback'] = getattr(models.Callack.objects.filter(lead=l).last(), 'datetime', '')
+                         row['latest_callback'] = getattr(models.Callback.objects.filter(lead=l).last(), 'datetime', '')
                     else:
                         row[field.split("__")[0]] = getattr(l, field)
                 writer.writerow(row)
