@@ -37,5 +37,5 @@ export class LeadService {
   }
   getLeadHistory(id: any, params: any) {
     return this.http.get(`api/leads/${id}/history/`, params);
-
   }
+ }
