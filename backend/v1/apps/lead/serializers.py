@@ -13,6 +13,11 @@ class LeadBusinessDetailsSerializer(serializers.ModelSerializer):
         extra_kwargs = {"lead":{"required":False}}
 
 class LeadSupplyDetailsDetailsSerializer(serializers.ModelSerializer):
+    supply_number = serializers.CharField()
+
+    def validate_supply_number(self, value):
+        return value
+
     class Meta:
         model = LeadSupplyDetails
         fields = '__all__'
@@ -216,3 +221,14 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
         LeadBusinessDetails.objects.bulk_create(validated_data['business_objects'].values())
         LeadSupplyDetails.objects.bulk_create(validated_data['supply_objects'].values())
         LeadHistory.objects.bulk_create(history_objs)
+
+class LeadHistorySerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = LeadHistory
+        fields = '__all__'
+
+    
+    def to_representation(self, obj):
+        ret = super(LeadHistorySerializer, self).to_representation(obj)
+        ret['created_by'] = obj.created_by.get_full_name() if obj.created_by else None
+        return ret

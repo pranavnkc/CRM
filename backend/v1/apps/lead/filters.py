@@ -1,8 +1,8 @@
 import json
 import django_filters
 from django.db.models.functions import Concat
-from django.db.models import F, Value
-from .models import Lead
+from django.db.models import F, Value, Q
+from .models import Lead, LeadHistory
 
 class LeadFilter(django_filters.FilterSet):
     q = django_filters.CharFilter(method='q_filter')
@@ -23,3 +23,19 @@ class LeadFilter(django_filters.FilterSet):
     class Meta:
         model = Lead
         fields = ('q',)
+
+class LeadHistoryFilter(django_filters.FilterSet):
+    start_date = django_filters.CharFilter(method='date_filter')
+    end_date = django_filters.CharFilter(method='date_filter')
+    
+    def date_filter(self, queryset, name, val):
+        filter_q = Q()
+        end_date = self.data.get('end_date')
+        if name == 'start_date' and end_date:
+            filter_q = filter_q | Q(created_on__range=(self.data.get(
+                'start_date'), end_date))
+        return queryset.filter(filter_q)
+
+    class Meta:
+        model = LeadHistory
+        fields = ('start_date', 'end_date')

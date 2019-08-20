@@ -1,15 +1,19 @@
 import csv
 from django.contrib.postgres.forms import SimpleArrayField
-from django.forms import IntegerField
+from django.forms import IntegerField, CharField
+from django.db.models.functions import Concat
+from django.db.models import F, Value
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
 from v1.apps.utils.pagination import StandardResultsSetPagination
-from v1.apps.utils.utils import get_file_name
+from v1.apps.utils.utils import get_file_name, model_to_dict_v2
 from . import serializers
 from . import models
-from .filters import LeadFilter
+from .filters import LeadFilter, LeadHistoryFilter
+
+
 class LeadViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.LeadSerializer
@@ -75,26 +79,40 @@ class LeadViewSet(viewsets.ModelViewSet):
         ser.create(ser.validated_data)
         return Response()
     
-    @list_route(url_path='history', methods=('get',))
-    def history(self, request):
+    @list_route(url_path='lead-export', methods=('get',))
+    def lead_export(self, request):
         leads = request.query_params.get('leads', [])
+        fields = request.query_params.get('fields', [])
         leads_field = SimpleArrayField(IntegerField())
         leads = leads_field.clean(leads)
-        history_objs = models.LeadHistory.objects.filter(lead_id__in=leads).order_by('lead_id', '-created_on')
-        file_name = get_file_name(file_type='history_export')
+        fields = SimpleArrayField(CharField()).clean(fields)
+        lead_objs = models.Lead.objects.filter(id__in=leads).annotate(
+            full_name=Concat(
+                F('business_detail__first_name'), Value(" "), F('business_detail__middle_name'), Value(" "), F('business_detail__last_name'))).order_by('id')
+        file_name = get_file_name(file_type='lead_export')
+        print([f.split("__")[-1] for f in fields])
         with open(file_name, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=['Lead ID', 'Action', 'Action Date', 'Created By', 'From', 'To'])
+            writer = csv.DictWriter(csvfile, fieldnames=[f.split("__")[-1] for f in fields])
             writer.writeheader()
-            for h in history_objs:
-                writer.writerow({
-                    "Lead ID":h.lead.id,
-                    "Action":h.action,
-                    "Action Date":h.created_on,
-                    "Created By":h.created_by.get_full_name(),
-                    "From":h.old_instance_meta,
-                    "To":h.new_instance_meta
-                })
+            for l in lead_objs:
+                row = {}
+                for field in fields:
+                    if 'business_detail__' in field:
+                        row[field.split("__")[-1]] = getattr(l.business_detail, field.split("__")[1])
+                    elif 'supply_detail__' in field:
+                        row[field.split("__")[-1]] = getattr(l.supply_detail, field.split("__")[1])
+                    elif field in ['latest_callback']:\
+                         row['latest_callback'] = getattr(models.Callack.objects.filter(lead=l).last(), 'datetime', '')
+                    else:
+                        row[field.split("__")[0]] = getattr(l, field)
+                writer.writerow(row)
         return Response({'file':file_name})
 
 
+    
+    @detail_route(url_path='history', methods=('post','get'))
+    def history(self, request, pk):
+        instance = self.get_object()
+        self.filter_class = LeadHistoryFilter
+        return self.get_paginated_response(serializers.LeadHistorySerializer(self.paginate_queryset(self.filter_queryset(instance.lead_history.all().select_related('created_by'))), many=True).data)
     

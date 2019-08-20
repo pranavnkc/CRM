@@ -40,14 +40,14 @@ export class LeadListComponent implements OnInit {
   fields = [
     { "field": "id", "display": "Lead ID", "selected": true },
     { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "lead_hash", "display": "Lead Hash", "selected": false },
+    { "field": "lead_hash", "display": "Lead Hash", "selected": false, "fxFlex": "15%" },
     { "field": "status", "display": "Status", "selected": true },
     { "field": "assigned_to", "display": "Assigned To", "selected": true },
     { "field": "busines_name", 'filterField': 'business_detail__busines_name', "display": "Business Name", "selected": true },
     { "field": "salutation", 'filterField': 'business_detail__salutation', "display": "Salutation", "selected": false },
-    { "field": "name", 'filterField': 'business_detail__full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}` },
+    { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}` },
     { "field": "latest_callback", "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "phone_number", 'filterField': 'business_detail__phone_numbar', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
+    { "field": "phone_number", 'filterField': 'business_detail__phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
     { "field": "email", 'filterField': 'business_detail__email', "display": "Email", "selected": false },
     { "field": "building_name", 'filterField': 'business_detail__building_name', "display": "Building Name", "selected": false },
     { "field": "subb", 'filterField': 'business_detail__subb', "display": "Subb", "selected": false },
@@ -204,8 +204,8 @@ export class LeadListComponent implements OnInit {
       }
     })
   }
-  getHistory() {
-    this.service.getHistory({ 'leads': this.selection.selected.map((s) => s.id).join(",") }).subscribe((res) => {
+  getLeadExport() {
+    this.service.getLeadExport({ 'leads': this.selection.selected.map((s) => s.id).join(","), 'fields': this.fields.filter(f => f.selected).map((f: any) => f.filterField || f.field).join(",") }).subscribe((res) => {
       this.fileLoader.downloadFile('/' + res.file);
     });
   }

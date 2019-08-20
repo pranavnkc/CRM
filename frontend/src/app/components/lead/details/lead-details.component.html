@@ -1,37 +1,108 @@
 <button mat-raised-button routerLink="/leads">
-  <mat-icon>arrow_back</mat-icon> Back to list
+    <mat-icon>arrow_back</mat-icon> Back to list
 </button>
 <button *ngIf="role!='sales-person'" mat-raised-button routerLink="/leads/edit/{{user?.id}}">
-  <mat-icon aria-label="Edit">edit</mat-icon>
+    <mat-icon aria-label="Edit">edit</mat-icon>
 </button>
 <button *ngIf="role!='sales-person'"  mat-raised-button color="warn" (click)="onDelete()">
-  <mat-icon aria-label="Delete">delete</mat-icon>
+    <mat-icon aria-label="Delete">delete</mat-icon>
 </button>
-
+<!--
+     <mat-table #table [dataSource]="dataSource">
+     <ng-container matColumnDef="created_on">
+     <mat-header-cell *matHeaderCellDef fxFlex="40%"> Created On </mat-header-cell>
+     <mat-cell *matCellDef="let element" fxFlex="40%"> {{moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A')}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="created_by">
+     <mat-header-cell *matHeaderCellDef fxFlex="20%"> Author </mat-header-cell>
+     <mat-cell *matCellDef="let element" fxFlex="20%"> {{element.created_by}} </mat-cell>
+     </ng-container>
+     <ng-container matColumnDef="comment">
+     <mat-header-cell *matHeaderCellDef> Comment </mat-header-cell>
+     <mat-cell *matCellDef="let element"> {{element.comment}} </mat-cell>
+     </ng-container>
+     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+     <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+     </mat-table> -->
 <section class="margin-top-10">
-  <mat-card>
-    <mat-card-title> Comments </mat-card-title>
-    <mat-card-content>
-      <mat-table #table [dataSource]="dataSource">
-        <ng-container matColumnDef="created_on">
-          <mat-header-cell *matHeaderCellDef fxFlex="40%"> Created On </mat-header-cell>
-          <mat-cell *matCellDef="let element" fxFlex="40%"> {{moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A')}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="created_by">
-          <mat-header-cell *matHeaderCellDef fxFlex="20%"> Author </mat-header-cell>
-          <mat-cell *matCellDef="let element" fxFlex="20%"> {{element.created_by}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="comment">
-          <mat-header-cell *matHeaderCellDef> Comment </mat-header-cell>
-          <mat-cell *matCellDef="let element"> {{element.comment}} </mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-      </mat-table>
-    </mat-card-content>
-  </mat-card>
-</section>
+    <mat-card>
+        <mat-card-title> History </mat-card-title>
+        <mat-card-content>
+            <div fxLayout="column">
+                <form [formGroup]="form">
+                    <div fxLayout="row" fxLayoutGap="2%">
+                        <mat-form-field fxFlex="20%">
+                            <input matInput [matDatepicker]="fromPicker" placeholder="From" (dateChange)="getHistoryData({ 'pageIndex': 0, pageSize: this.historyPaginator.pageSize })" formControlName="start_date">
+                            <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #fromPicker></mat-datepicker>
+                        </mat-form-field>
+                        <mat-form-field fxFlex="20%">
+                            <input matInput [matDatepicker]="toPicker" placeholder="To" (dateChange)="getHistoryData({ 'pageIndex': 0, pageSize: this.historyPaginator.pageSize })" formControlName="end_date">
+                            <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #toPicker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <mat-divider></mat-divider>
+                </form>
+            </div>
+            <div class="table-container">
+                <mat-table #table [dataSource]="historyDataSource">
+                    <ng-container matColumnDef="created_by">
+                        <mat-header-cell *matHeaderCellDef fxFlex="12%">Created By </mat-header-cell>
+                        <mat-cell *matCellDef="let element;let index=index;" fxFlex="12%">
+                            {{element.created_by}}<br>
+                        </mat-cell>
+                    </ng-container>
 
+                    <ng-container matColumnDef="created_on">
+                        <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Updated On </mat-header-cell>
+                        <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{moment(element.created_on).format('MMM DD, YYYY hh:mm A')}} </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="reason">
+                        <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="25%"> Reason </mat-header-cell>
+                        <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="25%" class="capitalize">
+                            <div *ngIf="element.action=='edit';then edit else otherActions"></div>
+                            <ng-template #edit>
+                                <span class="mat-block" *ngFor="let key of constants.keys(element.new_instance_meta || [])">
+                                    <span>{{"Edit Lead - "+ key}}</span><br/>
+                                </span>
+                            </ng-template>
+                            <ng-template #otherActions>{{element.action}}</ng-template>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="past_settings">
+                        <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="25%"> Past Settings </mat-header-cell>
+                        <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="25%"class="capitalize">
+                            <span class="mat-block" *ngFor="let key of constants.keys(element.old_instance_meta || [])">
+                                <span>{{element.old_instance_meta[key]}}</span><br/>
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="current_settings">
+                        <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="25%"> Current Settings </mat-header-cell>
+                        <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="25%" class="capitalize">
+                            <div *ngIf="element.old_instance_meta">
+                                <span class="mat-block" *ngFor="let key of constants.keys(element.new_instance_meta || [])">
+                                    <span>{{element.new_instance_meta[key]}}</span><br/>
+                                </span>
+                            </div>
+                        </mat-cell>
+                    </ng-container>
+                    <mat-header-row *matHeaderRowDef="historyDisplayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: historyDisplayedColumns;"></mat-row>
+                </mat-table>
+                <mat-paginator #historyPaginator
+                               [pageSize]="constants.defaultPageSize"
+                               [pageSizeOptions]="constants.pageSizeOptions"
+                               [showFirstLastButtons]="true">
+                </mat-paginator>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</section>
 <button mat-fab class="fixed-bottom-right" routerLink="/users/edit/{{user?.id}}">
-  <mat-icon aria-label="Edit">edit</mat-icon>
+    <mat-icon aria-label="Edit">edit</mat-icon>
 </button>
