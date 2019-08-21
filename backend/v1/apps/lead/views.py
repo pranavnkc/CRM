@@ -3,6 +3,7 @@ from django.contrib.postgres.forms import SimpleArrayField
 from django.forms import IntegerField, CharField
 from django.db.models.functions import Concat
 from django.db.models import F, Value
+from django.db.models.functions import Lower 
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.decorators import list_route, detail_route
@@ -21,8 +22,24 @@ class LeadViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     filter_class = LeadFilter
     def get_queryset(self):
+        sortBy = self.request.query_params.get('sortBy')
+        sortOrder = self.request.query_params.get('sortOrder')
+        if sortBy:
+            fields = {field.name:type(field) for field in models.Lead._meta.fields}
+            fields.update({"business_detail__"+field.name:type(field) for field in models.LeadBusinessDetails._meta.fields})
+            fields.update({"supply_detail__"+field.name:type(field) for field in models.LeadSupplyDetails._meta.fields})
+            fields.update({"callbacks__"+field.name:type(field) for field in models.Callback._meta.fields})
+            if fields[sortBy] == 'django.db.models.fields.CharField':
+                sortAttr = Lower(self.request.query_params.get('sortBy'))
+                sortAttr = getattr(sortAttr, sortOrder)() if hasattr(sortAttr, sortOrder) else sortAttr.asc()
+            else:
+                sortAttr = sortBy if sortOrder=='asc' else "-"+sortBy
+            self.queryset = self.queryset.order_by(sortAttr)
+        else:
+            self.queryset = self.queryset.order_by('-id')
         if self.request.user.groups.filter(name='sales-person').exists():
             return self.queryset.filter(assigned_to=self.request.user)
+       
         return self.queryset
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])

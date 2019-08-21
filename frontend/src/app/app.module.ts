@@ -31,6 +31,7 @@ import {
   MatChipsModule,
   MatSnackBarModule,
   MatTableModule,
+  MatSortModule,
   MatPaginatorModule,
   MatProgressSpinnerModule,
 } from '@angular/material';
@@ -178,6 +179,7 @@ const appRoutes: Routes = [
     MatTabsModule,
     MatChipsModule,
     MatTableModule,
+    MatSortModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
     ChartsModule,

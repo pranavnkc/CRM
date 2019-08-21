@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
-import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { LeadService } from '../services';
 import { SnackBarService, SpinnerService, FileLoaderService } from '../../../services'
@@ -18,6 +18,7 @@ import { AuthService } from '../../../../app/services/auth.service';
 })
 export class LeadListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   private allUsersChecked: boolean = false;
   moment = moment;
   leads: Array<any>;
@@ -46,7 +47,7 @@ export class LeadListComponent implements OnInit {
     { "field": "busines_name", 'filterField': 'business_detail__busines_name', "display": "Business Name", "selected": true },
     { "field": "salutation", 'filterField': 'business_detail__salutation', "display": "Salutation", "selected": false },
     { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}` },
-    { "field": "latest_callback", "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+    { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
     { "field": "phone_number", 'filterField': 'business_detail__phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
     { "field": "email", 'filterField': 'business_detail__email', "display": "Email", "selected": false },
     { "field": "building_name", 'filterField': 'business_detail__building_name', "display": "Building Name", "selected": false },
@@ -111,6 +112,9 @@ export class LeadListComponent implements OnInit {
     this.paginator.page.subscribe((pageConfig) => {
       this.loadLeads();
     })
+    this.sort.sortChange.subscribe((s) => {
+      this.loadLeads();
+    })
     let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
     if (selectedItems && selectedItems.length) {
       selectedItems = selectedItems.filter(f => f != 'lead_id')
@@ -135,7 +139,12 @@ export class LeadListComponent implements OnInit {
   private loadLeads(pageIndex?: any, param?: string) {
     param = param || this.buildFilterAndGetLeads();
     this.spinnerService.showSpinner = true;
-    this.service.getLeads({ 'page': pageIndex != undefined ? pageIndex + 1 : this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize, 'q': param }).finally(() => {
+    let params = { 'page': pageIndex != undefined ? pageIndex + 1 : this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize, 'q': param };
+    if (this.sort.direction) {
+      params['sortBy'] = this.sort.active;
+      params['sortOrder'] = this.sort.direction;
+    }
+    this.service.getLeads(params).finally(() => {
       this.spinnerService.showSpinner = false;
     }).subscribe(data => {
       this.dataSource.data = data.results;

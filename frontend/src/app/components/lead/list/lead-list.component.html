@@ -137,7 +137,7 @@
                 </button>
             </div>
             <div class="overflow-auto">
-            <mat-table #table [dataSource]="dataSource">
+            <mat-table #table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="select">
                     <mat-header-cell *matHeaderCellDef>
                         <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
@@ -153,7 +153,7 @@
                     </mat-cell>
                 </ng-container>
                 <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
-                    <mat-header-cell *matHeaderCellDef fxFlex="{{column.fxFlex}}"> {{ column.display }} </mat-header-cell>
+                    <mat-header-cell *matHeaderCellDef fxFlex="{{column.fxFlex}}" [mat-sort-header]="column.filterField || column.field"> {{ column.display }} </mat-header-cell>
                         <mat-cell *matCellDef="let element" fxLayoutGap="4%" fxFlex="{{column.fxFlex}}">
                             <span *ngIf="column.field!='status'">
                                 {{ column.cell?column.cell(element):element[column.field] ||  element['business_detail'][column.field] || element['supply_detail'][column.field]}}
