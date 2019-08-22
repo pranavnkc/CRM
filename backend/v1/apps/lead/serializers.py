@@ -120,9 +120,17 @@ class CallbackSerializer(serializers.ModelSerializer):
         history_obj.save()
         return instance
     
+    def update(self, instance, validated_data):
+        history_obj = LeadHistory(lead_id=instance.lead_id, action=LeadHistory.ACTION_CALLBACk_SCHEDULED, created_by=self.context['request'].user)
+        history_obj.old_instance_meta = {'callback_time':str(instance.datetime)}
+        instance = super(CallbackSerializer, self).update(instance, validated_data)
+        history_obj.new_instance_meta = {'callback_time':str(instance.datetime)}
+        history_obj.save()
+        return instance
+    
     def to_representation(self, obj):
         ret = super(CallbackSerializer, self).to_representation(obj)
-        ret['scheduled_by'] = obj.scheduled_by.get_full_name()
+        ret['scheduled_by'] = getattr(obj,'scheduled_by', obj['scheduled_by']).get_full_name()
         return ret
     
 

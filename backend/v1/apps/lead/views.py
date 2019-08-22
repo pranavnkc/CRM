@@ -18,7 +18,7 @@ from .filters import LeadFilter, LeadHistoryFilter
 class LeadViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.LeadSerializer
-    queryset = models.Lead.objects.all().select_related('assigned_to').order_by('created_on')
+    queryset = models.Lead.objects.all().select_related('assigned_to').order_by('created_on').distinct()
     pagination_class = StandardResultsSetPagination
     filter_class = LeadFilter
     def get_queryset(self):
@@ -71,7 +71,11 @@ class LeadViewSet(viewsets.ModelViewSet):
             data['scheduled_by'] = request.user.id
             ser = serializers.CallbackSerializer(data=data, context={'request':request})
             ser.is_valid(raise_exception=True)
-            ser.save()
+            last_callback = models.Callback.objects.filter(lead=instance).last()
+            if last_callback:
+                ser.update(last_callback, ser.validated_data)
+            else:
+                ser.create(ser.validated_data)
             return Response(ser.data)
         
     @list_route(url_path='assign', methods=('post',))
@@ -131,5 +135,5 @@ class LeadViewSet(viewsets.ModelViewSet):
     def history(self, request, pk):
         instance = self.get_object()
         self.filter_class = LeadHistoryFilter
-        return self.get_paginated_response(serializers.LeadHistorySerializer(self.paginate_queryset(self.filter_queryset(instance.lead_history.all().select_related('created_by'))), many=True).data)
+        return self.get_paginated_response(serializers.LeadHistorySerializer(self.paginate_queryset(self.filter_queryset(instance.lead_history.all().select_related('created_by').order_by('created_on'))), many=True).data)
     
