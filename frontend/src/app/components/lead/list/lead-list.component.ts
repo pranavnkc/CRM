@@ -67,7 +67,7 @@ export class LeadListComponent implements OnInit {
     { "field": "meter_serial_number", 'filterField': 'supply_detail__meter_serial_number', "display": "Meter Serial", "selected": false },
     { "field": "supply_number", 'filterField': 'supply_detail__supply_number', "display": "Supply Number", "selected": false },
   ]
-  dateFields = ['created_on'];
+  dateFields = ['created_on', 'supply_detail__contract_end_date'];
   role: any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();
@@ -88,7 +88,6 @@ export class LeadListComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.selection)
     this.filterForm.controls.field.valueChanges.subscribe((val) => {
       if (this.dateFields.indexOf(val.toLowerCase()) != -1 && !this.filterForm.controls['start_date']) {
         this.filterForm.addControl('start_date', new FormControl(null, Validators.required));
@@ -139,7 +138,10 @@ export class LeadListComponent implements OnInit {
   private loadLeads(pageIndex?: any, param?: string) {
     param = param || this.buildFilterAndGetLeads();
     this.spinnerService.showSpinner = true;
-    let params = { 'page': pageIndex != undefined ? pageIndex + 1 : this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize, 'q': param };
+    let params = { 'page': pageIndex != undefined ? pageIndex + 1 : this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize };
+    if (param != undefined) {
+      params['q'] = param;
+    }
     if (this.sort.direction) {
       params['sortBy'] = this.sort.active;
       params['sortOrder'] = this.sort.direction;
@@ -240,7 +242,7 @@ export class LeadListComponent implements OnInit {
       let start_date = moment(this.filterForm.value.start_date).format('YYYY-MM-DD')
       let end_date = moment(this.filterForm.value.end_date).format('YYYY-MM-DD')
       value = `${start_date},${end_date}`;
-      filterField = this.filterForm.value.field + "__date__" + this.filterForm.value.condition;
+      filterField = this.filterForm.value.field + (this.filterForm.value.field != 'supply_detail__contract_end_date' ? "__date__" : '__') + this.filterForm.value.condition;
     }
     else {
       filterField = this.filterForm.value.field + "__" + this.filterForm.value.condition;
