@@ -25,15 +25,6 @@ class Status(models.Model):
     display = models.CharField(max_length=100)
     
 class Lead(models.Model):
-    lead_internal_hash = models.SlugField(max_length=140, default=get_unique_internal_slug)
-    lead_hash = models.SlugField(max_length=140, default=get_unique_slug)
-    created_on = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
-    status = models.CharField(max_length=40)
-    assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
-    
-    
-class LeadBusinessDetails(models.Model):
     MR = "Mr."
     MRS = "Mrs."
     MISS = "Miss"
@@ -50,7 +41,14 @@ class LeadBusinessDetails(models.Model):
         (PROF, PROF),
         (REV, REV)
     )
-    lead = models.OneToOneField(Lead, on_delete=models.CASCADE, related_name="business_detail")
+    lead_internal_hash = models.SlugField(max_length=140, default=get_unique_internal_slug)
+    lead_hash = models.SlugField(max_length=140, default=get_unique_slug)
+    source = models.CharField(max_length=200, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
+    status = models.CharField(max_length=40)
+    assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
+    #lead business deatil fields
     busines_name = models.CharField(max_length=50, null=True, blank=True)
     salutation = models.CharField(choices=SALUTATION_CHOICES, max_length=30, null=True, blank=True)
     first_name = models.CharField(max_length=50, null=True, blank=True)
@@ -65,19 +63,17 @@ class LeadBusinessDetails(models.Model):
     town = models.CharField(max_length=100, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     county = models.CharField(max_length=100, null=True, blank=True)
-
-class LeadSupplyDetails(models.Model):
-    lead = models.OneToOneField(Lead, on_delete=models.CASCADE, related_name="supply_detail")
+    #suppky detail fields
     meter_type = models.CharField(max_length=100, null=True, blank=True)
     meter_type_code = models.CharField(max_length=100, null=True, blank=True)
-    domestic_meter = models.CharField(max_length=100, null=True, blank=True)
+
     amr = models.BooleanField(default=True, null=True, blank=True)
     related_meter = models.BooleanField(default=False, null=True, blank=True)
     current_electricity_supplier =  models.CharField(max_length=100, null=True, blank=True)
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
     supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True)
-    
+
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()

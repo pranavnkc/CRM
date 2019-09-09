@@ -1,7 +1,14 @@
 <style>
-    mat-cell, .mat-header-cell{
-  overflow: visible;
-}
+ mat-cell, .mat-header-cell{
+     overflow: visible;
+ }
+ .mat-table {
+     display: table;
+     width:max-content;
+ }
+ .mat-cell, .mat-header-cell {
+     word-wrap: break-word;
+ }
 </style>
 <div class="user-list-container">
     <button mat-raised-button (click)="onRefresh()">
@@ -76,37 +83,37 @@
                 <br/>
                 <br/>
                 <form fxLayout="row" fxLayoutGap="5%" [formGroup]="filterForm" (ngSubmit)="filterForm.valid && loadLeads(0)">
-                <mat-form-field>
-                    <mat-select placeholder="Fields" formControlName="field">
-                        <mat-option *ngFor="let field of fields" [value]="field.filterField || field.field">
-                            {{ field.display }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field>
-                    <mat-select placeholder="Condition" formControlName="condition">
-                        <mat-option *ngFor="let cond of conditions" [value]="cond.key">
-                            {{ cond.val }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-                <mat-form-field  *ngIf="filterForm.controls.value">
-                    <input matInput placeholder="Value" formControlName="value">
-                </mat-form-field>
-                <mat-form-field *ngIf="filterForm.controls.start_date">
-                    <input matInput [matDatepicker]="startDatepicker" placeholder="Start Date" formControlName="start_date">
-                    <mat-datepicker-toggle matSuffix [for]="startDatepicker"></mat-datepicker-toggle>
-                    <mat-datepicker #startDatepicker></mat-datepicker>
-                </mat-form-field>
-                <mat-form-field *ngIf="filterForm.controls.end_date">
-                    <input matInput [matDatepicker]="endDatepicker" placeholder="End Date" formControlName="end_date">
-                    <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
-                    <mat-datepicker #endDatepicker></mat-datepicker>
-                </mat-form-field>
-                <div>
-                    <button mat-raised-button type="submit" color="primary">Apply Filter</button>
-                </div>
-            </form>
+                    <mat-form-field>
+                        <mat-select placeholder="Fields" formControlName="field">
+                            <mat-option *ngFor="let field of fields" [value]="field.filterField || field.field">
+                                {{ field.display }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-select placeholder="Condition" formControlName="condition">
+                            <mat-option *ngFor="let cond of conditions" [value]="cond.key">
+                                {{ cond.val }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field  *ngIf="filterForm.controls.value">
+                        <input matInput placeholder="Value" formControlName="value">
+                    </mat-form-field>
+                    <mat-form-field *ngIf="filterForm.controls.start_date">
+                        <input matInput [matDatepicker]="startDatepicker" placeholder="Start Date" formControlName="start_date">
+                        <mat-datepicker-toggle matSuffix [for]="startDatepicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatepicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="filterForm.controls.end_date">
+                        <input matInput [matDatepicker]="endDatepicker" placeholder="End Date" formControlName="end_date">
+                        <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
+                        <mat-datepicker #endDatepicker></mat-datepicker>
+                    </mat-form-field>
+                    <div>
+                        <button mat-raised-button type="submit" color="primary">Apply Filter</button>
+                    </div>
+                </form>
                 <br/>
                 <div>
                     <mat-chip-list>
@@ -137,46 +144,61 @@
                 </button>
             </div>
             <div class="overflow-auto">
-            <mat-table #table [dataSource]="dataSource" matSort>
-                <ng-container matColumnDef="select">
-                    <mat-header-cell *matHeaderCellDef>
-                        <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
-                            [checked]="selection.hasValue() && isAllSelected()"
-                            [indeterminate]="selection.hasValue() && !isAllSelected()">
-                        </mat-checkbox>
-                    </mat-header-cell>
-                    <mat-cell *matCellDef="let row">
-                        <mat-checkbox class="inline" color="primary" (click)="$event.stopPropagation()"
-                                      (change)="$event ? selection.toggle(row) : null"
-                                      [checked]="selection.isSelected(row)">
-                        </mat-checkbox>
-                    </mat-cell>
-                </ng-container>
-                <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
-                    <mat-header-cell *matHeaderCellDef fxFlex="{{column.fxFlex}}" [mat-sort-header]="column.filterField || column.field"> {{ column.display }} </mat-header-cell>
-                        <mat-cell *matCellDef="let element" fxLayoutGap="4%" fxFlex="{{column.fxFlex}}">
-                            <span *ngIf="column.field!='status'">
-                                {{ column.cell?column.cell(element):element[column.field] ||  element['business_detail'][column.field] || element['supply_detail'][column.field]}}
-                            </span>
-
-                                    <mat-select *ngIf="column.field=='status'" placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(element)'>
-                                        <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
-                                    </mat-select>
-
-
+                <form [formGroup]="inlineEditForm">
+                    <mat-table #table [dataSource]="dataSource" matSort>
+                        <ng-container matColumnDef="edit">
+                            <mat-header-cell *matHeaderCellDef>
+                                Inline Edit
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <mat-icon *ngIf="row.id!=inlineEditedID" (click)="inlineEdit(row)">mode_edit</mat-icon>
+                                <mat-icon *ngIf="row.id==inlineEditedID" (click)="update()">done</mat-icon>
                             </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="actions">
-                    <mat-header-cell *matHeaderCellDef fxFlex="5%"> Action </mat-header-cell>
-                        <mat-cell *matCellDef="let element" fxFlex="5%">
-                            <button mat-icon-button [matMenuTriggerFor]="menu">
+                        </ng-container>
+
+                        <ng-container matColumnDef="select">
+                            <mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
+                                              [checked]="selection.hasValue() && isAllSelected()"
+                                              [indeterminate]="selection.hasValue() && !isAllSelected()">
+                                </mat-checkbox>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <mat-checkbox class="inline" color="primary" (click)="$event.stopPropagation()"
+                                              (change)="$event ? selection.toggle(row) : null"
+                                              [checked]="selection.isSelected(row)">
+                                </mat-checkbox>
+                            </mat-cell>
+                        </ng-container>
+                        <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
+                            <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.field" fxFlex="20%"> {{ column.display }} </mat-header-cell>
+                            <mat-cell *matCellDef="let element" fxFlex="20%">
+                                <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field]" class="full-width user-search">
+                                    <input  matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                                </mat-form-field>
+                                <span *ngIf="!inlineEditForm.controls[column.field] || element.id!=inlineEditedID">
+                                    {{ column.cell?column.cell(element):element[column.field]}}
+                                </span>
+                            </mat-cell>
+
+                        </ng-container>
+
+                        <!-- <mat-select *ngIf="column.field=='status'" placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(element)'>
+                             <mat-option *ngFor="let status of sharedDataService.leadStatus" [value]="status.key">{{status.display}}</mat-option>
+                             </mat-select>
+                           -->
+
+                        <ng-container matColumnDef="actions">
+                            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <button mat-icon-button [matMenuTriggerFor]="menu">
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
                                 <mat-menu #menu="matMenu">
                                     <a routerLink="/leads/details/{{element.id}}"><button mat-menu-item (click)="null">
                                         Details
                                     </button></a>
-                                     <button *ngIf="role=='sales-person'" mat-menu-item (click)="scheduleCallback(element)">
+                                    <button *ngIf="role=='sales-person'" mat-menu-item (click)="scheduleCallback(element)">
                                         <span>Schedule Callback</span>
                                     </button>
                                     <button mat-menu-item (click)="comment(element)">
@@ -187,11 +209,12 @@
                                     </button></a>
 
                                 </mat-menu>
-                        </mat-cell>
-                </ng-container>
-                <mat-header-row fxLayoutGap="2%" *matHeaderRowDef="displayedColumns"></mat-header-row>
-                <mat-row fxLayoutGap="2%" *matRowDef="let row; columns: displayedColumns;"></mat-row>
-            </mat-table>
+                            </mat-cell>
+                        </ng-container>
+                        <mat-header-row  *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                    </mat-table>
+                </form>
             </div>
             <mat-paginator #paginator
                            [pageSize]="constants.defaultPageSize"

@@ -26,8 +26,6 @@ class LeadViewSet(viewsets.ModelViewSet):
         sortOrder = self.request.query_params.get('sortOrder')
         if sortBy:
             fields = {field.name:type(field) for field in models.Lead._meta.fields}
-            fields.update({"business_detail__"+field.name:type(field) for field in models.LeadBusinessDetails._meta.fields})
-            fields.update({"supply_detail__"+field.name:type(field) for field in models.LeadSupplyDetails._meta.fields})
             fields.update({"callbacks__"+field.name:type(field) for field in models.Callback._meta.fields})
             if fields[sortBy] == 'django.db.models.fields.CharField':
                 sortAttr = Lower(self.request.query_params.get('sortBy'))
@@ -109,23 +107,19 @@ class LeadViewSet(viewsets.ModelViewSet):
         fields = SimpleArrayField(CharField()).clean(fields)
         lead_objs = models.Lead.objects.filter(id__in=leads).annotate(
             full_name=Concat(
-                F('business_detail__first_name'), Value(" "), F('business_detail__middle_name'), Value(" "), F('business_detail__last_name'))).order_by('id')
+                F('first_name'), Value(" "), F('middle_name'), Value(" "), F('last_name'))).order_by('id')
         file_name = get_file_name(file_type='lead_export')
-        print([f.split("__")[-1] for f in fields])
+        print(fields)
         with open(file_name, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=[f.split("__")[-1] for f in fields])
+            writer = csv.DictWriter(csvfile, fieldnames=fields)
             writer.writeheader()
             for l in lead_objs:
                 row = {}
                 for field in fields:
-                    if 'business_detail__' in field:
-                        row[field.split("__")[-1]] = getattr(l.business_detail, field.split("__")[1])
-                    elif 'supply_detail__' in field:
-                        row[field.split("__")[-1]] = getattr(l.supply_detail, field.split("__")[1])
-                    elif field in ['latest_callback']:\
+                    if field in ['latest_callback']:
                          row['latest_callback'] = getattr(models.Callback.objects.filter(lead=l).last(), 'datetime', '')
                     else:
-                        row[field.split("__")[0]] = getattr(l, field)
+                        row[field] = getattr(l, field)
                 writer.writerow(row)
         return Response({'file':file_name})
 

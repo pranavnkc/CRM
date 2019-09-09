@@ -2,9 +2,14 @@
     <div fxLayout="row" class="pdt30">
         <input type="file" #fileInput accept=".csv">
     </div>
+    <div fxLayout="row" class="pdt30">
+        <mat-form-field>
+                <input matInput placeholder="Source" [(ngModel)]="source" name="first" required>
+        </mat-form-field>
+    </div>
+
     <p class="danger">{{officersUploaderror}}</p>
     <div fxLayout="row" fxLayoutAlign="end end" fxLayoutGap="2%">
-        <!-- <button type="button" class="pull-right" mat-button mat-raised-button (click)="cancel()"><b class="f20">Cancel</b></button>
-           --><button type="submit"  mat-button mat-raised-button (click)="addMultipleOfficers()" color="primary">Upload</button>
+        <button type="submit"  mat-button mat-raised-button (click)="addMultipleOfficers()" color="primary">Upload</button>
     </div>
 </form>

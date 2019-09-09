@@ -13,14 +13,14 @@ class LeadFilter(django_filters.FilterSet):
             filter_q = json.loads(val)
             if 'created_on__date__range' in filter_q.keys():
                 filter_q['created_on__date__range'] = filter_q['created_on__date__range'].split(",")
-            if 'supply_detail__contract_end_date__range' in filter_q.keys():
-                filter_q['supply_detail__contract_end_date__range'] = filter_q['supply_detail__contract_end_date__range'].split(",")
+            if 'contract_end_date__range' in filter_q.keys():
+                filter_q['contract_end_date__range'] = filter_q['contract_end_date__range'].split(",")
         except Exception as e:
             print("Exception in filter", e)
             return queryset
         return queryset.annotate(
                 full_name=Concat(
-                    F('business_detail__first_name'), Value(" "), F('business_detail__middle_name'), Value(" "), F('business_detail__last_name'))
+                    F('first_name'), Value(" "), F('middle_name'), Value(" "), F('last_name'))
             ).filter(**filter_q)
     class Meta:
         model = Lead

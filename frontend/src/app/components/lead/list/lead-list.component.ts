@@ -30,6 +30,8 @@ export class LeadListComponent implements OnInit {
   constants = constants;
   selection = new SelectionModel<any>(true, []);
   filterForm: FormGroup;
+  inlineEditForm: FormGroup;
+  inlineEditedID: any;
   allConditions = [
     { 'key': 'exact', 'val': 'Exact' },
     { 'key': 'iexact', 'val': 'Insensitive Exact' },
@@ -44,30 +46,31 @@ export class LeadListComponent implements OnInit {
     { "field": "lead_hash", "display": "Lead Hash", "selected": false, "fxFlex": "15%" },
     { "field": "status", "display": "Status", "selected": true },
     { "field": "assigned_to", "display": "Assigned To", "selected": true },
-    { "field": "busines_name", 'filterField': 'business_detail__busines_name', "display": "Business Name", "selected": true },
-    { "field": "salutation", 'filterField': 'business_detail__salutation', "display": "Salutation", "selected": false },
-    { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.business_detail.first_name} ${element.business_detail.middle_name} ${element.business_detail.last_name}` },
+    { "field": "busines_name", 'filterField': 'busines_name', "display": "Business Name", "selected": true },
+    { "field": "salutation", 'filterField': 'salutation', "display": "Salutation", "selected": false },
+    { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name} ${element.last_name}` },
     { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "phone_number", 'filterField': 'business_detail__phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.business_detail.phone_number ? constants.formatPhone(element.business_detail.phone_number) : ''}` },
-    { "field": "email", 'filterField': 'business_detail__email', "display": "Email", "selected": false },
-    { "field": "building_name", 'filterField': 'business_detail__building_name', "display": "Building Name", "selected": false },
-    { "field": "subb", 'filterField': 'business_detail__subb', "display": "Subb", "selected": false },
-    { "field": "building_number", 'filterField': 'business_detail__building_number', "display": "Building Number", "selected": false },
-    { "field": "street_name", 'filterField': 'business_detail__street_name', "display": "Street Name", "selected": false },
-    { "field": "town", 'filterField': 'business_detail__town', "display": "Town", "selected": false },
-    { "field": "city", 'filterField': 'business_detail__city', "display": "City", "selected": false },
-    { "field": "county", 'filterField': 'business_detail__county', "display": "County", "selected": false },
-    { "field": "meter_type", 'filterField': 'supply_detail__meter_type', "display": "Meter Type", "selected": false },
-    { "field": "meter_type_code", 'filterField': 'supply_detail__meter_type_code', "display": "Meter Type Code", "selected": false },
-    { "field": "domestic_meter", 'filterField': 'supply_detail__domestic_meter', "display": "Domestic Meter", "selected": false },
-    { "field": "amr", 'filterField': 'supply_detail__amr', "display": "AMR", "selected": false },
-    { "field": "related_meter", 'filterField': 'supply_detail__related_meter', "display": "Related Meter", "selected": false },
-    { "field": "current_electricity_supplier", 'filterField': 'supply_detail__current_electricity_supplier', "display": "Current Supplier", "selected": true },
-    { "field": "contract_end_date", 'filterField': 'supply_detail__contract_end_date', "display": "Contract End Date", "selected": true },
-    { "field": "meter_serial_number", 'filterField': 'supply_detail__meter_serial_number', "display": "Meter Serial", "selected": false },
-    { "field": "supply_number", 'filterField': 'supply_detail__supply_number', "display": "Supply Number", "selected": false },
+    { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? constants.formatPhone(element.phone_number) : ''}` },
+    { "field": "email", 'filterField': 'email', "display": "Email", "selected": false },
+    { "field": "building_name", 'filterField': 'building_name', "display": "Building Name", "selected": false },
+    { "field": "subb", 'filterField': 'subb', "display": "Subb", "selected": false },
+    { "field": "building_number", 'filterField': 'building_number', "display": "Building Number", "selected": false },
+    { "field": "street_name", 'filterField': 'street_name', "display": "Street Name", "selected": false },
+    { "field": "town", 'filterField': 'town', "display": "Town", "selected": false },
+    { "field": "city", 'filterField': 'city', "display": "City", "selected": false },
+    { "field": "county", 'filterField': 'county', "display": "County", "selected": false },
+    { "field": "meter_type", 'filterField': 'eter_type', "display": "Meter Type", "selected": false },
+    {
+      "field": "meter_type_code", 'filterField': 'meter_type_code', "display": "Meter Type Code", "selected": false
+    },
+    { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false },
+    { "field": "related_meter", 'filterField': 'related_meter', "display": "Related Meter", "selected": false },
+    { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true },
+    { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true },
+    { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false },
+    { "field": "supply_number", 'filterField': 'supply_number', "display": "Supply Number", "selected": false },
   ]
-  dateFields = ['created_on', 'supply_detail__contract_end_date'];
+  dateFields = ['created_on', 'contract_end_date'];
   role: any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();
@@ -85,6 +88,30 @@ export class LeadListComponent implements OnInit {
       'value': [null, Validators.required]
     });
     this.conditions = this.allConditions;
+    this.inlineEditForm = this.fb.group({
+      lead_hash: [null, Validators.required],
+      salutation: [null, Validators.required],
+      first_name: [null, Validators.required],
+      middle_name: [null, Validators.required],
+      last_name: [null, Validators.required],
+      phone_number: [null, Validators.compose([Validators.required, Validators.minLength(10), Validators.maxLength(10)])],
+      email: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)])],
+      building_name: [null],
+      subb: [null],
+      building_number: [null],
+      street_name: [null],
+      town: [null],
+      city: [null],
+      county: [null],
+      meter_type: [null],
+      meter_type_code: [null],
+      amr: [null],
+      related_meter: [null],
+      current_electricity_supplier: [null],
+      contract_end_date: [null],
+      meter_serial_number: [null],
+      supply_number: [null]
+    })
   }
 
   ngOnInit() {
@@ -124,13 +151,13 @@ export class LeadListComponent implements OnInit {
       }
     }
     else {
-      selectedItems = ['select'].concat(this.fields.filter(field => field.selected).map((field) => field.field));
+      selectedItems = ['edit', 'select'].concat(this.fields.filter(field => field.selected).map((field) => field.field));
     }
     this.displayedColumns = selectedItems;
   }
 
   private selectedFieldsChanged() {
-    this.displayedColumns = ['select'].concat(this.fields.filter(field => field.selected).map(field => field.field));
+    this.displayedColumns = ['edit', 'select'].concat(this.fields.filter(field => field.selected).map(field => field.field));
     this.displayedColumns.push('actions');
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
   }
@@ -216,7 +243,7 @@ export class LeadListComponent implements OnInit {
     })
   }
   getLeadExport() {
-    this.service.getLeadExport({ 'leads': this.selection.selected.map((s) => s.id).join(","), 'fields': this.fields.filter(f => f.selected).map((f: any) => f.filterField || f.field).join(",") }).subscribe((res) => {
+    this.service.getLeadExport({ 'leads': this.selection.selected.map((s) => s.id).join(","), 'fields': this.fields.filter(f => f.selected).map((f: any) => f.field).join(",") }).subscribe((res) => {
       this.fileLoader.downloadFile('/' + res.file);
     });
   }
@@ -242,7 +269,7 @@ export class LeadListComponent implements OnInit {
       let start_date = moment(this.filterForm.value.start_date).format('YYYY-MM-DD')
       let end_date = moment(this.filterForm.value.end_date).format('YYYY-MM-DD')
       value = `${start_date},${end_date}`;
-      filterField = this.filterForm.value.field + (this.filterForm.value.field != 'supply_detail__contract_end_date' ? "__date__" : '__') + this.filterForm.value.condition;
+      filterField = this.filterForm.value.field + (this.filterForm.value.field != 'contract_end_date' ? "__date__" : '__') + this.filterForm.value.condition;
     }
     else {
       filterField = this.filterForm.value.field + "__" + this.filterForm.value.condition;
@@ -250,5 +277,22 @@ export class LeadListComponent implements OnInit {
     }
     let param = JSON.stringify({ [filterField]: value })
     return param;
+  }
+  inlineEdit(row) {
+    for (let field in this.inlineEditForm.controls) {
+      this.inlineEditForm.controls[field].setValue(row[field]);
+    }
+    this.inlineEditedID = row.id;
+  }
+
+  update() {
+    var data = JSON.parse(JSON.stringify(this.inlineEditForm.value));
+    if (data.contract_end_date) {
+      data.contract_end_date = data.contract_end_date.split("T")[0]
+    }
+    this.service.updateLead(this.inlineEditedID, data).subscribe((res) => {
+      this.inlineEditedID = null;
+      this.loadLeads();
+    })
   }
 }

@@ -9,6 +9,7 @@ import { HttpService, SpinnerService, SnackBarService, FileLoaderService } from 
 export class LeadBulkCreateComponent implements OnInit {
   @ViewChild("fileInput", { read: ElementRef }) fileInput: ElementRef;
   officersUploaderror: any;
+  source: any;
   constructor(
     private http: HttpService,
     private spinnerService: SpinnerService,
@@ -19,10 +20,19 @@ export class LeadBulkCreateComponent implements OnInit {
 
   ngOnInit() {
   }
+
   addMultipleOfficers() {
     let formData = new FormData();
+    console.log(this.source);
+    if (!this.fileInput.nativeElement.files.length) {
+      return;
+    }
+    if (!this.source) {
+      return
+    }
     let file = this.fileInput.nativeElement.files[0];
     formData.append('file', file, file.name);
+    formData.append('source', this.source);
     let successMsg = "Officer's Added Succesfully";
     this.spinnerService.showSpinner = true;
     this.http.post('api/leads/bulk-create/', formData).subscribe((response: any) => {
