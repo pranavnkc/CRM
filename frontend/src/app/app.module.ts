@@ -1,5 +1,5 @@
 import { BrowserModule, Title } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -40,7 +40,7 @@ import { ChartsModule } from 'ng2-charts';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { NgProgressModule, NgProgressInterceptor } from 'ngx-progressbar';
 
-import { HttpService } from './services';
+import { HttpService, AppLoadService } from './services';
 import { SnackBarService, SpinnerService, FileLoaderService } from './services';
 
 import { NgInitDirective } from './directives/ng-init.directive';
@@ -118,6 +118,10 @@ const appRoutes: Routes = [
   { path: '**', redirectTo: '/home' }
 
 ];
+
+export function get_ip(appLoadService: AppLoadService) {
+  return () => appLoadService.loadConfigurationData();
+}
 
 @NgModule({
   declarations: [
@@ -202,7 +206,9 @@ const appRoutes: Routes = [
       provide: HTTP_INTERCEPTORS,
       useClass: NgProgressInterceptor,
       multi: true
-    }
+    },
+    AppLoadService,
+    { provide: APP_INITIALIZER, useFactory: get_ip, deps: [AppLoadService], multi: true }
   ],
   bootstrap: [AppComponent],
   entryComponents: [ConfirmDialogComponent, PromptDialogComponent, LeadAssignComponent, CallbackComponent]

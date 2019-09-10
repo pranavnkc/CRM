@@ -4,11 +4,11 @@ import { Observable } from 'rxjs/Rx';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { SpinnerService } from './spinner.service';
+import { constants } from '../constants';
 import 'rxjs/Rx';
 
 @Injectable()
 export class HttpService {
-
   private baseUrl: string;
   public contentType: string;
   constructor(private http: HttpClient, private router: Router, private spinnerService: SpinnerService) {
@@ -23,6 +23,7 @@ export class HttpService {
     if (token) {
       // HttpHeaders are immutable, set() method returns new instance of HttpHeaders
       headers = headers.set('Authorization', `Token ${token}`);
+      headers = headers.set('client-ip', `${constants.ipAddress ? constants.ipAddress : ''}`);
     }
 
     return headers;

@@ -30,6 +30,32 @@ export class LeadListComponent implements OnInit {
   constants = constants;
   selection = new SelectionModel<any>(true, []);
   filterForm: FormGroup;
+  inlineFormFields = {
+    lead_hash: [null, Validators.required],
+    status: [null, Validators.required],
+    salutation: [null, Validators.required],
+    first_name: [null, Validators.required],
+    middle_name: [null, Validators.required],
+    last_name: [null, Validators.required],
+    business_name: [null],
+    phone_number: [null, Validators.compose([Validators.required, Validators.minLength(10), Validators.maxLength(10)])],
+    email: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)])],
+    building_name: [null],
+    subb: [null],
+    building_number: [null],
+    street_name: [null],
+    town: [null],
+    city: [null],
+    county: [null],
+    meter_type: [null],
+    meter_type_code: [null],
+    amr: [null],
+    related_meter: [null],
+    current_electricity_supplier: [null],
+    contract_end_date: [null],
+    meter_serial_number: [null],
+    supply_number: [null]
+  }
   inlineEditForm: FormGroup;
   inlineEditedID: any;
   allConditions = [
@@ -40,36 +66,7 @@ export class LeadListComponent implements OnInit {
     { 'key': 'range', 'val': 'Between' }
   ];
   conditions: any;
-  fields = [
-    { "field": "id", "display": "Lead ID", "selected": true },
-    { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "lead_hash", "display": "Lead Hash", "selected": false, "fxFlex": "15%" },
-    { "field": "status", "display": "Status", "selected": true },
-    { "field": "assigned_to", "display": "Assigned To", "selected": true },
-    { "field": "busines_name", 'filterField': 'busines_name', "display": "Business Name", "selected": true },
-    { "field": "salutation", 'filterField': 'salutation', "display": "Salutation", "selected": false },
-    { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name} ${element.last_name}` },
-    { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-    { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? constants.formatPhone(element.phone_number) : ''}` },
-    { "field": "email", 'filterField': 'email', "display": "Email", "selected": false },
-    { "field": "building_name", 'filterField': 'building_name', "display": "Building Name", "selected": false },
-    { "field": "subb", 'filterField': 'subb', "display": "Subb", "selected": false },
-    { "field": "building_number", 'filterField': 'building_number', "display": "Building Number", "selected": false },
-    { "field": "street_name", 'filterField': 'street_name', "display": "Street Name", "selected": false },
-    { "field": "town", 'filterField': 'town', "display": "Town", "selected": false },
-    { "field": "city", 'filterField': 'city', "display": "City", "selected": false },
-    { "field": "county", 'filterField': 'county', "display": "County", "selected": false },
-    { "field": "meter_type", 'filterField': 'eter_type', "display": "Meter Type", "selected": false },
-    {
-      "field": "meter_type_code", 'filterField': 'meter_type_code', "display": "Meter Type Code", "selected": false
-    },
-    { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false },
-    { "field": "related_meter", 'filterField': 'related_meter', "display": "Related Meter", "selected": false },
-    { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true },
-    { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true },
-    { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false },
-    { "field": "supply_number", 'filterField': 'supply_number', "display": "Supply Number", "selected": false },
-  ]
+  fields = [];
   dateFields = ['created_on', 'contract_end_date'];
   role: any;
   displayedColumns = [];
@@ -82,36 +79,56 @@ export class LeadListComponent implements OnInit {
     private spinnerService: SpinnerService,
     private fileLoader: FileLoaderService,
     private authService: AuthService) {
+    console.log(this);
+    this.fields = [
+      { "field": "id", "display": "Lead ID", "selected": true },
+      { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+      { "field": "lead_hash", "display": "Lead Hash", "selected": false, "fieldType": "input" },
+      {
+        "field": "status", "display": "Status", "selected": true, "fieldType": "select", "options": this.sharedDataService.leadStatus
+      },
+      { "field": "assigned_to", "display": "Assigned To", "selected": true },
+      { "field": "busines_name", 'filterField': 'busines_name', "display": "Business Name", "selected": true, "fieldType": "input" },
+      {
+        "field": "salutation", 'filterField': 'salutation', "display": "Salutation", "selected": false, "fieldType": "select", "options": [
+          { "key": "Mr.", "value": "Mr." },
+          { "key": "Mrs.", value: "Mrs." },
+          { "key": "Miss", value: "Miss" },
+          { "key": "Dr.", value: "Dr." },
+          { "key": "Ms.", value: "Ms." },
+          { "key": "Prof.", value: "Prof." },
+          { "key": "Rev.", value: "Rev." },
+        ]
+      },
+      { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name} ${element.last_name}`, "fieldType": "input" },
+      { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+      { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? constants.formatPhone(element.phone_number) : ''}`, "fieldType": "phone" },
+      { "field": "email", 'filterField': 'email', "display": "Email", "selected": false, "fieldType": "input" },
+      { "field": "building_name", 'filterField': 'building_name', "display": "Building Name", "selected": false, "fieldType": "input" },
+      { "field": "subb", 'filterField': 'subb', "display": "Subb", "selected": false, "fieldType": "input" },
+      { "field": "building_number", 'filterField': 'building_number', "display": "Building Number", "selected": false, "fieldType": "input" },
+      { "field": "street_name", 'filterField': 'street_name', "display": "Street Name", "selected": false, "fieldType": "input" },
+      { "field": "town", 'filterField': 'town', "display": "Town", "selected": false, "fieldType": "input" },
+      { "field": "city", 'filterField': 'city', "display": "City", "selected": false, "fieldType": "input" },
+      { "field": "county", 'filterField': 'county', "display": "County", "selected": false, "fieldType": "input" },
+      { "field": "meter_type", 'filterField': 'eter_type', "display": "Meter Type", "selected": false, "fieldType": "input" },
+      {
+        "field": "meter_type_code", 'filterField': 'meter_type_code', "display": "Meter Type Code", "selected": false, "fieldType": "input"
+      },
+      { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false, "fieldType": "input" },
+      { "field": "related_meter", 'filterField': 'related_meter', "display": "Related Meter", "selected": false, "fieldType": "input" },
+      { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "input" },
+      { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true, "fieldType": "date" },
+      { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false, "fieldType": "input" },
+      { "field": "supply_number", 'filterField': 'supply_number', "display": "Supply Number", "selected": false, "fieldType": "input" },
+    ]
     this.filterForm = this.fb.group({
       'field': [null, Validators.required],
       'condition': [null, Validators.required],
       'value': [null, Validators.required]
     });
     this.conditions = this.allConditions;
-    this.inlineEditForm = this.fb.group({
-      lead_hash: [null, Validators.required],
-      salutation: [null, Validators.required],
-      first_name: [null, Validators.required],
-      middle_name: [null, Validators.required],
-      last_name: [null, Validators.required],
-      phone_number: [null, Validators.compose([Validators.required, Validators.minLength(10), Validators.maxLength(10)])],
-      email: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)])],
-      building_name: [null],
-      subb: [null],
-      building_number: [null],
-      street_name: [null],
-      town: [null],
-      city: [null],
-      county: [null],
-      meter_type: [null],
-      meter_type_code: [null],
-      amr: [null],
-      related_meter: [null],
-      current_electricity_supplier: [null],
-      contract_end_date: [null],
-      meter_serial_number: [null],
-      supply_number: [null]
-    })
+    this.inlineEditForm = this.fb.group(this.inlineFormFields)
   }
 
   ngOnInit() {
@@ -154,14 +171,26 @@ export class LeadListComponent implements OnInit {
       selectedItems = ['edit', 'select'].concat(this.fields.filter(field => field.selected).map((field) => field.field));
     }
     this.displayedColumns = selectedItems;
+    this.buildInlineForm();
   }
 
   private selectedFieldsChanged() {
     this.displayedColumns = ['edit', 'select'].concat(this.fields.filter(field => field.selected).map(field => field.field));
     this.displayedColumns.push('actions');
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
+    this.buildInlineForm();
   }
-
+  private buildInlineForm() {
+    let fields = {}
+    for (let field in this.inlineFormFields) {
+      if (this.displayedColumns.indexOf(field) != -1) {
+        let f = this.inlineFormFields[field]
+        f[0] = this.inlineEditForm.controls[field] ? this.inlineEditForm.controls[field].value : null;
+        fields[field] = f
+      }
+    }
+    this.inlineEditForm = this.fb.group(fields)
+  }
   private loadLeads(pageIndex?: any, param?: string) {
     param = param || this.buildFilterAndGetLeads();
     this.spinnerService.showSpinner = true;

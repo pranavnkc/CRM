@@ -1,7 +1,7 @@
 @import 'sass/main';
 
 .mat-block{
-        width:100%;
+  width:100%;
 }
 .app-spinner{
      position: fixed;
@@ -21,4 +21,7 @@
  }
 .overflow-auto{
   overflow:auto;
+}
+.cursor-pointer {
+  cursor: pointer;
 }

@@ -45,7 +45,9 @@ export class CreateEditLeadComponent implements OnInit {
   }
 
   private setLeadData() {
-    this.form.controls.lead_hash.setValue(this.lead.lead_hash);
+    for (let field in this.form.controls) {
+      this.form.controls[field].setValue(this.lead[field]);
+    }
   }
   private getLead(id: any) {
     this.service.getLead(id).subscribe((data) => {

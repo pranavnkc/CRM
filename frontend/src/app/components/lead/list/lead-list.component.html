@@ -7,7 +7,8 @@
      width:max-content;
  }
  .mat-cell, .mat-header-cell {
-     word-wrap: break-word;
+    word-wrap: break-word;
+    width: 1%;
  }
 </style>
 <div class="user-list-container">
@@ -147,23 +148,23 @@
                 <form [formGroup]="inlineEditForm">
                     <mat-table #table [dataSource]="dataSource" matSort>
                         <ng-container matColumnDef="edit">
-                            <mat-header-cell *matHeaderCellDef>
+                            <mat-header-cell *matHeaderCellDef style="margin-right:1%">
                                 Inline Edit
                             </mat-header-cell>
-                            <mat-cell *matCellDef="let row">
-                                <mat-icon *ngIf="row.id!=inlineEditedID" (click)="inlineEdit(row)">mode_edit</mat-icon>
-                                <mat-icon *ngIf="row.id==inlineEditedID" (click)="update()">done</mat-icon>
+                            <mat-cell *matCellDef="let row" style="margin-right:1%">
+                                <mat-icon class="cursor-pointer" *ngIf="row.id!=inlineEditedID" (click)="inlineEdit(row)">mode_edit</mat-icon>
+                                <mat-icon class="cursor-pointer" *ngIf="row.id==inlineEditedID" (ngSubmit)="inlineEditForm.valid && update()">done</mat-icon>
                             </mat-cell>
                         </ng-container>
 
                         <ng-container matColumnDef="select">
-                            <mat-header-cell *matHeaderCellDef>
+                            <mat-header-cell *matHeaderCellDef style="margin-right:1%">
                                 <mat-checkbox color="primary" (change)="$event ? masterToggle() : null"
                                               [checked]="selection.hasValue() && isAllSelected()"
                                               [indeterminate]="selection.hasValue() && !isAllSelected()">
                                 </mat-checkbox>
                             </mat-header-cell>
-                            <mat-cell *matCellDef="let row">
+                            <mat-cell *matCellDef="let row" style="margin-right:1%">
                                 <mat-checkbox class="inline" color="primary" (click)="$event.stopPropagation()"
                                               (change)="$event ? selection.toggle(row) : null"
                                               [checked]="selection.isSelected(row)">
@@ -171,12 +172,21 @@
                             </mat-cell>
                         </ng-container>
                         <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
-                            <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.field" fxFlex="20%"> {{ column.display }} </mat-header-cell>
-                            <mat-cell *matCellDef="let element" fxFlex="20%">
-                                <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field]" class="full-width user-search">
-                                    <input  matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                            <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.field" style="margin-right:1%"> {{ column.display }} </mat-header-cell>
+                            <mat-cell *matCellDef="let element" style="margin-right:1%">
+                                <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType!='date'" class="mat-block">
+                                    <input  *ngIf="column.fieldType=='phone'" [mask]="'(000) 900-0000'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                                    <input  *ngIf="column.fieldType=='input'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                                    <mat-select *ngIf="column.fieldType=='select'" [formControlName]="column.field" placeholder="{{column.display}}">
+                                        <mat-option *ngFor="let option of (column.field=='status'?sharedDataService.leadStatus:column.options)" [value]="option.key">{{option.value || option.display}}</mat-option>
+                                    </mat-select>
                                 </mat-form-field>
-                                <span *ngIf="!inlineEditForm.controls[column.field] || element.id!=inlineEditedID">
+                                <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType=='date'" class="mat-block">
+                                    <input matInput [matDatepicker]="conEndpicker" [formControlName]="column.field" placeholder="{{column.display}}">
+                                    <mat-datepicker-toggle  matSuffix [for]="conEndpicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #conEndpicker></mat-datepicker>
+                                </mat-form-field>
+                                    <span *ngIf="!inlineEditForm.controls[column.field] || element.id!=inlineEditedID">
                                     {{ column.cell?column.cell(element):element[column.field]}}
                                 </span>
                             </mat-cell>
@@ -189,8 +199,8 @@
                            -->
 
                         <ng-container matColumnDef="actions">
-                            <mat-header-cell *matHeaderCellDef> Action </mat-header-cell>
-                            <mat-cell *matCellDef="let element">
+                            <mat-header-cell *matHeaderCellDef style="margin-right:1%"> Action </mat-header-cell>
+                            <mat-cell *matCellDef="let element" style="margin-right:1%">
                                 <button mat-icon-button [matMenuTriggerFor]="menu">
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
