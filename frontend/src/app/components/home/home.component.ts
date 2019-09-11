@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../../components/users/services/user.service';
+import { AuthService } from '../../services/index';
 
 @Component({
   selector: 'app-home',
-  templateUrl: './home.component.html'
+  templateUrl: './home.component.html',
+  providers: [UserService]
 })
 export class HomeComponent {
 
@@ -21,7 +25,7 @@ export class HomeComponent {
 
   pieChartData: Array<any> = [[10, 100, 154, 184, 476, 95, 133, 408, 619, 363]];
   pieChartLabels: Array<any> = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
-  pieChart2Data: Array<any> = [[112,55]];
+  pieChart2Data: Array<any> = [[112, 55]];
   pieChart2Labels: Array<any> = ['Active', 'Inactive'];
   pieChart2Colors: any[] = [{ backgroundColor: ['rgba(21,101,192,.8)', 'rgba(96,125,139,.7)'] }];
   pieChart3Data: Array<any> = [[95, 78]];
@@ -49,10 +53,14 @@ export class HomeComponent {
       display: false,
     }
   };
+  dashboardData = {};
+  constructor(private activatedRoute: ActivatedRoute, private authService: AuthService, private userService: UserService) {
+    this.userService.getDashboardData(this.activatedRoute.snapshot.params.id || this.authService.user.id).subscribe((res) => {
+      this.dashboardData = res;
+    })
+  }
 
-  constructor() { }
-
-  onRefresh(){
+  onRefresh() {
     this.loading = true;
 
     setTimeout(() => {

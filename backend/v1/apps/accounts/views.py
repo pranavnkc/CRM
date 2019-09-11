@@ -3,12 +3,14 @@ from rest_framework import permissions
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from django.contrib.auth.models import Group
+from django.utils import timezone
 from v1.apps.utils.pagination import StandardResultsSetPagination 
 from . import serializer
 from . import models
 from .filters import UserFilter
+from v1.apps.lead.models import Lead, LeadHistory
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializer.GroupSerializer
@@ -25,7 +27,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.user.groups.filter(name='sales-person').exists():
             return qs.filter(id=self.request.user.id)
         elif self.request.user.groups.filter(name__in=['team-manager', 'company-head']).exists():
-            return qs.filter(parent=self.request.user) | qs.filter(id=self.request.user.id) 
+            return qs.filter(parent=self.request.user) | qs.filter(id=self.request.user.id) | qs.filter(parent__parent=self.request.user)  
         return qs
    
     @list_route(url_path="validate_username", methods=['get', ], permission_classes=[permissions.AllowAny])
@@ -38,3 +40,22 @@ class UserViewSet(viewsets.ModelViewSet):
         if user.exists():
             return Response({'username': ['A user with that email address already exists.']}, status=status.HTTP_400_BAD_REQUEST)
         return Response()
+
+    @detail_route(url_path="dashboard", methods=['get', ])
+    def dashboard_data(self, request, pk):
+        ret = {}
+        user = self.get_object()
+        qs=None
+        if user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
+            qs = Lead.objects.filter(assigned_to=self.request.user)
+        elif user.groups.filter(name='team-manager').exists():
+            qs = Lead.objects.filter(assigned_to__in=models.User.objects.filter(parent=self.request.user))
+        elif user.groups.filter(name='company-head').exists():
+            qs = Lead.objects.filter(assigned_to__in=models.User.objects.filter(parent__parent=self.request.user))
+        else:
+            qs = Lead.objects.all()
+        ret['lead_count'] = qs.count()
+        ret['work_done'] = LeadHistory.objects.filter(created_by=user, action=LeadHistory.ACTION_STATUS_CHANGE, created_on__date=timezone.now().date()).count()
+        return Response(ret)
+
+    

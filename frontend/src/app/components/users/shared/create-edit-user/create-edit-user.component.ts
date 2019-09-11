@@ -23,6 +23,7 @@ export class CreateEditUserComponent implements OnInit {
   userOptions: any;
   roleFilterOptions = [
     { 'key': 'sales-person', 'value': 'Sales Person' },
+    { 'key': 'stage-1', 'value': 'Stage 1' }
     { 'key': 'team-manager', 'value': 'Team Manager' },
     { 'key': 'company-head', 'value': 'Company Head' },
     { 'key': 'admin', 'value': 'Admin' }
@@ -35,10 +36,10 @@ export class CreateEditUserComponent implements OnInit {
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator) {
     this.createForm();
     if (this.authService.role == 'company-head') {
-      this.roleFilterOptions = this.roleFilterOptions.slice(0, 2);
+      this.roleFilterOptions = this.roleFilterOptions.slice(0, 3);
     }
     else if (this.authService.role == 'team-manager') {
-      this.roleFilterOptions = this.roleFilterOptions.slice(0, 1);
+      this.roleFilterOptions = this.roleFilterOptions.slice(0, 2);
     }
   }
 
@@ -55,7 +56,7 @@ export class CreateEditUserComponent implements OnInit {
       else {
         this.editMode = EditMode.Create;
         this.form.controls.role.valueChanges.subscribe((val) => {
-          if (['sales-person', 'team-manager'].indexOf(val) != -1) {
+          if (['sales-person', 'team-manager', 'stage-1'].indexOf(val) != -1) {
             this.form.addControl('parent', new FormControl(null));
           }
           else {

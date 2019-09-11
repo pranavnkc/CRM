@@ -21,6 +21,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     queryset = models.Lead.objects.all().select_related('assigned_to').order_by('created_on').distinct()
     pagination_class = StandardResultsSetPagination
     filter_class = LeadFilter
+
     def get_queryset(self):
         sortBy = self.request.query_params.get('sortBy')
         sortOrder = self.request.query_params.get('sortOrder')
@@ -36,8 +37,7 @@ class LeadViewSet(viewsets.ModelViewSet):
         else:
             self.queryset = self.queryset.order_by('-id')
         if self.request.user.groups.filter(name='sales-person').exists():
-            return self.queryset.filter(assigned_to=self.request.user)
-       
+            return self.queryset.filter(assigned_to=self.request.user)   
         return self.queryset
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])

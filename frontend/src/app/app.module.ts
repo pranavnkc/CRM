@@ -87,6 +87,7 @@ const appRoutes: Routes = [
       { path: 'users/new', canActivate: [AuthGuard], component: CreateEditUserComponent, data: { title: 'New user' }, resolve: { "users": UserResolver } },
       { path: 'users/edit/:id', canActivate: [AuthGuard], component: CreateEditUserComponent, data: { title: 'Edit user' } },
       { path: 'users/details/:id', canActivate: [AuthGuard], component: UserDetailsComponent, data: { title: 'User details' } },
+      { path: 'users/:id/dashboard', canActivate: [AuthGuard], component: HomeComponent, data: { title: 'User Dashboard' } },
       { path: 'leads', component: LeadListComponent, data: { title: 'Leads' } },
       { path: 'leads/new', component: CreateEditLeadComponent, data: { title: 'New Lead' } },
       { path: 'leads/bulk-create', component: LeadBulkCreateComponent, data: { title: ' Bulk Create Lead' } },

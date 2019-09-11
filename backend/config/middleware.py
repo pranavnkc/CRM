@@ -8,7 +8,7 @@ class IPAddressCheckMiddleware(object):
     def __call__(self, request):
         # Code to be executed for each request before
         # the view (and later middleware) are called
-        print(request.META.get('HTTP_CLIENT_IP'), request.META)
+        #print(request.META.get('HTTP_CLIENT_IP'), request.META)
         if request.META.get('HTTP_CLIENT_IP') and not IPAddress.objects.filter(ip=request.META.get('HTTP_CLIENT_IP'), active=True).exists():
             return HttpResponseForbidden()
         response = self.get_response(request)

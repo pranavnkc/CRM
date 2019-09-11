@@ -19,7 +19,7 @@ export class UserListComponent implements OnInit {
   endDate: Date = null;
   state: string;
   constants = constants;
-  displayedColumns = ['select', 'id', 'name', 'username', 'phone_number', 'role'];
+  displayedColumns = ['select', 'id', 'name', 'username', 'phone_number', 'role', 'actions'];
   dataSource = new MatTableDataSource();
   selection = new SelectionModel<any>(true, []);
   constructor(private service: UserService, private spinnerService: SpinnerService) { }
