@@ -53,7 +53,7 @@ export class HomeComponent {
       display: false,
     }
   };
-  dashboardData = {};
+  dashboardData: any = {};
   constructor(private activatedRoute: ActivatedRoute, private authService: AuthService, private userService: UserService) {
     this.userService.getDashboardData(this.activatedRoute.snapshot.params.id || this.authService.user.id).subscribe((res) => {
       this.dashboardData = res;
