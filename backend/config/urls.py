@@ -5,16 +5,19 @@ from django.conf.urls.static import static
 
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from .views import IndexPageView
+from .views import IndexPageView, UpdateSettingsView
 
 from config.routes import router
 from v1.apps.authentication import views as auth_views 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('api/auth/', auth_views.AuthViewset.as_view()),
+    path('api/settings/', UpdateSettingsView.as_view()),
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls'), name='api_auth'),
+    
     re_path('^.*$', IndexPageView.as_view(), name='home'),
 ]
 

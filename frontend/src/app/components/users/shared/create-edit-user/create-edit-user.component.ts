@@ -23,7 +23,7 @@ export class CreateEditUserComponent implements OnInit {
   userOptions: any;
   roleFilterOptions = [
     { 'key': 'sales-person', 'value': 'Sales Person' },
-    { 'key': 'stage-1', 'value': 'Stage 1' }
+    { 'key': 'stage-1', 'value': 'Stage 1' },
     { 'key': 'team-manager', 'value': 'Team Manager' },
     { 'key': 'company-head', 'value': 'Company Head' },
     { 'key': 'admin', 'value': 'Admin' }
