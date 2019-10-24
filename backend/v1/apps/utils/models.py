@@ -7,3 +7,6 @@ class IPAddress(models.Model):
     active = models.BooleanField(_('Active'), default=False)
     description = models.TextField(_('Description'), null=True, blank=True)
 
+
+class Settings(models.Model):
+    is_ip_restriction_active = models.BooleanField(default=False)

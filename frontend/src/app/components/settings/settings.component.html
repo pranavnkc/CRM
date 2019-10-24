@@ -1,4 +1,9 @@
 <section>
+  <h2>Enable Ip Restriction</h2>
+  <mat-slide-toggle (change)="updateIpRestriction($event.checked)" [checked]="is_ip_restriction_active">Enable Ip Restriction</mat-slide-toggle>
+</section>
+
+<section>
   <h2>Toolbar layout</h2>
   <mat-slide-toggle (change)="setFullWidth($event.checked)" [checked]="isFullWidth">Full width</mat-slide-toggle>
 </section>

@@ -75,6 +75,7 @@ import { SharedDataService } from './services/sharedData.service';
 import { LeadAssignComponent } from './components/lead/lead-assign/lead-assign.component';
 import { CallbackComponent } from './components/lead/callback/callback.component';
 import { LeadBulkCreateComponent } from './components/lead/lead-bulk-create/lead-bulk-create.component';
+import { Page403Component } from './page-403/page-403.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -116,6 +117,7 @@ const appRoutes: Routes = [
       }
     ]
   },
+  { path: '403', component: Page403Component },
   { path: '**', redirectTo: '/home' }
 
 ];
@@ -151,6 +153,7 @@ export function get_ip(appLoadService: AppLoadService) {
     LeadAssignComponent,
     CallbackComponent,
     LeadBulkCreateComponent,
+    Page403Component,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -195,6 +198,8 @@ export function get_ip(appLoadService: AppLoadService) {
   providers: [
     HttpService,
     SnackBarService,
+    AppLoadService,
+    { provide: APP_INITIALIZER, useFactory: get_ip, deps: [AppLoadService], multi: true },
     SpinnerService,
     FileLoaderService,
     AuthService,
@@ -208,8 +213,6 @@ export function get_ip(appLoadService: AppLoadService) {
       useClass: NgProgressInterceptor,
       multi: true
     },
-    AppLoadService,
-    { provide: APP_INITIALIZER, useFactory: get_ip, deps: [AppLoadService], multi: true }
   ],
   bootstrap: [AppComponent],
   entryComponents: [ConfirmDialogComponent, PromptDialogComponent, LeadAssignComponent, CallbackComponent]

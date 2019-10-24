@@ -22,7 +22,7 @@ export class ToolbarComponent implements OnInit {
   constructor(private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
-    private authService: AuthService) { }
+    public authService: AuthService) { }
 
   /**
   * Dispatch toggleMenu event.

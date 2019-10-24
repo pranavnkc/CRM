@@ -23,15 +23,17 @@ export class HttpService {
     if (token) {
       // HttpHeaders are immutable, set() method returns new instance of HttpHeaders
       headers = headers.set('Authorization', `Token ${token}`);
-      headers = headers.set('client-ip', `${constants.ipAddress ? constants.ipAddress : ''}`);
     }
-
+    headers = headers.set('client-ip', `${constants.ipAddress ? constants.ipAddress : ''}`);
     return headers;
   }
 
   private onError(error: any): Promise<any> {
-    if (error.status === 401 || error.status === 403) {
-      //this.router.navigate(['/login']);
+    if (error.status === 401) {
+      this.router.navigate(['/login']);
+    }
+    if (error.status === 403) {
+      this.router.navigate(['/403']);
     }
     this.spinnerService.showSpinner = false;
     return Promise.reject(error);
