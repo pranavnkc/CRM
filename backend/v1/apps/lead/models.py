@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
@@ -41,13 +42,15 @@ class Lead(models.Model):
         (PROF, PROF),
         (REV, REV)
     )
-    lead_internal_hash = models.SlugField(max_length=140, default=get_unique_internal_slug)
-    lead_hash = models.SlugField(max_length=140, default=get_unique_slug)
+    GAS = 'gas'
+    ELECTRICITY = 'electricity'
     source = models.CharField(max_length=200, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
     status = models.CharField(max_length=40)
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
+    assigned_by = models.ForeignKey(User, null=True, blank=True, related_name='have_assigned_leads', on_delete=models.SET_NULL)
+    assigned_on = models.DateTimeField(blank=True, null=True, default=timezone.now)
     #lead business deatil fields
     busines_name = models.CharField(max_length=50, null=True, blank=True)
     salutation = models.CharField(choices=SALUTATION_CHOICES, max_length=30, null=True, blank=True)
@@ -56,24 +59,32 @@ class Lead(models.Model):
     last_name = models.CharField(max_length=50, null=True, blank=True)
     phone_number = models.CharField(null=True, blank=True, max_length=10)
     email = models.EmailField(null=True, blank=True)
-    building_name = models.CharField(max_length=100, null=True, blank=True)
-    subb = models.CharField(max_length=100, null=True, blank=True)
-    building_number = models.CharField(max_length=50, null=True, blank=True)
-    street_name = models.CharField(max_length=100, null=True, blank=True)
-    town = models.CharField(max_length=100, null=True, blank=True)
-    city = models.CharField(max_length=100, null=True, blank=True)
+    address_1 = models.CharField(max_length=200, null=True, blank=True)
+    address_2 = models.CharField(max_length=200, null=True, blank=True)
+    address_3 = models.CharField(max_length=200, null=True, blank=True)
+    address_4 = models.CharField(max_length=200, null=True, blank=True)
+    city_or_town = models.CharField(max_length=100, null=True, blank=True)
     county = models.CharField(max_length=100, null=True, blank=True)
+    postcode = models.CharField(max_length=10, null=True, blank=True)
     #suppky detail fields
-    meter_type = models.CharField(max_length=100, null=True, blank=True)
-    meter_type_code = models.CharField(max_length=100, null=True, blank=True)
-
+    utility_type = models.CharField(choices=SALUTATION_CHOICES, max_length=30, null=True, blank=True)
     amr = models.BooleanField(default=True, null=True, blank=True)
     related_meter = models.BooleanField(default=False, null=True, blank=True)
-    current_electricity_supplier =  models.CharField(max_length=100, null=True, blank=True)
+    current_electricity_supplier = models.CharField(max_length=100, null=True, blank=True)
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
-    supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True)
-
+    supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True) # this is MPRN/MPAN
+    #new fields as discussed on 10th oct
+    can_sell_water = models.BooleanField(default=False)
+    initial_disposition_made = models.BooleanField(default=False)
+    new_renewal_date = models.DateField(null=True, blank=True)
+    agent_name = models.CharField(max_length=200, null=True, blank=True)
+    contract_duration = models.IntegerField(null=True, blank=True)
+    s_andr3_status = models.CharField(max_length=200, null=True, blank=True)
+    bilge_eac = models.CharField(max_length=200, null=True, blank=True)
+    new_disposition_date = models.DateField(null=True, blank=True)
+    is_locked = models.BooleanField(default=False) # if lead is locked then it assigned_to can not be changed
+    
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()
