@@ -31,30 +31,32 @@ export class LeadListComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
   filterForm: FormGroup;
   inlineFormFields = {
-    lead_hash: [null, Validators.required],
-    status: [null, Validators.required],
-    salutation: [null, Validators.required],
-    first_name: [null, Validators.required],
-    middle_name: [null, Validators.required],
-    last_name: [null, Validators.required],
+    status: [null],
+    salutation: [null],
+    first_name: [null],
+    last_name: [null],
     business_name: [null],
-    phone_number: [null, Validators.compose([Validators.required, Validators.minLength(10), Validators.maxLength(10)])],
-    email: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)])],
-    building_name: [null],
-    subb: [null],
-    building_number: [null],
-    street_name: [null],
-    town: [null],
-    city: [null],
+    phone_number: [null, Validators.compose([Validators.minLength(10), Validators.maxLength(10)])],
+    email: [null, Validators.compose([Validators.pattern(constants.EMAIL_REGEXP)])],
+    address_1: [null],
+    address_2: [null],
+    address_3: [null],
+    address_4: [null],
+    town_or_city: [null],
     county: [null],
-    meter_type: [null],
-    meter_type_code: [null],
+    postcode: [null],
     amr: [null],
+    utility_type: [null],
     related_meter: [null],
+    can_sell_water: [null],
     current_electricity_supplier: [null],
+    contract_duration: [null],
+    s_andr3_status: [null],
+    bilge_eac: [null],
     contract_end_date: [null],
     meter_serial_number: [null],
-    supply_number: [null]
+    supply_number: [null],
+    is_locked: [null],
   }
   inlineEditForm: FormGroup;
   inlineEditedID: any;
@@ -83,7 +85,6 @@ export class LeadListComponent implements OnInit {
     this.fields = [
       { "field": "id", "display": "Lead ID", "selected": true },
       { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-      { "field": "lead_hash", "display": "Lead Hash", "selected": false, "fieldType": "input" },
       {
         "field": "status", "display": "Status", "selected": true, "fieldType": "select", "options": this.sharedDataService.leadStatus
       },
@@ -104,23 +105,42 @@ export class LeadListComponent implements OnInit {
       { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
       { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? constants.formatPhone(element.phone_number) : ''}`, "fieldType": "phone" },
       { "field": "email", 'filterField': 'email', "display": "Email", "selected": false, "fieldType": "input" },
-      { "field": "building_name", 'filterField': 'building_name', "display": "Building Name", "selected": false, "fieldType": "input" },
-      { "field": "subb", 'filterField': 'subb', "display": "Subb", "selected": false, "fieldType": "input" },
-      { "field": "building_number", 'filterField': 'building_number', "display": "Building Number", "selected": false, "fieldType": "input" },
-      { "field": "street_name", 'filterField': 'street_name', "display": "Street Name", "selected": false, "fieldType": "input" },
-      { "field": "town", 'filterField': 'town', "display": "Town", "selected": false, "fieldType": "input" },
-      { "field": "city", 'filterField': 'city', "display": "City", "selected": false, "fieldType": "input" },
+      { "field": "address_1", 'filterField': 'building_name', "display": "Building Name", "selected": false, "fieldType": "input" },
+      { "field": "address_2", 'filterField': 'subb', "display": "Subb", "selected": false, "fieldType": "input" },
+      { "field": "address_3", 'filterField': 'building_number', "display": "Building Number", "selected": false, "fieldType": "input" },
+      { "field": "address_4", 'filterField': 'street_name', "display": "Street Name", "selected": false, "fieldType": "input" },
+      { "field": "city_or_town", 'filterField': 'town', "display": "Town", "selected": false, "fieldType": "input" },
+
       { "field": "county", 'filterField': 'county', "display": "County", "selected": false, "fieldType": "input" },
-      { "field": "meter_type", 'filterField': 'eter_type', "display": "Meter Type", "selected": false, "fieldType": "input" },
+      { "field": "postcode", 'filterField': 'postcode', "display": "Postcode", "selected": false, "fieldType": "input" },
+      {
+        "field": "utility_type", 'filterField': 'utility_type', "display": "Utility Type", "selected": false, "fieldType": "select", "options": [
+          { "key": "gas", "value": "Gas" },
+          { "key": "electricity", "value": "Electricity" },
+        ]
+      },
       {
         "field": "meter_type_code", 'filterField': 'meter_type_code', "display": "Meter Type Code", "selected": false, "fieldType": "input"
       },
       { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false, "fieldType": "input" },
-      { "field": "related_meter", 'filterField': 'related_meter', "display": "Related Meter", "selected": false, "fieldType": "input" },
       { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "input" },
       { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true, "fieldType": "date" },
       { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false, "fieldType": "input" },
       { "field": "supply_number", 'filterField': 'supply_number', "display": "Supply Number", "selected": false, "fieldType": "input" },
+      {
+        "field": "can_sell_water", 'filterField': 'can_sell_water', "display": "Can Sell Water", "selected": false, "fieldType": "select", "options": [
+          { "key": true, "value": "Yes" },
+          { "key": false, "value": "No" },
+        ]
+      },
+      {
+        "field": "is_locked", 'filterField': 'is_locked', "display": "Locked?", "selected": false, "fieldType": "select", "options": [
+          { "key": true, "value": "Yes" },
+          { "key": false, "value": "No" },
+        ]
+      },
+
+
     ]
     this.filterForm = this.fb.group({
       'field': [null, Validators.required],
@@ -158,7 +178,10 @@ export class LeadListComponent implements OnInit {
     this.sort.sortChange.subscribe((s) => {
       this.loadLeads();
     })
-    let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields'));
+    let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields')).filter((sf) => this.fields.find((f) => f.field == sf) || ['edit', 'select', 'actions'].indexOf(sf) != -1);
+    if (selectedItems.length != JSON.parse(localStorage.getItem('selectedLeadFields')).length) {
+      localStorage.setItem('selectedLeadFields', JSON.stringify(selectedItems));
+    }
     if (selectedItems && selectedItems.length) {
       selectedItems = selectedItems.filter(f => f != 'lead_id')
       for (let field of this.fields) {
@@ -307,6 +330,7 @@ export class LeadListComponent implements OnInit {
     let param = JSON.stringify({ [filterField]: value })
     return param;
   }
+
   inlineEdit(row) {
     for (let field in this.inlineEditForm.controls) {
       this.inlineEditForm.controls[field].setValue(row[field]);

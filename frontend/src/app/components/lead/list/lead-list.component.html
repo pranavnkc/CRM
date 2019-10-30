@@ -153,7 +153,7 @@
                             </mat-header-cell>
                             <mat-cell *matCellDef="let row" style="margin-right:1%">
                                 <mat-icon class="cursor-pointer" *ngIf="row.id!=inlineEditedID" (click)="inlineEdit(row)">mode_edit</mat-icon>
-                                <mat-icon class="cursor-pointer" *ngIf="row.id==inlineEditedID" (ngSubmit)="inlineEditForm.valid && update()">done</mat-icon>
+                                <mat-icon class="cursor-pointer" *ngIf="row.id==inlineEditedID" (click)="inlineEditForm.valid && update()">done</mat-icon>
                             </mat-cell>
                         </ng-container>
 

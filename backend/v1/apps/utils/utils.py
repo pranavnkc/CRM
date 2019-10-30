@@ -2,6 +2,7 @@ import os
 import json
 import random
 import string
+from datetime import datetime
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
@@ -43,3 +44,16 @@ def get_diff(old, new, json_loads=True, exempt_fields=[]):
         sort_keys=True,
         cls=DjangoJSONEncoder
     ))) if json_loads else (old_ret, new_ret)
+
+
+
+def try_parsing_date(text):
+    text = text.strip()
+    print(text)
+    for fmt in ('%b %d, %y', ):
+        try:
+            return datetime.strptime(text, fmt)
+        except ValueError as e:
+            print(e)
+            pass
+    raise ValueError('no valid date format found')

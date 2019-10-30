@@ -13,7 +13,7 @@
       <mat-icon>people</mat-icon>
       <span>Leads</span>
     </a>
-    <ul>
+    <ul *ngIf="false">
       <li [ngClass]="{'expanded-parent': ngInit.value}">
 
         <a (click)="ngInit.value = !ngInit.value" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">

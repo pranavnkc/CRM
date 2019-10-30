@@ -79,6 +79,8 @@ class LeadViewSet(viewsets.ModelViewSet):
     @list_route(url_path='assign', methods=('post',))
     def assign(self, request):
         leads =self.queryset.filter(id__in=request.data.get('leads', []))
+        if any([lead.is_locked for lead in leads]):
+            return Response({"locked":"Can't assign locked lead"}, status=400)
         history_objs = []
         assinee = self.request.data.get('assignee')
         if assinee:

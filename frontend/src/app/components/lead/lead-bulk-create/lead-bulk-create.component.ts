@@ -33,7 +33,7 @@ export class LeadBulkCreateComponent implements OnInit {
     let file = this.fileInput.nativeElement.files[0];
     formData.append('file', file, file.name);
     formData.append('source', this.source);
-    let successMsg = "Officer's Added Succesfully";
+    let successMsg = "Lead's Added Succesfully";
     this.spinnerService.showSpinner = true;
     this.http.post('api/leads/bulk-create/', formData).subscribe((response: any) => {
       this.spinnerService.showSpinner = false;

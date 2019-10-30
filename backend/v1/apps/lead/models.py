@@ -44,6 +44,10 @@ class Lead(models.Model):
     )
     GAS = 'gas'
     ELECTRICITY = 'electricity'
+    METER_TYPE_CHOICES = (
+        (GAS, "GAS"),
+        (ELECTRICITY, "Elecricity"),
+    )
     source = models.CharField(max_length=200, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
@@ -67,7 +71,7 @@ class Lead(models.Model):
     county = models.CharField(max_length=100, null=True, blank=True)
     postcode = models.CharField(max_length=10, null=True, blank=True)
     #suppky detail fields
-    utility_type = models.CharField(choices=SALUTATION_CHOICES, max_length=30, null=True, blank=True)
+    utility_type = models.CharField(choices=METER_TYPE_CHOICES, max_length=30, null=True, blank=True)
     amr = models.BooleanField(default=True, null=True, blank=True)
     related_meter = models.BooleanField(default=False, null=True, blank=True)
     current_electricity_supplier = models.CharField(max_length=100, null=True, blank=True)
@@ -76,7 +80,7 @@ class Lead(models.Model):
     supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True) # this is MPRN/MPAN
     #new fields as discussed on 10th oct
     can_sell_water = models.BooleanField(default=False)
-    initial_disposition_made = models.BooleanField(default=False)
+    initial_disposition_date = models.DateField(blank=True, null=True)
     new_renewal_date = models.DateField(null=True, blank=True)
     agent_name = models.CharField(max_length=200, null=True, blank=True)
     contract_duration = models.IntegerField(null=True, blank=True)

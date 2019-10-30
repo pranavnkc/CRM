@@ -1,5 +1,5 @@
 export let constants = {
-  pageSizeOptions: [5, 10, 15, 20, 25, 30],
+  pageSizeOptions: [5, 10, 15, 20, 25, 30, 60, 120, 240, 480, 960, 1920, 2000, 3000, 4000, 5000],
   defaultPageSize: 20,
   keys: Object.keys,
   showSpinner: false,

@@ -3,7 +3,7 @@ from django.db import transaction
 from io import StringIO
 from rest_framework import serializers
 from .models import Lead, Status, Comment, Callback, LeadHistory
-from v1.apps.utils.utils import get_file_name, model_to_dict_v2, get_diff
+from v1.apps.utils.utils import get_file_name, model_to_dict_v2, get_diff, try_parsing_date
 
 
 class LeadSerializer(serializers.ModelSerializer):    
@@ -102,31 +102,56 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
     file = serializers.FileField()
     source = serializers.CharField(max_length=200)
     lead_field_mapping = {
-        'lead_hash':'Lead Hash',
-        'busines_name':'BusinessName',
-        'first_name':'FirstName',
-        'middle_name':'MiddleName',
-        'last_name':'LastName',
-        'phone_number':'PhoneNumber',
-        'email':'eMail',
+        'busines_name':'Company Name',
+        'salutation':'Saluatation',
+        'first_name':'Contact Forename',
+        'last_name':'Contact Surname',
+        'phone_number':'Tel Number',
+        'email':'Email',
         'building_name':'BuildingName',
-        'subb':'Subb',
+        'address_1':'Address 1',
+        'address_2':'Address 2',
+        'address_3':'Address 3',
+        'address_4':'Address 4',
         'building_number':'BuildingNumber',
         'street_name':'StreetName',
-        'town':'Town',
+        'city_or_town':'City/Town',
         'county':'County',
-        'meter_type':'MeterType',
+        'postcode':'Site Post Code',
         'meter_type_code':'MeterTypeCode',
         'domestic_meter':'domesticMeter',
         'related_meter':'RelatedMeter',
         'amr':'AMR',
+        'utility_type':'Utility(Elec / Gas)',
         'current_electricity_supplier':'CurrentElectricitySupplier',
         'contract_end_day':'contractEndDay',
         'contract_end_month':'contractEndMonth',
         'contract_end_year':'contractEndYear',
-        'meter_serial_number':'Meter Serial Number',
-        'supply_number':'SupplyNumber',
+        'meter_serial_number':'Electricity Meter Serial Number',
+        'supply_number':'Full MPAN/MPR',
+        'can_sell_water':'Can Sell Water ?',
+        'source':'Source',
+        'initial_disposition_date':'Sale / Disposition Made',
+        'new_renewal_date':'New Renewal / PR',
+        'agent_name':'Agent Id',
+        'contract_duration':'Duration (Months)',
+        's_andr3_status':'S&R3 Status',
+        'bilge_eac':'BILGE Submitted EAC',
+        'new_disposition_date':'New Disposition Date',
+        'is_locked':'Is locked?',
+        
     }
+    def transform_row(self, row):
+        row['utility_type'] = Lead.GAS if row['utility_type'].lower().startswith('g') else Lead.ELECTRICITY
+        row['can_sell_water'] = True if row['can_sell_water'].strip().lower()=='yes' else False
+        if row.get('initial_disposition_date') is not None:
+            row['initial_disposition_date'] = row['initial_disposition_date'] or None
+        if row.get('new_renewal_date') is not None:
+            row['new_renewal_date'] = row['new_renewal_date'] or None
+        if row.get('new_disposition_date') is not None:
+            row['new_disposition_date'] = row['new_disposition_date'] or None
+        return row
+        
     def validate(self, data):
         validated_data = {"lead_objects":[], "business_objects":{}, "supply_objects":{}}
         is_error = False
@@ -151,6 +176,8 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                 if lead_data['supply_number'] in supply_number_list:
                     raise serializers.ValidationError({"lead_hash":"Duplicate supply number {}".format(lead_data['supply_number'])})
                 supply_number_list.append(lead_data['supply_number'])
+                lead_data = self.transform_row(lead_data)
+                lead_data['source'] = lead_data['source'] or data['source']
                 lead_ser = LeadSerializer(data=lead_data, context=self.context)
                 lead_ser.status_choices = status_choices
                 if not lead_ser.is_valid():
@@ -158,7 +185,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                     row['errors'] = lead_ser.errors
                     writer.writerow(row)
                 else:
-                    lead_obj  = Lead(status=lead_ser.validated_data.get('status', 'raw'), created_by=self.context['request'].user, source=data['source'], **lead_ser.validated_data)
+                    lead_obj  = Lead(status=lead_ser.validated_data.get('status', 'raw'), created_by=self.context['request'].user, **lead_ser.validated_data)
                     validated_data['lead_objects'].append(lead_obj)
         if is_error:
             raise serializers.ValidationError({"data_error":error_file_name})
@@ -168,7 +195,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
     def create(self, validated_data):
         history_objs = []
         Lead.objects.bulk_create(validated_data['lead_objects'])
-        for index, l in enumerate(Lead.objects.filter(lead_internal_hash__in=[l.lead_internal_hash for l in validated_data['lead_objects']])):
+        for index, l in enumerate(Lead.objects.filter(supply_number__in=[l.supply_number for l in validated_data['lead_objects']])):
             history_obj = LeadHistory(lead=l, action=LeadHistory.ACTION_CREATED, created_by=self.context['request'].user, old_instance_meta={})
             history_obj.new_instance_meta = model_to_dict_v2(l)
             history_objs.append(history_obj)
