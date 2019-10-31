@@ -3,9 +3,12 @@
         <input type="file" #fileInput accept=".csv">
     </div>
     <div fxLayout="row" class="pdt30">
-        <mat-form-field>
+        <mat-form-field fxFlex="20%">
                 <input matInput placeholder="Source" [(ngModel)]="source" name="first" required>
         </mat-form-field>
+        <div fxFlexOffset="60%">
+            <button mat-button mat-raised-button  (click)="downloadTemplate()" color="primary">Download Template</button>
+        </div>
     </div>
 
     <p class="danger">{{officersUploaderror}}</p>

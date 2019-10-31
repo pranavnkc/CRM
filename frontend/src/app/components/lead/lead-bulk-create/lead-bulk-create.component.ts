@@ -48,6 +48,8 @@ export class LeadBulkCreateComponent implements OnInit {
     });
 
   };
-
+  downloadTemplate() {
+    this.fileLoader.downloadFile('/static/upload_template.csv');
+  }
 
 }
