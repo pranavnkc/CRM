@@ -1,11 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="form.valid && createLead()">
     <div fxLayout="column" class="padded-form">
         <div fxLayout="row" fxLayoutGap="5%">
-            <mat-form-field fxFlex="90%">
-                <input matInput class="white-text f20" placeholder="Lead Hash" formControlName="lead_hash">
-            </mat-form-field>
-        </div>
-        <div fxLayout="row" fxLayoutGap="5%">
             <mat-form-field fxFlex="15%" class="mat-block">
                 <mat-select placeholder="*Salutation" formControlName="salutation">
                     <mat-option value="Mr.">Mr.</mat-option>
@@ -42,28 +37,28 @@
         </div>
         <div fxLayout="row" fxLayoutGap="5%">
             <mat-form-field fxFlex="45%" >
-                <input matInput class="white-text f20" placeholder="Building Name" formControlName="building_name">
+                <input matInput class="white-text f20" placeholder="Address 1" formControlName="address_1">
             </mat-form-field>
             <mat-form-field fxFlex="45%" >
-                <input matInput class="white-text f20" placeholder="Subb" formControlName="subb">
+                <input matInput class="white-text f20" placeholder="Address 2" formControlName="address_2">
             </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutGap="5%">
             <mat-form-field fxFlex="45%" >
-                <input matInput class="white-text f20" placeholder="Building Number" formControlName="building_number">
+                <input matInput class="white-text f20" placeholder="Address 3" formControlName="address_3">
             </mat-form-field>
 
             <mat-form-field fxFlex="45%">
-                <input matInput class="white-text f20" placeholder="Street Name" formControlName="street_name">
+                <input matInput class="white-text f20" placeholder="Address 4" formControlName="address_4">
             </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutGap="5%">
             <mat-form-field fxFlex="28%" >
-                <input matInput class="white-text f20" placeholder="Town" formControlName="town">
+                <input matInput class="white-text f20" placeholder="Town or City" formControlName="town_or_city">
             </mat-form-field>
 
             <mat-form-field fxFlex="28%">
-                <input matInput class="white-text f20" placeholder="City" formControlName="city">
+                <input matInput class="white-text f20" placeholder="Postcode" formControlName="postcode">
             </mat-form-field>
 
             <mat-form-field fxFlex="29%">
@@ -72,11 +67,19 @@
         </div>
         <div fxLayout="row" fxLayoutGap="5%">
             <mat-form-field fxFlex="28%">
-                <input matInput class="white-text f20 mat-block" placeholder="Meter Type" formControlName="meter_type">
+                <mat-select placeholder="Meter Type" formControlName="utility_type">
+                    <mat-option value="gas">Gas</mat-option>
+                    <mat-option value="electricity">Electricity</mat-option>
+                </mat-select>
             </mat-form-field>
-
             <mat-form-field fxFlex="28%">
                 <input matInput class="white-text f20 mat-block" placeholder="Meter Type Code" formControlName="meter_type_code">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <mat-select placeholder="Can Sell Water?" formControlName="can_sell_water">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>NO</mat-option>
+                </mat-select>
             </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutGap="5%">
@@ -107,7 +110,33 @@
                 <input matInput class="white-text f20 mat-block" placeholder="Supply Number" formControlName="supply_number">
             </mat-form-field>
         </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Contract Duration" formControlName="contract_duration">
+            </mat-form-field>
 
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Meter Serial Number" formControlName="meter_serial_number">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Supply Number" formControlName="supply_number">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="S & R3 Status" formControlName="s_andr3_status">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Bilge EAC" formControlName="bilge_eac">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Locked" formControlName="is_locked">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
     </div>
     <br />
     <div fxLayout="row" fxLayoutGap="30px" fxLayout.xs="column">

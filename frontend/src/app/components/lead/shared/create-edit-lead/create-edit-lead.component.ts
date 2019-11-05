@@ -58,28 +58,31 @@ export class CreateEditLeadComponent implements OnInit {
 
   createForm() {
     this.form = this.fb.group({
-      lead_hash: [null, Validators.required],
-      salutation: [null, Validators.required],
-      first_name: [null, Validators.required],
-      middle_name: [null, Validators.required],
-      last_name: [null, Validators.required],
-      phone_number: [null, Validators.compose([Validators.required, Validators.minLength(10), Validators.maxLength(10)])],
-      email: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)])],
-      building_name: [null],
-      subb: [null],
-      building_number: [null],
-      street_name: [null],
-      town: [null],
-      city: [null],
+      salutation: [null],
+      first_name: [null],
+      middle_name: [null,],
+      last_name: [null,],
+      phone_number: [null, Validators.compose([Validators.minLength(10), Validators.maxLength(10)])],
+      email: [null, Validators.compose([Validators.pattern(constants.EMAIL_REGEXP)])],
+      address_1: [null],
+      address_2: [null],
+      address_3: [null],
+      address_4: [null],
+      town_or_city: [null],
       county: [null],
-      meter_type: [null],
-      meter_type_code: [null],
+      postcode: [null],
+      utility_type: [null],
       amr: [null],
+      contract_duration: [null],
+      can_sell_water: [false],
+      s_andr3_status: [null],
+      bilge_eac: [null],
       related_meter: [null],
       current_electricity_supplier: [null],
       contract_end_date: [null],
       meter_serial_number: [null],
-      supply_number: [null]
+      supply_number: [null],
+      is_locked: [false]
     })
   }
 
