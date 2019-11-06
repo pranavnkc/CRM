@@ -30,6 +30,7 @@ export class LeadListComponent implements OnInit {
   constants = constants;
   selection = new SelectionModel<any>(true, []);
   filterForm: FormGroup;
+  include_raw_leads = false;
   inlineFormFields = {
     status: [null],
     salutation: [null],
@@ -80,7 +81,7 @@ export class LeadListComponent implements OnInit {
     private snackBarService: SnackBarService,
     private spinnerService: SpinnerService,
     private fileLoader: FileLoaderService,
-    private authService: AuthService) {
+    public authService: AuthService) {
     console.log(this);
     this.fields = [
       { "field": "id", "display": "Lead ID", "selected": true },
@@ -126,7 +127,7 @@ export class LeadListComponent implements OnInit {
       { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "input" },
       { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true, "fieldType": "date" },
       { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false, "fieldType": "input" },
-      { "field": "supply_number", 'filterField': 'supply_number', "display": "Supply Number", "selected": false, "fieldType": "input" },
+      { "field": "supply_number", 'filterField': 'supply_number', "display": "MPAN/MPRN", "selected": false, "fieldType": "input" },
       {
         "field": "can_sell_water", 'filterField': 'can_sell_water', "display": "Can Sell Water", "selected": false, "fieldType": "select", "options": [
           { "key": true, "value": "Yes" },
@@ -220,6 +221,9 @@ export class LeadListComponent implements OnInit {
     let params = { 'page': pageIndex != undefined ? pageIndex + 1 : this.paginator.pageIndex + 1, 'page_size': this.paginator.pageSize || this.constants.defaultPageSize };
     if (param != undefined) {
       params['q'] = param;
+    }
+    if (this.include_raw_leads) {
+      params['include_raw_leads'] = this.include_raw_leads;
     }
     if (this.sort.direction) {
       params['sortBy'] = this.sort.active;
@@ -343,7 +347,7 @@ export class LeadListComponent implements OnInit {
     if (data.contract_end_date) {
       data.contract_end_date = data.contract_end_date.split("T")[0]
     }
-    this.service.updateLead(this.inlineEditedID, data).subscribe((res) => {
+    this.service.updateLead(this.inlineEditedID, data, this.include_raw_leads).subscribe((res) => {
       this.inlineEditedID = null;
       this.loadLeads();
     })

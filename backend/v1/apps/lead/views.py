@@ -2,21 +2,21 @@ import csv
 from django.contrib.postgres.forms import SimpleArrayField
 from django.forms import IntegerField, CharField
 from django.db.models.functions import Concat
-from django.db.models import F, Value
+from django.db.models import F, Value, Q
 from django.db.models.functions import Lower 
 from rest_framework import viewsets
 from rest_framework import permissions
+from rest_framework import mixins
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
+
 from v1.apps.utils.pagination import StandardResultsSetPagination
 from v1.apps.utils.utils import get_file_name, model_to_dict_v2
 from . import serializers
 from . import models
 from .filters import LeadFilter, LeadHistoryFilter
 
-
 class LeadViewSet(viewsets.ModelViewSet):
-
     serializer_class = serializers.LeadSerializer
     queryset = models.Lead.objects.all().select_related('assigned_to').order_by('created_on').distinct()
     pagination_class = StandardResultsSetPagination
@@ -37,7 +37,11 @@ class LeadViewSet(viewsets.ModelViewSet):
         else:
             self.queryset = self.queryset.order_by('-id')
         if self.request.user.groups.filter(name='sales-person').exists():
-            return self.queryset.filter(assigned_to=self.request.user)   
+            return self.queryset.filter(assigned_to=self.request.user)
+        if self.request.user.groups.filter(name='stage-1').exists():
+            if self.request.query_params.get('include_raw_leads'):
+                return self.queryset.filter(status='raw')
+            return self.queryset.filter(assigned_to=self.request.user)  
         return self.queryset
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
@@ -132,4 +136,16 @@ class LeadViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.filter_class = LeadHistoryFilter
         return self.get_paginated_response(serializers.LeadHistorySerializer(self.paginate_queryset(self.filter_queryset(instance.lead_history.all().select_related('created_by').order_by('created_on'))), many=True).data)
+    
+
+class ReportViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = serializers.LeadHistorySerializer
+    pagination_class = StandardResultsSetPagination
+    queryset = models.LeadHistory.objects.all()
+    filter_class = LeadHistoryFilter
+    def get_queryset(self):
+        if self.request.user.groups.filter(name='admin').exists():
+            return models.LeadHistory.objects.filter(lead__isnull=False).select_related('created_by').order_by('-created_on')
+        filter_q = Q(created_by=self.request.user) | Q(created_by__parent=self.request.user.id) | Q(created_by__parent__parent=self.request.user.id)
+        return models.LeadHistory.objects.filter(lead__isnull=False).filter(filter_q).select_related('created_by').order_by('created_on')
     

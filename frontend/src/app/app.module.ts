@@ -76,6 +76,7 @@ import { LeadAssignComponent } from './components/lead/lead-assign/lead-assign.c
 import { CallbackComponent } from './components/lead/callback/callback.component';
 import { LeadBulkCreateComponent } from './components/lead/lead-bulk-create/lead-bulk-create.component';
 import { Page403Component } from './page-403/page-403.component';
+import { ReportsComponent } from './components/reports/reports.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -94,6 +95,7 @@ const appRoutes: Routes = [
       { path: 'leads/bulk-create', component: LeadBulkCreateComponent, data: { title: ' Bulk Create Lead' } },
       { path: 'leads/edit/:id', component: CreateEditLeadComponent, data: { title: 'Edit Lead' } },
       { path: 'leads/details/:id', component: LeadDetailsComponent, data: { title: 'Lead details' } },
+      { path: 'reports', canActivate: [AuthGuard], component: ReportsComponent, data: { title: 'Report' } },
       { path: 'settings', component: SettingsComponent, data: { title: 'Settings' } },
       { path: 'profile', component: ProfileComponent, data: { title: 'Profile' } },
       {
@@ -154,6 +156,7 @@ export function get_ip(appLoadService: AppLoadService) {
     CallbackComponent,
     LeadBulkCreateComponent,
     Page403Component,
+    ReportsComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

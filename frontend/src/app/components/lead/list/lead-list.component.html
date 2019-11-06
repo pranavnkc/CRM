@@ -115,6 +115,9 @@
                         <button mat-raised-button type="submit" color="primary">Apply Filter</button>
                     </div>
                 </form>
+                <div *ngIf="authService.role=='stage-1'">
+                    <mat-checkbox [(ngModel)]="include_raw_leads" [ngModelOptions]="{standalone: true}" (ngModelChange)="loadLeads()">Include All Raw Leads</mat-checkbox>
+                </div>
                 <br/>
                 <div>
                     <mat-chip-list>

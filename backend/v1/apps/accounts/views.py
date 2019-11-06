@@ -24,7 +24,7 @@ class UserViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
     def get_queryset(self):
         qs = models.User.objects.all().order_by('-date_joined').prefetch_related('groups')
-        if self.request.user.groups.filter(name='sales-person').exists():
+        if self.request.user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
             return qs.filter(id=self.request.user.id)
         elif self.request.user.groups.filter(name__in=['team-manager', 'company-head']).exists():
             return qs.filter(parent=self.request.user) | qs.filter(id=self.request.user.id) | qs.filter(parent__parent=self.request.user)  

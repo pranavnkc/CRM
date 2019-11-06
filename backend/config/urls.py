@@ -12,7 +12,6 @@ from v1.apps.authentication import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('api/auth/', auth_views.AuthViewset.as_view()),
     path('api/settings/', UpdateSettingsView.as_view()),
     path('api/', include(router.urls)),

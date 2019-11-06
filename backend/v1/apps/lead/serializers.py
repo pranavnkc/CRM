@@ -1,4 +1,5 @@
 import csv
+from django.utils import timezone
 from django.db import transaction
 from io import StringIO
 from rest_framework import serializers
@@ -29,6 +30,7 @@ class LeadSerializer(serializers.ModelSerializer):
         return super(LeadSerializer, self).create(validated_data)
     
     def update(self, instance, validated_data):
+        old_status = instance.status
         history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_EDIT_LEAD, created_by=self.context['request'].user)
         history_obj.old_instance_meta = model_to_dict_v2(instance)
         instance = super(LeadSerializer, self).update(instance, validated_data)
@@ -36,6 +38,11 @@ class LeadSerializer(serializers.ModelSerializer):
         history_obj.old_instance_meta, history_obj.new_instance_meta = get_diff(history_obj.old_instance_meta, history_obj.new_instance_meta)
         if history_obj.new_instance_meta:
             history_obj.save()
+        if old_status == 'raw' and self.context['request'].user.groups.filter(name='stage-1').exists():
+            instance.assigned_to = self.context['request'].user
+            instance.assigned_by = self.context['request'].user
+            instance.assigned_on = timezone.now()
+            instance.save() 
         return instance
 
     def to_representation(self, obj):

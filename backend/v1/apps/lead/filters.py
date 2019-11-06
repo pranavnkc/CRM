@@ -27,8 +27,12 @@ class LeadFilter(django_filters.FilterSet):
         fields = ('q',)
 
 class LeadHistoryFilter(django_filters.FilterSet):
+    q = django_filters.CharFilter(method='q_filter')
     start_date = django_filters.CharFilter(method='date_filter')
     end_date = django_filters.CharFilter(method='date_filter')
+    
+    def q_filter(self, queryset, name, val):
+        return queryset.filter(lead_id=val)
     
     def date_filter(self, queryset, name, val):
         filter_q = Q()
@@ -40,4 +44,4 @@ class LeadHistoryFilter(django_filters.FilterSet):
 
     class Meta:
         model = LeadHistory
-        fields = ('start_date', 'end_date')
+        fields = ('start_date', 'end_date', 'created_by', 'q')
