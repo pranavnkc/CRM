@@ -39,9 +39,14 @@ class LeadSerializer(serializers.ModelSerializer):
         if history_obj.new_instance_meta:
             history_obj.save()
         if old_status == 'raw' and self.context['request'].user.groups.filter(name='stage-1').exists():
+            history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_ASSIGN_CHANGED, created_by=self.context['request'].user)
+            history_obj.old_instance_meta = {"assinee":instance.assigned_to_id}
+            history_obj.new_instance_meta = {"assinee":self.context['request'].user.id}
+            history_obj.save()
             instance.assigned_to = self.context['request'].user
             instance.assigned_by = self.context['request'].user
             instance.assigned_on = timezone.now()
+            
             instance.save() 
         return instance
 

@@ -135,7 +135,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     def history(self, request, pk):
         instance = self.get_object()
         self.filter_class = LeadHistoryFilter
-        return self.get_paginated_response(serializers.LeadHistorySerializer(self.paginate_queryset(self.filter_queryset(instance.lead_history.all().select_related('created_by').order_by('created_on'))), many=True).data)
+        return self.get_paginated_response(serializers.LeadHistorySerializer(self.paginate_queryset(self.filter_queryset(instance.lead_history.all().select_related('created_by').order_by('-created_on'))), many=True).data)
     
 
 class ReportViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
