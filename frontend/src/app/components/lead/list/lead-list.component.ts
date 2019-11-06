@@ -43,7 +43,7 @@ export class LeadListComponent implements OnInit {
     address_2: [null],
     address_3: [null],
     address_4: [null],
-    town_or_city: [null],
+    city_or_town: [null],
     county: [null],
     postcode: [null],
     amr: [null],
@@ -104,7 +104,7 @@ export class LeadListComponent implements OnInit {
       },
       { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name} ${element.last_name}`, "fieldType": "input" },
       { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-      { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? constants.formatPhone(element.phone_number) : ''}`, "fieldType": "phone" },
+      { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? element.phone_number : ''}`, "fieldType": "phone" },
       { "field": "email", 'filterField': 'email', "display": "Email", "selected": false, "fieldType": "input" },
       { "field": "address_1", 'filterField': 'address_1', "display": "Address 1", "selected": false, "fieldType": "input" },
       { "field": "address_2", 'filterField': 'address_2', "display": "Address 2", "selected": false, "fieldType": "input" },
@@ -179,8 +179,8 @@ export class LeadListComponent implements OnInit {
     this.sort.sortChange.subscribe((s) => {
       this.loadLeads();
     })
-    let selectedItems = JSON.parse(localStorage.getItem('selectedLeadFields')).filter((sf) => this.fields.find((f) => f.field == sf) || ['edit', 'select', 'actions'].indexOf(sf) != -1);
-    if (selectedItems.length != JSON.parse(localStorage.getItem('selectedLeadFields')).length) {
+    let selectedItems = (JSON.parse(localStorage.getItem('selectedLeadFields')) || []).filter((sf) => this.fields.find((f) => f.field == sf) || ['edit', 'select', 'actions'].indexOf(sf) != -1);
+    if (selectedItems.length && selectedItems.length != JSON.parse(localStorage.getItem('selectedLeadFields')).length) {
       localStorage.setItem('selectedLeadFields', JSON.stringify(selectedItems));
     }
     if (selectedItems && selectedItems.length) {

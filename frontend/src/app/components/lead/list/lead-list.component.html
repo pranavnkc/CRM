@@ -178,7 +178,7 @@
                             <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.field" style="margin-right:1%"> {{ column.display }} </mat-header-cell>
                             <mat-cell *matCellDef="let element" style="margin-right:1%">
                                 <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType!='date'" class="mat-block">
-                                    <input  *ngIf="column.fieldType=='phone'" [mask]="'(000) 900-0000'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                                    <input  *ngIf="column.fieldType=='phone'" [mask]="'0000000000'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
                                     <input  *ngIf="column.fieldType=='input'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
                                     <mat-select *ngIf="column.fieldType=='select'" [formControlName]="column.field" placeholder="{{column.display}}">
                                         <mat-option *ngFor="let option of (column.field=='status'?sharedDataService.leadStatus:column.options)" [value]="option.key">{{option.value || option.display}}</mat-option>
