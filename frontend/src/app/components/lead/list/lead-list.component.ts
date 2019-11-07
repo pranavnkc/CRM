@@ -353,8 +353,9 @@ export class LeadListComponent implements OnInit {
       this.loadLeads();
     })
   }
+
   submitForPR(lead) {
-    this.service.updateLead(lead.id, { 'submission_status': 'prospect' }, this.include_raw_leads).subscribe((res) => {
+    this.service.submitForPR(lead.id, { 'submission_status': 'prospect' }, this.include_raw_leads).subscribe((res) => {
       this.loadLeads();
     })
   }

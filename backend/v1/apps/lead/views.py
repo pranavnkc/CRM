@@ -51,9 +51,14 @@ class LeadViewSet(viewsets.ModelViewSet):
             'submission_status':models.SubmissionStatus.objects.values(),
             'lead_actions':[{'key':la[0], 'display':la[1]} for  la in models.LeadHistory.ACTION_CHOICES]})
     
-    @detail_route(url_path='submission', methods=('patch',))
+    @detail_route(url_path='submit-for-pr', methods=('patch',))
     def submission(self, request, pk):
-        pass
+        instance = self.get_object()
+        pr=models.ProspectLead(lead=instance, status=models.ProspectLead.STATUS_PR, submitted_by=request.user, is_hot_transfer=request.data.get('is_hot_transfer', False))
+        instance.status = 'prospect'
+        instance.save()
+        pr.save()
+        return Response()
     @detail_route(url_path='comment', methods=('post','get'))
     def comment(self, request, pk):
         instance = self.get_object()

@@ -42,4 +42,11 @@ export class LeadService {
   getLeadHistory(id: any, params: any) {
     return this.http.get(`api/leads/${id}/history/`, params);
   }
+  submitForPR(id: any, data: any, includeRaw?: Boolean) {
+    let url = `api/leads/${id}/submit-for-pr/`;
+    if (includeRaw) {
+      url = `api/leads/${id}/?include_raw_leads=true`;
+    }
+    return this.http.patch(url, data);
+  }
 }

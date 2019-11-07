@@ -18,7 +18,8 @@ class LeadSerializer(serializers.ModelSerializer):
         }
 
     def validate_status(self, value):
-        if (hasattr(self, 'status_choices') and value not in self.status_choices) or not Status.objects.filter(key=value).exists():
+        print(value)
+        if value and ((hasattr(self, 'status_choices') and value not in self.status_choices) or not Status.objects.filter(key=value).exists()):
             raise serializers.ValidationError({'status':'Invalid status code'})
         return value
     

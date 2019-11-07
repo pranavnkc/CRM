@@ -102,6 +102,23 @@ class Lead(models.Model):
     @property
     def name(self):
         return "{} {} {}".format(self.first_name, self.middle_name, self.last_name)
+
+class ProspectLead(models.Model):
+    STATUS_PR = 'pr'
+    STATUS_UNAPPROVED = 'unapproved'
+    STATUS_HOLD = 'hold'
+    STATUS_CHOICES = (
+        (STATUS_PR, 'Prospect'),
+        (STATUS_UNAPPROVED, 'Unapproved'),
+        (STATUS_HOLD, 'On Hold')
+    )
+    lead = models.ForeignKey(Lead, related_name='prospect', on_delete=models.CASCADE)
+    status = models.CharField(
+        choices=STATUS_CHOICES, max_length=30)
+    submitted_by = models.ForeignKey(User, related_name='submitted_prospects', on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True)
+    is_hot_transfer = models.BooleanField(default=False)
+    
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()
