@@ -24,7 +24,15 @@ def get_unique_internal_slug():
 class Status(models.Model):
     key = models.CharField(max_length=100)
     display = models.CharField(max_length=100)
+    def __str__(self):
+        return  self.display
     
+class SubmissionStatus(models.Model):
+    key = models.CharField(max_length=100)
+    display = models.CharField(max_length=100)
+    def __str__(self):
+        return  self.display
+
 class Lead(models.Model):
     MR = "Mr."
     MRS = "Mrs."
@@ -88,7 +96,9 @@ class Lead(models.Model):
     bilge_eac = models.CharField(max_length=200, null=True, blank=True)
     new_disposition_date = models.DateField(null=True, blank=True)
     is_locked = models.BooleanField(default=False) # if lead is locked then it assigned_to can not be changed
-    
+    @property
+    def name(self):
+        return "{} {} {}".format(self.first_name, self.middle_name, self.last_name)
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()

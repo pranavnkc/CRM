@@ -102,7 +102,7 @@ export class LeadListComponent implements OnInit {
           { "key": "Rev.", value: "Rev." },
         ]
       },
-      { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name} ${element.last_name}`, "fieldType": "input" },
+      { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name || ""} ${element.last_name}`, "fieldType": "input" },
       { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
       { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? element.phone_number : ''}`, "fieldType": "phone" },
       { "field": "email", 'filterField': 'email', "display": "Email", "selected": false, "fieldType": "input" },
@@ -110,7 +110,7 @@ export class LeadListComponent implements OnInit {
       { "field": "address_2", 'filterField': 'address_2', "display": "Address 2", "selected": false, "fieldType": "input" },
       { "field": "address_3", 'filterField': 'address_3', "display": "Address 3", "selected": false, "fieldType": "input" },
       { "field": "address_4", 'filterField': 'address_4', "display": "Address 4", "selected": false, "fieldType": "input" },
-      { "field": "city_or_town", 'filterField': 'town_or_city', "display": "Town or City", "selected": false, "fieldType": "input" },
+      { "field": "city_or_town", 'filterField': 'city_or_town', "display": "Town or City", "selected": false, "fieldType": "input" },
 
       { "field": "county", 'filterField': 'county', "display": "County", "selected": false, "fieldType": "input" },
       { "field": "postcode", 'filterField': 'postcode', "display": "Postcode", "selected": false, "fieldType": "input" },
@@ -119,9 +119,6 @@ export class LeadListComponent implements OnInit {
           { "key": "gas", "value": "Gas" },
           { "key": "electricity", "value": "Electricity" },
         ]
-      },
-      {
-        "field": "meter_type_code", 'filterField': 'meter_type_code', "display": "Meter Type Code", "selected": false, "fieldType": "input"
       },
       { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false, "fieldType": "input" },
       { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "input" },

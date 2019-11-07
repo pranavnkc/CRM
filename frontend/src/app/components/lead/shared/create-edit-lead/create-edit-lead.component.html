@@ -73,13 +73,13 @@
                 </mat-select>
             </mat-form-field>
             <mat-form-field fxFlex="28%">
-                <input matInput class="white-text f20 mat-block" placeholder="Meter Type Code" formControlName="meter_type_code">
-            </mat-form-field>
-            <mat-form-field fxFlex="29%">
                 <mat-select placeholder="Can Sell Water?" formControlName="can_sell_water">
                     <mat-option [value]=true>YES</mat-option>
                     <mat-option [value]=false>NO</mat-option>
                 </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Contract Duration" formControlName="contract_duration">
             </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutGap="5%">
@@ -108,14 +108,6 @@
 
             <mat-form-field fxFlex="29%">
                 <input matInput class="white-text f20 mat-block" placeholder="MPAN/MPRN" formControlName="supply_number">
-            </mat-form-field>
-        </div>
-        <div fxLayout="row" fxLayoutGap="5%">
-            <mat-form-field fxFlex="28%">
-                <input matInput class="white-text f20 mat-block" placeholder="Contract Duration" formControlName="contract_duration">
-            </mat-form-field>
-            <mat-form-field fxFlex="28%">
-                <input matInput class="white-text f20 mat-block" placeholder="Supply Number" formControlName="supply_number">
             </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutGap="5%">

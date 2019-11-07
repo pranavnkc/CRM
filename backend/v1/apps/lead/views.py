@@ -46,7 +46,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
     def status(self, request):
-        return Response(models.Status.objects.values())
+        return Response({'status':models.Status.objects.values(), 'submission_status':models.SubmissionStatus.objects.values()})
 
     @detail_route(url_path='comment', methods=('post','get'))
     def comment(self, request, pk):

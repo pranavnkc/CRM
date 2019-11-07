@@ -6,7 +6,7 @@ export class SharedDataService {
   ip = '';
   constructor(private http: HttpService) {
     this.http.get(`api/leads/status/`).subscribe((res) => {
-      this.leadStatus = res;
+      this.leadStatus = res['status'];
     });
   }
 }
