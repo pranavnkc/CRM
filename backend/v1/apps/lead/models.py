@@ -59,7 +59,8 @@ class Lead(models.Model):
     source = models.CharField(max_length=200, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, related_name='created_leads', on_delete=models.CASCADE,default=None, null=True)
-    status = models.CharField(max_length=40)
+    status = models.CharField(max_length=40, null=True, blank=True)
+    submission_status = models.CharField(max_length=40, default='raw')
     assigned_to = models.ForeignKey(User, related_name='assigned_leads', on_delete=models.CASCADE,default=None, null=True)
     assigned_by = models.ForeignKey(User, null=True, blank=True, related_name='have_assigned_leads', on_delete=models.SET_NULL)
     assigned_on = models.DateTimeField(blank=True, null=True, default=timezone.now)
@@ -78,7 +79,8 @@ class Lead(models.Model):
     city_or_town = models.CharField(max_length=100, null=True, blank=True)
     county = models.CharField(max_length=100, null=True, blank=True)
     postcode = models.CharField(max_length=10, null=True, blank=True)
-    #suppky detail fields
+    
+    #supply detail fields
     utility_type = models.CharField(choices=METER_TYPE_CHOICES, max_length=30, null=True, blank=True)
     amr = models.BooleanField(default=True, null=True, blank=True)
     related_meter = models.BooleanField(default=False, null=True, blank=True)
@@ -86,6 +88,7 @@ class Lead(models.Model):
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
     supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True) # this is MPRN/MPAN
+    
     #new fields as discussed on 10th oct
     can_sell_water = models.BooleanField(default=False)
     initial_disposition_date = models.DateField(blank=True, null=True)
@@ -117,6 +120,7 @@ class LeadHistory(models.Model):
     ACTION_EDIT_LEAD = 'edit'
     ACTION_DELETE_LEAD = 'deleted'
     ACTION_STATUS_CHANGE = 'status changed'
+    ACTION_SUBMISSION_STATUS_CHANGE = 'submission status changed'
     ACTION_ASSIGN_CHANGED = "lead assign changed"
     ACTION_CALLBACk_SCHEDULED = "lead callback scheduled"
     ACTION_COMMENT = "comment"
@@ -127,7 +131,8 @@ class LeadHistory(models.Model):
         (ACTION_ASSIGN_CHANGED, 'Lead Assign Changed'),
         (ACTION_CALLBACk_SCHEDULED, 'Lead Callback Scheduled'),
         (ACTION_DELETE_LEAD, 'Lead Deleted'),
-        (ACTION_COMMENT, 'Comment Added')
+        (ACTION_COMMENT, 'Comment Added'),
+        (ACTION_SUBMISSION_STATUS_CHANGE, 'Submission Status Changed'),
     )
     lead = models.ForeignKey(Lead, null=True, blank=True, on_delete=models.SET_NULL, related_name='lead_history')
     action = models.CharField(

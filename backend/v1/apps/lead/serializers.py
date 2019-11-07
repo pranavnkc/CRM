@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import transaction
 from io import StringIO
 from rest_framework import serializers
-from .models import Lead, Status, Comment, Callback, LeadHistory
+from .models import Lead, Status, SubmissionStatus, Comment, Callback, LeadHistory
 from v1.apps.utils.utils import get_file_name, model_to_dict_v2, get_diff, try_parsing_date
 
 
@@ -21,24 +21,35 @@ class LeadSerializer(serializers.ModelSerializer):
         if (hasattr(self, 'status_choices') and value not in self.status_choices) or not Status.objects.filter(key=value).exists():
             raise serializers.ValidationError({'status':'Invalid status code'})
         return value
+    
+    def validate_submission_status(self, value):
+        if (hasattr(self, 'submission_status_choices') and value not in self.submission_status_choices) or not SubmissionStatus.objects.filter(key=value).exists():
+            raise serializers.ValidationError({'status':'Invalid submission status code'})
+        return value
 
     def create(self, validated_data):
         if self.context['request'].user.groups.filter(name='sales-person').exists():
             validated_data['assigned_to'] = self.context['request'].user
-        validated_data['status'] = "raw"
+        validated_data['submission_status'] = "raw"
         validated_data['created_by'] = self.context['request'].user
         return super(LeadSerializer, self).create(validated_data)
-    
+    @transaction.atomic
     def update(self, instance, validated_data):
+        old_submission_status = instance.submission_status
         old_status = instance.status
         history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_EDIT_LEAD, created_by=self.context['request'].user)
         history_obj.old_instance_meta = model_to_dict_v2(instance)
         instance = super(LeadSerializer, self).update(instance, validated_data)
         history_obj.new_instance_meta = model_to_dict_v2(instance)
         history_obj.old_instance_meta, history_obj.new_instance_meta = get_diff(history_obj.old_instance_meta, history_obj.new_instance_meta)
-        if history_obj.new_instance_meta:
+        if validated_data.get('submission_status') and old_submission_status!=validated_data.get('submission_status'):
+            history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_SUBMISSION_STATUS_CHANGE, created_by=self.context['request'].user)
+            history_obj.old_instance_meta = {"submission_status": old_submission_status}
+            history_obj.new_instance_meta = {"submission_status": validated_data.get('submission_status')}
             history_obj.save()
-        if old_status == 'raw' and self.context['request'].user.groups.filter(name='stage-1').exists():
+        elif history_obj.new_instance_meta:
+            history_obj.save()
+        if old_submission_status == 'raw' and self.context['request'].user.groups.filter(name='stage-1').exists():
             history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_ASSIGN_CHANGED, created_by=self.context['request'].user)
             history_obj.old_instance_meta = {"assinee":instance.assigned_to_id}
             history_obj.new_instance_meta = {"assinee":self.context['request'].user.id}
@@ -46,7 +57,6 @@ class LeadSerializer(serializers.ModelSerializer):
             instance.assigned_to = self.context['request'].user
             instance.assigned_by = self.context['request'].user
             instance.assigned_on = timezone.now()
-            
             instance.save() 
         return instance
 
@@ -175,7 +185,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
         except Exception as e:
             raise serializers.ValidationError({"file": e})
         error_file_name = get_file_name()
-        status_choices = list(Status.objects.values_list('key', flat=True))
+        submission_status_choices = list(SubmissionStatus.objects.values_list('key', flat=True))
         supply_number_list = []
         with open(error_file_name, 'w', newline='') as csvfile:
             fieldnames = data['file'].fieldnames
@@ -193,13 +203,13 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                 lead_data = self.transform_row(lead_data)
                 lead_data['source'] = lead_data['source'] or data['source']
                 lead_ser = LeadSerializer(data=lead_data, context=self.context)
-                lead_ser.status_choices = status_choices
+                lead_ser.submission_status_choices = submission_status_choices
                 if not lead_ser.is_valid():
                     is_error = True 
                     row['errors'] = lead_ser.errors
                     writer.writerow(row)
                 else:
-                    lead_obj  = Lead(status=lead_ser.validated_data.get('status', 'raw'), created_by=self.context['request'].user, **lead_ser.validated_data)
+                    lead_obj  = Lead(submission_status=lead_ser.validated_data.get('submission_status', 'raw'), created_by=self.context['request'].user, **lead_ser.validated_data)
                     validated_data['lead_objects'].append(lead_obj)
         if is_error:
             raise serializers.ValidationError({"data_error":error_file_name})

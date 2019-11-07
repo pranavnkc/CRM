@@ -20,6 +20,12 @@
                             <mat-option *ngFor="let user of users" [value]="user.id">{{user.first_name + " " + user.last_name}}</mat-option>
                         </mat-select>
                     </mat-form-field>
+                    <mat-form-field fxFlex="20%">
+                        <mat-select placeholder="Action" formControlName="action" (selectionChange)="getHistoryData({ 'pageIndex': 0, pageSize: this.historyPaginator.pageSize })">
+                            <mat-option [value]="false">All</mat-option>
+                            <mat-option *ngFor="let la of sharedDataService.leadActions" [value]="la.key">{{la.display}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
 
                 </div>
                 <div fxLayout="row" fxLayoutGap="2%">

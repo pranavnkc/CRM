@@ -40,14 +40,20 @@ class LeadViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(assigned_to=self.request.user)
         if self.request.user.groups.filter(name='stage-1').exists():
             if self.request.query_params.get('include_raw_leads'):
-                return self.queryset.filter(status='raw')
+                return self.queryset.filter(submission_status='raw')
             return self.queryset.filter(assigned_to=self.request.user)  
         return self.queryset
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
     def status(self, request):
-        return Response({'status':models.Status.objects.values(), 'submission_status':models.SubmissionStatus.objects.values()})
-
+        return Response({
+            'status':models.Status.objects.values(),
+            'submission_status':models.SubmissionStatus.objects.values(),
+            'lead_actions':[{'key':la[0], 'display':la[1]} for  la in models.LeadHistory.ACTION_CHOICES]})
+    
+    @detail_route(url_path='submission', methods=('patch',))
+    def submission(self, request, pk):
+        pass
     @detail_route(url_path='comment', methods=('post','get'))
     def comment(self, request, pk):
         instance = self.get_object()

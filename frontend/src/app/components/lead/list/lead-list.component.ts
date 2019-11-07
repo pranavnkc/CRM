@@ -89,6 +89,10 @@ export class LeadListComponent implements OnInit {
       {
         "field": "status", "display": "Status", "selected": true, "fieldType": "select", "options": this.sharedDataService.leadStatus
       },
+      {
+        "field": "submission_status", "display": "Submission Status", "selected": true
+      },
+
       { "field": "assigned_to", "display": "Assigned To", "selected": true },
       { "field": "busines_name", 'filterField': 'busines_name', "display": "Business Name", "selected": true, "fieldType": "input" },
       {
@@ -346,6 +350,11 @@ export class LeadListComponent implements OnInit {
     }
     this.service.updateLead(this.inlineEditedID, data, this.include_raw_leads).subscribe((res) => {
       this.inlineEditedID = null;
+      this.loadLeads();
+    })
+  }
+  submitForPR(lead) {
+    this.service.updateLead(lead.id, { 'submission_status': 'prospect' }, this.include_raw_leads).subscribe((res) => {
       this.loadLeads();
     })
   }

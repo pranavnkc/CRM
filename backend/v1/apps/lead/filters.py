@@ -44,4 +44,4 @@ class LeadHistoryFilter(django_filters.FilterSet):
 
     class Meta:
         model = LeadHistory
-        fields = ('start_date', 'end_date', 'created_by', 'q')
+        fields = ('start_date', 'end_date', 'created_by', 'q', 'action')

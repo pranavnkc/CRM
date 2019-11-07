@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
 import { HttpService, SpinnerService } from '../../services';
+import { SharedDataService } from '../../../app/services/sharedData.service';
 import { UserService } from '../users/services/index';
 import { constants } from '../../constants';
 import * as moment from 'moment';
@@ -22,12 +23,13 @@ export class ReportsComponent implements OnInit {
   moment = moment;
   constants = constants;
   users = [];
-  constructor(private fb: FormBuilder, private spinnerService: SpinnerService, private http: HttpService, private userService: UserService) {
+  constructor(private fb: FormBuilder, private spinnerService: SpinnerService, private http: HttpService, private userService: UserService, public sharedDataService: SharedDataService) {
     this.getUSers();
     this.form = this.fb.group({
       "start_date": [moment().subtract('days', 7)],
       "end_date": [moment()],
       "user": [false],
+      "action": [false],
       "q": [null],
     });
   }
@@ -60,6 +62,9 @@ export class ReportsComponent implements OnInit {
     };
     if (this.form.value.user) {
       params['created_by'] = this.form.value.user;
+    }
+    if (this.form.value.action) {
+      params['action'] = this.form.value.action;
     }
 
     if (this.form.controls.q.value) {
