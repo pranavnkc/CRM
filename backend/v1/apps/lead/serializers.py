@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import transaction
 from io import StringIO
 from rest_framework import serializers
-from .models import Lead, Status, SubmissionStatus, Comment, Callback, LeadHistory
+from .models import *
 from v1.apps.utils.utils import get_file_name, model_to_dict_v2, get_diff, try_parsing_date
 
 
@@ -236,3 +236,34 @@ class LeadHistorySerializer(serializers.ModelSerializer):
         ret = super(LeadHistorySerializer, self).to_representation(obj)
         ret['created_by'] = obj.created_by.get_full_name() if obj.created_by else None
         return ret
+
+class ProspectLeadSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = ProspectLead
+        fields = '__all__'
+    def validate(self, data):
+        print(data['lead'].current_electricity_supplier, data['lead'].contract_end_date)
+        if not data['lead'].current_electricity_supplier or not data['lead'].contract_end_date:
+            raise serializers.ValidationError({"required":"Need to fill current supplier and contract End Date before PR."})
+        return data
+    def create(self, validated_data):
+        instance = super(ProspectLeadSerializer, self).create(validated_data)
+        instance.lead.submission_status = 'prospect'
+        instance.lead.save()
+        history = LeadHistory(lead=instance.lead, action=LeadHistory.ACTION_HT if validated_data.get('is_hot_transfer') else LeadHistory.ACTION_PR, created_by=self.context['request'].user, new_instance_meta={}, old_instance_meta={})
+        history.save()
+        return instance
+
+class LeadSaleSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = LeadSale
+        fields = '__all__'
+    def validate(self, data):
+        return data
+    def create(self, validated_data):
+        instance = super(LeadSaleSerializer, self).create(validated_data)
+        instance.lead.submission_status = 'sale'
+        instance.lead.save()
+        history = LeadHistory(lead=instance.lead, action=LeadHistory.ACTION_SALE, created_by=self.context['request'].user, new_instance_meta={}, old_instance_meta={})
+        history.save()
+        return instance

@@ -220,9 +220,17 @@
                                     <a *ngIf="role!='sales-person'" routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
                                         Edit
                                     </button></a>
-                                    <button *ngIf="role=='stage-1'" mat-menu-item (click)="submitForPR(element)">
+                                    <button *ngIf="role=='stage-1' || role=='sales-person'" mat-menu-item (click)="submitForPR(element)">
                                         <span>Submit For PR</span>
                                     </button>
+                                    <button *ngIf="role=='stage-1' || role=='sales-person'" mat-menu-item (click)="submitForPR(element, true)">
+                                        <span>Submit For HT</span>
+                                    </button>
+                                    <button *ngIf="role=='sales-person' || true" mat-menu-item (click)="submitForSale(element)">
+                                        <span>Submit For Sale</span>
+                                    </button>
+
+
                                 </mat-menu>
                             </mat-cell>
                         </ng-container>

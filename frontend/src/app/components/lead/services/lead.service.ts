@@ -49,4 +49,11 @@ export class LeadService {
     }
     return this.http.patch(url, data);
   }
+  submitForSale(id: any, data: any, includeRaw?: Boolean) {
+    let url = `api/leads/${id}/submit-for-sale/`;
+    if (includeRaw) {
+      url = `api/leads/${id}/?include_raw_leads=true`;
+    }
+    return this.http.patch(url, data);
+  }
 }

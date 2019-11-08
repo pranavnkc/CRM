@@ -77,6 +77,9 @@ import { CallbackComponent } from './components/lead/callback/callback.component
 import { LeadBulkCreateComponent } from './components/lead/lead-bulk-create/lead-bulk-create.component';
 import { Page403Component } from './page-403/page-403.component';
 import { ReportsComponent } from './components/reports/reports.component';
+import { PrSubmissionComponent } from './components/lead/pr-submission/pr-submission.component';
+import { AlertDialogComponent } from './components/dialogs/alert-dialog/alert-dialog.component';
+import { SaleComponent } from './components/lead/sale/sale.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -157,6 +160,9 @@ export function get_ip(appLoadService: AppLoadService) {
     LeadBulkCreateComponent,
     Page403Component,
     ReportsComponent,
+    PrSubmissionComponent,
+    AlertDialogComponent,
+    SaleComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
@@ -218,6 +224,6 @@ export function get_ip(appLoadService: AppLoadService) {
     },
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, LeadAssignComponent, CallbackComponent]
+  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, AlertDialogComponent, LeadAssignComponent, CallbackComponent, SaleComponent]
 })
 export class AppModule { }

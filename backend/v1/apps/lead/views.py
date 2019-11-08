@@ -12,6 +12,7 @@ from rest_framework.response import Response
 
 from v1.apps.utils.pagination import StandardResultsSetPagination
 from v1.apps.utils.utils import get_file_name, model_to_dict_v2
+from v1.apps.utils.models import Settings
 from . import serializers
 from . import models
 from .filters import LeadFilter, LeadHistoryFilter
@@ -49,16 +50,36 @@ class LeadViewSet(viewsets.ModelViewSet):
         return Response({
             'status':models.Status.objects.values(),
             'submission_status':models.SubmissionStatus.objects.values(),
-            'lead_actions':[{'key':la[0], 'display':la[1]} for  la in models.LeadHistory.ACTION_CHOICES]})
-    
+            'lead_actions':[{'key':la[0], 'display':la[1]} for  la in models.LeadHistory.ACTION_CHOICES],
+            'sold_as_choices':[{'key':sac[0], 'display':sac[1]} for  sac in models.LeadSale.SOLD_AS_CHOICES],
+            'company_type_choices':[{'key':ctc[0], 'display':ctc[1]} for ctc in models.LeadSale.COMPANY_TYPE_CHOICES],
+            'renewal_choices':[{'key':rc[0], 'display':rc[1]} for  rc in models.LeadSale.RENEWAL_CHOICES],
+            'supplier_choices':[{'key':sn, 'display':sn} for sn in Settings.objects.first().supplier_names]
+        })
     @detail_route(url_path='submit-for-pr', methods=('patch',))
-    def submission(self, request, pk):
+    def pr_submission(self, request, pk):
         instance = self.get_object()
-        pr=models.ProspectLead(lead=instance, status=models.ProspectLead.STATUS_PR, submitted_by=request.user, is_hot_transfer=request.data.get('is_hot_transfer', False))
-        instance.status = 'prospect'
-        instance.save()
-        pr.save()
+        data = {"lead":instance.id, "submitted_by":request.user.id, "comment": request.data.get('comment'), "is_hot_transfer":request.data.get('is_hot_transfer', False)}
+        ser = serializers.ProspectLeadSerializer(data=data, context={"request":request})
+        ser.is_valid(raise_exception=True)
+        print(ser.validated_data)
+        ser.save()
         return Response()
+
+    @detail_route(url_path='submit-for-sale', methods=('patch',))
+    def sale_submission(self, request, pk):
+        instance = self.get_object()
+        lead_ser = serializers.LeadSerializer(instance, data=request.data.pop('lead'), context={"request":request})
+        lead_ser.is_valid(raise_exception=True)
+        lead_ser.save()
+        data = request.data
+        data['lead'] = instance.id
+        data['sold_by'] = request.user.id
+        ser = serializers.LeadSaleSerializer(data=data, context={"request":request})
+        ser.is_valid(raise_exception=True)
+        ser.save()
+        return Response()
+
     @detail_route(url_path='comment', methods=('post','get'))
     def comment(self, request, pk):
         instance = self.get_object()

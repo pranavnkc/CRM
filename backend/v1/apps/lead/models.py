@@ -114,9 +114,11 @@ class ProspectLead(models.Model):
     )
     lead = models.ForeignKey(Lead, related_name='prospect', on_delete=models.CASCADE)
     status = models.CharField(
-        choices=STATUS_CHOICES, max_length=30)
+        choices=STATUS_CHOICES, max_length=30, default=STATUS_PR)
     submitted_by = models.ForeignKey(User, related_name='submitted_prospects', on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
+    comment = models.TextField()
+    campaign = models.CharField(max_length=100, blank=True, null=True)
     is_hot_transfer = models.BooleanField(default=False)
     
 class Callback(models.Model):
@@ -141,6 +143,9 @@ class LeadHistory(models.Model):
     ACTION_ASSIGN_CHANGED = "lead assign changed"
     ACTION_CALLBACk_SCHEDULED = "lead callback scheduled"
     ACTION_COMMENT = "comment"
+    ACTION_PR = "pr"
+    ACTION_HT = "ht"
+    ACTION_SALE = "sale"
     ACTION_CHOICES = (
         (ACTION_CREATED, "Lead Created"),
         (ACTION_EDIT_LEAD, 'Lead Edited'),
@@ -150,6 +155,9 @@ class LeadHistory(models.Model):
         (ACTION_DELETE_LEAD, 'Lead Deleted'),
         (ACTION_COMMENT, 'Comment Added'),
         (ACTION_SUBMISSION_STATUS_CHANGE, 'Submission Status Changed'),
+        (ACTION_PR, 'PR Submitted'),
+        (ACTION_HT, 'Hot Transfer'),
+        (ACTION_SALE, 'Sale'),
     )
     lead = models.ForeignKey(Lead, null=True, blank=True, on_delete=models.SET_NULL, related_name='lead_history')
     action = models.CharField(
@@ -158,3 +166,77 @@ class LeadHistory(models.Model):
     created_on = models.DateTimeField(auto_now=True, null=True)
     old_instance_meta = JSONField(blank=True, null=True)
     new_instance_meta = JSONField(blank=True, null=True)
+
+from v1.apps.utils.models import Settings
+from django.core.validators import RegexValidator, MinValueValidator
+from decimal import Decimal
+class LeadSale(models.Model):
+    SOLD_AS_UTILITY = "utilities expert"
+    SOLD_AS_MV = "mv utilities"
+    SOLD_AS_CHOICES = (
+        (SOLD_AS_UTILITY, "Utilities Expert"),
+        (SOLD_AS_MV, "MV Utilities"),
+    )
+    COMPANY_TYPE_LIMITED = "limited"
+    COMPANY_TYPE_SOLE = "sole-trader"
+    COMPANY_TYPE_PARTNERSHIP = "Partnership"
+    COMPANY_TYPE_CHOICES = (
+        (COMPANY_TYPE_LIMITED, "Limited"),
+        (COMPANY_TYPE_SOLE, "Sole Trader"),
+        (COMPANY_TYPE_PARTNERSHIP, "Partnership")
+    )
+    ACQUISITION = "Acquisition"
+    RENEWAL = "Renewal"
+    RENEWAL_CHOICES = (
+        (ACQUISITION, "ACQUISITION"),
+        (RENEWAL, RENEWAL)
+    )
+    lead = models.ForeignKey(Lead, null=True, on_delete=models.SET_NULL, related_name='sale')
+    date_sold = models.DateField(null=True, blank=True)
+    sold_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+    sold_as = models.CharField(
+        choices=SOLD_AS_CHOICES, max_length=30, null=True, blank=True)
+    multi_site = models.BooleanField(default=False)
+    company_type = models.CharField(
+        choices=COMPANY_TYPE_CHOICES, max_length=30, null=True, blank=True)
+    company_reg = models.CharField(max_length=100, blank=True, null=True)
+    position_in_company = models.CharField(max_length=100, blank=True, null=True)
+    ebilling = models.BooleanField(default=False)
+    receive_marketing = models.BooleanField(default=False)
+    full_address = models.TextField(null=True, blank=True)
+    time_at_address = models.IntegerField(null=True, blank=True)
+    sole_trader_dob = models.DateField(null=True, blank=True)
+    full_billing_address = models.TextField(null=True, blank=True)
+    renewal_acquisition = models.CharField(
+        choices=RENEWAL_CHOICES, max_length=30, null=True, blank=True)
+    new_supplier = models.CharField(
+        choices=((sn, sn) for sn in Settings.objects.first().supplier_names), max_length=100, null=True, blank=True)
+    top_row = models.CharField(max_length=100, blank=True, null=True)
+    bottom_row  =models.CharField(max_length=100, blank=True, null=True)
+    start_date = models.DateField(null=True, blank=True)
+    days = models.IntegerField(null=True, blank=True)
+    eac_submitted = models.IntegerField(null=True, blank=True)
+    tariif_code = models.CharField(max_length=100, blank=True, null=True)
+    standing_charge = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    standing_charge_uplift = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    unit_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    day_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    night_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    weekday_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    eve_weekened_rate =models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    eve_weekend_night_rate = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    uplift = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    sc_comm = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    eac_comm = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    total_comm = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    total_comm_on_submission = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    agenct_comm_percentage = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    agenct_comm_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, validators=[MinValueValidator(Decimal('0.00'))])
+    bill_received = models.BooleanField(null=True, blank=True)
+    existing_contract_cancelled = models.BooleanField(null=True, blank=True)
+    bank_name = models.CharField(max_length=100, blank=True, null=True)
+    account_name = models.CharField(max_length=100, blank=True, null=True)
+    account_number = models.CharField(max_length=100, blank=True, null=True)
+    account_sort_code = models.CharField(max_length=100, blank=True, null=True)
+    data_source = models.CharField(max_length=100, blank=True, null=True)
+    comment = models.CharField(max_length=100, blank=True, null=True)

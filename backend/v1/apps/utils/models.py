@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.postgres.fields import ArrayField
 
 
 class IPAddress(models.Model):
@@ -11,3 +12,6 @@ class IPAddress(models.Model):
 
 class Settings(models.Model):
     is_ip_restriction_active = models.BooleanField(default=False)
+    supplier_names = ArrayField(
+        models.CharField(max_length=50, blank=True),
+    )

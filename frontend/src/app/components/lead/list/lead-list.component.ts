@@ -6,8 +6,10 @@ import { LeadService } from '../services';
 import { SnackBarService, SpinnerService, FileLoaderService } from '../../../services'
 import { SharedDataService } from '../../../../app/services/sharedData.service';
 import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
+import { AlertDialogComponent } from '../../dialogs/alert-dialog/alert-dialog.component';
 import { CallbackComponent } from '../callback/callback.component';
 import { LeadAssignComponent } from '../lead-assign/lead-assign.component';
+import { SaleComponent } from '../sale/sale.component';
 import * as moment from 'moment';
 import { constants } from '../../../../app/constants';
 import { AuthService } from '../../../../app/services/auth.service';
@@ -354,9 +356,37 @@ export class LeadListComponent implements OnInit {
     })
   }
 
-  submitForPR(lead) {
-    this.service.submitForPR(lead.id, { 'submission_status': 'prospect' }, this.include_raw_leads).subscribe((res) => {
-      this.loadLeads();
+  submitForPR(lead, isHotTransfer?: Boolean) {
+    if (!lead.contract_end_date || !lead.current_electricity_supplier) {
+      this.dialog.open(AlertDialogComponent, {
+        width: "50%",
+        data: { "msg": "Need to fill current supplier and contract End Date before PR." }
+      });
+      return
+    }
+    let dialogRef = this.dialog.open(PromptDialogComponent, {
+      width: "50%",
+      data: { okButtonText: 'Add PR', cancelButtonText: 'Cancel', title: 'Add PR Comment', message: 'Add a PR comment.' }
+    });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        this.service.submitForPR(lead.id, { "comment": data, "is_hot_transfer": isHotTransfer || false }, this.include_raw_leads).subscribe((res) => {
+          this.loadLeads();
+        }, (error) => {
+          this.dialog.open(AlertDialogComponent, {
+            width: "50%",
+            data: { "msg": error.error['required'][0] }
+          });
+        })
+      }
+
     })
+  }
+  submitForSale(lead) {
+    let dialogRef = this.dialog.open(SaleComponent, {
+      width: "90%",
+      height: "90%",
+      data: { lead: lead }
+    });
   }
 }

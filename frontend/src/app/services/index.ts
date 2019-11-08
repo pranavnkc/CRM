@@ -5,3 +5,4 @@ export { SpinnerService } from './spinner.service';
 export { AuthService } from './auth.service';
 export { FileLoaderService } from './file-loader.service';
 export { AppLoadService } from './app-load.service';
+export { SharedDataService } from './sharedData.service';
