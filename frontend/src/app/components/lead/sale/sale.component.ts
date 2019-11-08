@@ -31,6 +31,7 @@ export class SaleComponent implements OnInit {
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator,
     public dialogRef: MatDialogRef<SaleComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.createForm();
+    console.log(this);
   }
 
   ngOnInit() {
