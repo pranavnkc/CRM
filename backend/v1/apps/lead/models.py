@@ -209,8 +209,7 @@ class LeadSale(models.Model):
     full_billing_address = models.TextField(null=True, blank=True)
     renewal_acquisition = models.CharField(
         choices=RENEWAL_CHOICES, max_length=30, null=True, blank=True)
-    new_supplier = models.CharField(
-        choices=((sn, sn) for sn in Settings.objects.first().supplier_names), max_length=100, null=True, blank=True)
+    new_supplier = models.CharField(max_length=100, null=True, blank=True)
     top_row = models.CharField(max_length=100, blank=True, null=True)
     bottom_row  =models.CharField(max_length=100, blank=True, null=True)
     start_date = models.DateField(null=True, blank=True)
