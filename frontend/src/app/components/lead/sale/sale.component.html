@@ -1,0 +1,332 @@
+<form [formGroup]="form" (ngSubmit)="form.valid && sale()">
+    <div fxLayout="column" class="padded-form">
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="15%" class="mat-block" formGroupName="lead">
+                <mat-select placeholder="*Salutation" formControlName="salutation">
+                    <mat-option value="Mr.">Mr.</mat-option>
+                    <mat-option value="Mrs.">Mrs.</mat-option>
+                    <mat-option value="Miss">Miss</mat-option>
+                    <mat-option value="Dr.">Dr.</mat-option>
+                    <mat-option value="Ms.">Ms.</mat-option>
+                    <mat-option value="Prof.">Prof.</mat-option>
+                    <mat-option value="Rev.">Rev.</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="21%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="First Name" formControlName="first_name">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="22%" class="mat-block" formGroupName="lead">
+                <input matInput class="white-text f20"
+                       placeholder="Middle Name" formControlName="middle_name">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="22%" formGroupName="lead">
+                <input matInput class="white-text f20"
+                       placeholder="Last Name" formControlName="last_name">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%" formGroupName="lead">
+            <mat-form-field fxFlex="45%">
+                <input matInput class="white-text f20" [mask]="'0000000000'" placeholder="Phone Number"
+                       formControlName="phone_number">
+            </mat-form-field>
+            <mat-form-field fxFlex="45%">
+                <input matInput class="white-text f20" placeholder="Email" formControlName="email">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="45%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="Address 1" formControlName="address_1">
+            </mat-form-field>
+            <mat-form-field fxFlex="45%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="Address 2" formControlName="address_2">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="45%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="Address 3" formControlName="address_3">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="45%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="Address 4" formControlName="address_4">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="Town or City" formControlName="town_or_city">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <input matInput class="white-text f20" placeholder="Postcode" formControlName="postcode">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="29%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="County" formControlName="county">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <mat-select placeholder="Meter Type" formControlName="utility_type">
+                    <mat-option value="gas">Gas</mat-option>
+                    <mat-option value="electricity">Electricity</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <mat-select placeholder="Can Sell Water?" formControlName="can_sell_water">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>NO</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="Contract Duration" formControlName="contract_duration">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%"  formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="AMR" formControlName="amr">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="Related Meter" formControlName="related_meter">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="29%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="Current Electricity Supplier" formControlName="current_electricity_supplier">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <input matInput [matDatepicker]="conEndpicker" placeholder="Contract End Date" formControlName="contract_end_date">
+                <mat-datepicker-toggle matSuffix [for]="conEndpicker"></mat-datepicker-toggle>
+                <mat-datepicker #conEndpicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="Meter Serial Number" formControlName="meter_serial_number">
+            </mat-form-field>
+
+            <mat-form-field fxFlex="29%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="MPAN/MPRN" formControlName="supply_number">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="29%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="S & R3 Status" formControlName="s_andr3_status">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%" formGroupName="lead">
+                <input matInput class="white-text f20 mat-block" placeholder="Bilge EAC" formControlName="bilge_eac">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%" formGroupName="lead">
+                <mat-select placeholder="Locked" formControlName="is_locked">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <!-- New Fields for sale  -->
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput [matDatepicker]="dateSoldpicker" placeholder="Date Sold" formControlName="date_sold">
+                <mat-datepicker-toggle matSuffix [for]="dateSoldpicker"></mat-datepicker-toggle>
+                <mat-datepicker #dateSoldpicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Sold As" formControlName="sold_as">
+                    <mat-option *ngFor="let sa of sharedDataService.sold_as_choices" [value]="sa.key">{{sa.display}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <mat-select placeholder="Locked" formControlName="multi_site">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Company Type" formControlName="company_type">
+                    <mat-option *ngFor="let ch of sharedDataService.company_type_choices" [value]="ch.key">{{ch.display}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Company Reg" formControlName="company_reg">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Position In Company" formControlName="position_in_company">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="5%">
+
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Ebilling" formControlName="ebilling">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Receive Marketing" formControlName="receive_marketing">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Full Address" formControlName="full_address">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Time At Address" formControlName="time_at_address">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput [matDatepicker]="soleDOBpicker" placeholder="Sole Trader Dob" formControlName="sole_trader_dob">
+                <mat-datepicker-toggle matSuffix [for]="soleDOBpicker"></mat-datepicker-toggle>
+                <mat-datepicker #soleDOBpicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Full Billing Address" formControlName="full_billing_address">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Renewal Acquisition" formControlName="renewal_acquisition">
+                    <mat-option *ngFor="let ch of sharedDataService.renewal_choices" [value]="ch.key">{{ch.display}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="New Supplier" formControlName="new_supplier">
+                    <mat-option *ngFor="let ch of sharedDataService.supplier_choices" [value]="ch.key">{{ch.display}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Top Row" formControlName="top_row">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Bottom Row" formControlName="bottom_row">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput [matDatepicker]="startDatepicker" placeholder="Start Date" formControlName="start_date">
+                <mat-datepicker-toggle matSuffix [for]="startDatepicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatepicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Days" formControlName="days">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="EAC Submitted" formControlName="eac_submitted">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Tariif Code" formControlName="tariif_code">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Standing Charge" formControlName="standing_charge">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Standing Charge Uplift" formControlName="standing_charge_uplift">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Unit Rate" formControlName="unit_rate">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Day Rate" formControlName="day_rate">
+            </mat-form-field>
+        </div>
+
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Night Rate" formControlName="night_rate">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Weekday Rate" formControlName="weekday_rate">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Evening Weekened Rate" formControlName="eve_weekened_rate">
+            </mat-form-field>
+        </div>
+
+
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Evening Weekend Night Rate" formControlName="eve_weekend_night_rate">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Uplift" formControlName="uplift">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="SC Comm" formControlName="sc_comm">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="EAC Comm" formControlName="eac_comm">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Total Comm" formControlName="total_comm">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <input matInput class="white-text f20 mat-block" placeholder="Total Comm On Submission" formControlName="total_comm_on_submission">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Agenct Comm Percentage" formControlName="agenct_comm_percentage">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Agenct Comm Amount" formControlName="agenct_comm_amount">
+            </mat-form-field>
+            <mat-form-field fxFlex="29%">
+                <mat-select placeholder="Bill Received" formControlName="bill_received">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <mat-select placeholder="Existing Contract Cancelled" formControlName="existing_contract_cancelled">
+                    <mat-option [value]=true>YES</mat-option>
+                    <mat-option [value]=false>No</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Bank Name" formControlName="bank_name">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Account Name" formControlName="account_name">
+            </mat-form-field>
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Account Number" formControlName="account_number">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Account Sort Code" formControlName="account_sort_code">
+            </mat-form-field>
+            <mat-form-field fxFlex="28%">
+                <input matInput class="white-text f20 mat-block" placeholder="Data Source" formControlName="data_source">
+            </mat-form-field>
+
+        </div>
+        <div fxLayout="row" fxLayoutGap="5%">
+            <mat-form-field fxFlex="95%">
+                <input matInput class="white-text f20 mat-block" placeholder="Comment" formControlName="comment">
+            </mat-form-field>
+        </div>
+
+
+    </div>
+    <br />
+    <div fxLayout="row" fxLayoutGap="30px" fxLayout.xs="column">
+        <button mat-raised-button type="submit" color="primary">{{editMode?"Update Sale":"Submit For Sale"}}</button>
+    </div>
+</form>

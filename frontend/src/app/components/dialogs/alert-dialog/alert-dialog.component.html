@@ -1,0 +1,9 @@
+<h2 mat-dialog-title *ngIf="title">{{data.title}}</h2>
+<mat-dialog-content>
+    <div>
+        <p>{{data.msg}}</p>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions class="pull-right" *ngIf = "buttonText !== 'Disable'">
+    <button class="ods-primary-button" mat-dialog-close mat-button mat-raised-button>{{data.buttonText || "OK"}}</button>
+</mat-dialog-actions>`
