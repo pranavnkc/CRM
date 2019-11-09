@@ -104,17 +104,20 @@ class Lead(models.Model):
         return "{} {} {}".format(self.first_name, self.middle_name, self.last_name)
 
 class ProspectLead(models.Model):
-    STATUS_PR = 'pr'
-    STATUS_UNAPPROVED = 'unapproved'
-    STATUS_HOLD = 'hold'
-    STATUS_CHOICES = (
-        (STATUS_PR, 'Prospect'),
-        (STATUS_UNAPPROVED, 'Unapproved'),
-        (STATUS_HOLD, 'On Hold')
+
+    QUALITY_STATUS_APPROVED = 'approved'
+    QUALITY_STATUS_REJECTED = 'Reject'
+    QUALITY_STATUS_HOLD = 'hold'
+    QUALITY_STATUS_REQUIRE_AUDITING = 'audit'
+    QUALITY_STATUS_CHOICES = (
+        (QUALITY_STATUS_APPROVED, 'Approved'),
+        (QUALITY_STATUS_REJECTED, 'Rejected'),
+        (QUALITY_STATUS_HOLD, 'On Hold'),
+        (QUALITY_STATUS_REQUIRE_AUDITING, 'Require Auditing'),
     )
     lead = models.ForeignKey(Lead, related_name='prospect', on_delete=models.CASCADE)
-    status = models.CharField(
-        choices=STATUS_CHOICES, max_length=30, default=STATUS_PR)
+    quality_status = models.CharField(
+        choices=QUALITY_STATUS_CHOICES, max_length=30, default=QUALITY_STATUS_REQUIRE_AUDITING)
     submitted_by = models.ForeignKey(User, related_name='submitted_prospects', on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
@@ -163,7 +166,7 @@ class LeadHistory(models.Model):
     action = models.CharField(
         choices=ACTION_CHOICES, max_length=30)
     created_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    created_on = models.DateTimeField(auto_now=True, null=True)
+    created_on = models.DateTimeField(auto_now_add=True)
     old_instance_meta = JSONField(blank=True, null=True)
     new_instance_meta = JSONField(blank=True, null=True)
 
@@ -191,7 +194,25 @@ class LeadSale(models.Model):
         (ACQUISITION, "ACQUISITION"),
         (RENEWAL, RENEWAL)
     )
+    QUALITY_STATUS_APPROVED = 'approved'
+    QUALITY_STATUS_REJECTED = 'Reject'
+    QUALITY_STATUS_HOLD = 'hold'
+    QUALITY_STATUS_REQUIRE_AUDITING = 'audit'
+    QUALITY_STATUS_CHOICES = (
+        (QUALITY_STATUS_APPROVED, 'Approved'),
+        (QUALITY_STATUS_REJECTED, 'Rejected'),
+        (QUALITY_STATUS_HOLD, 'On Hold'),
+        (QUALITY_STATUS_REQUIRE_AUDITING, 'Require Auditing'),
+    )
+    MANAGEMENT_STATUS_SUBMITTED_TO_SUPPLIER = 'submitted-to-supplier'
+    MANAGEMENT_STATUS_CHOICES = (
+        (MANAGEMENT_STATUS_SUBMITTED_TO_SUPPLIER, 'Submitted To Supplier'), )
     lead = models.ForeignKey(Lead, null=True, on_delete=models.SET_NULL, related_name='sale')
+    quality_status =models.CharField(
+        choices=QUALITY_STATUS_CHOICES, max_length=30, default=QUALITY_STATUS_REQUIRE_AUDITING)
+    management_status = models.CharField(
+        choices=MANAGEMENT_STATUS_CHOICES, max_length=30, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True) 
     date_sold = models.DateField(null=True, blank=True)
     sold_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
     sold_as = models.CharField(

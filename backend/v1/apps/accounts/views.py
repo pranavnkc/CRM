@@ -10,7 +10,7 @@ from v1.apps.utils.pagination import StandardResultsSetPagination
 from . import serializer
 from . import models
 from .filters import UserFilter
-from v1.apps.lead.models import Lead, LeadHistory
+from v1.apps.lead.models import Lead, LeadHistory, ProspectLead, LeadSale
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializer.GroupSerializer
@@ -46,8 +46,12 @@ class UserViewSet(viewsets.ModelViewSet):
         ret = {}
         user = self.get_object()
         qs=None
+        prospect = 0;
+        sale = 0;
         if user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
             qs = Lead.objects.filter(assigned_to=self.request.user)
+            prospect = ProspectLead.objects.filter(submitted_by=request.user).count()
+            sale = LeadSale.objects.filter(sold_by=request.user).count()
         elif user.groups.filter(name='team-manager').exists():
             qs = Lead.objects.filter(assigned_to__in=models.User.objects.filter(parent=self.request.user))
         elif user.groups.filter(name='company-head').exists():
@@ -55,7 +59,9 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             qs = Lead.objects.all()
         ret['lead_count'] = qs.count()
-        ret['work_done'] = LeadHistory.objects.filter(created_by=user, action=LeadHistory.ACTION_STATUS_CHANGE, created_on__date=timezone.now().date()).count()
+        
+        ret['prospect'] = prospect
+        ret['sale'] = sale
         return Response(ret)
 
     

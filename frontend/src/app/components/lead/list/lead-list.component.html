@@ -217,16 +217,16 @@
                                     <button mat-menu-item (click)="comment(element)">
                                         <span>Comment</span>
                                     </button>
-                                    <a *ngIf="role!='sales-person'" routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
+                                    <a routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
                                         Edit
                                     </button></a>
-                                    <button *ngIf="role=='stage-1' || role=='sales-person'" mat-menu-item (click)="submitForPR(element)">
-                                        <span>Submit For PR</span>
+                                    <button mat-menu-item (click)="submitForPR(element)">
+                                        <span>PR</span>
                                     </button>
-                                    <button *ngIf="role=='stage-1' || role=='sales-person'" mat-menu-item (click)="submitForPR(element, true)">
-                                        <span>Submit For HT</span>
+                                    <button mat-menu-item (click)="submitForPR(element, true)">
+                                        <span>HT</span>
                                     </button>
-                                    <button *ngIf="role=='sales-person' || true" mat-menu-item (click)="submitForSale(element)">
+                                    <button  mat-menu-item (click)="submitForSale(element)">
                                         <span>Sale</span>
                                     </button>
 

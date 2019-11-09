@@ -64,6 +64,7 @@ export class CreateEditLeadComponent implements OnInit {
       last_name: [null,],
       phone_number: [null, Validators.compose([Validators.minLength(10), Validators.maxLength(10)])],
       email: [null, Validators.compose([Validators.pattern(constants.EMAIL_REGEXP)])],
+      busines_name: [null],
       address_1: [null],
       address_2: [null],
       address_3: [null],

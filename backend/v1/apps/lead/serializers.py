@@ -18,7 +18,6 @@ class LeadSerializer(serializers.ModelSerializer):
         }
 
     def validate_status(self, value):
-        print(value)
         if value and ((hasattr(self, 'status_choices') and value not in self.status_choices) or not Status.objects.filter(key=value).exists()):
             raise serializers.ValidationError({'status':'Invalid status code'})
         return value
@@ -34,6 +33,7 @@ class LeadSerializer(serializers.ModelSerializer):
         validated_data['submission_status'] = "raw"
         validated_data['created_by'] = self.context['request'].user
         return super(LeadSerializer, self).create(validated_data)
+    
     @transaction.atomic
     def update(self, instance, validated_data):
         old_submission_status = instance.submission_status
@@ -255,6 +255,10 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         return instance
 
 class LeadSaleSerializer(serializers.ModelSerializer):    
+    def __init__(self, *args, **kwargs):
+        if not kwargs['context'].get('from_lead_view'):
+            self.fields['lead'] = LeadSerializer()
+        return super(LeadSaleSerializer, self).__init__(*args, **kwargs)
     class Meta:
         model = LeadSale
         fields = '__all__'
@@ -267,3 +271,17 @@ class LeadSaleSerializer(serializers.ModelSerializer):
         history = LeadHistory(lead=instance.lead, action=LeadHistory.ACTION_SALE, created_by=self.context['request'].user, new_instance_meta={}, old_instance_meta={})
         history.save()
         return instance
+    
+    def update(self, instance, validated_data):
+        lead = validated_data.pop('lead')
+        validated_data['lead'] = instance.lead
+        lead_ser = LeadSerializer(instance.lead, data=lead, context=self.context)
+        lead_ser.is_valid(raise_exception=True)
+        lead_ser.save()
+        instance  = super(LeadSaleSerializer, self).update(instance, validated_data)
+        return instance
+
+    def to_representation(self, obj):
+        ret = super(LeadSaleSerializer, self).to_representation(obj);
+        ret["lead"] = LeadSerializer(obj.lead).data
+        return ret

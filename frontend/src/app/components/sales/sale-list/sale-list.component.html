@@ -1,0 +1,68 @@
+<mat-card>
+    <mat-card-title> Sales </mat-card-title>
+    <mat-card-content>
+        <div class="table-container">
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef fxFlex="5%">Sale ID </mat-header-cell>
+                    <mat-cell *matCellDef="let element;let index=index;" fxFlex="5%">
+                        <a class="cursor-pointer" (click)="edit(element)">{{element.id}}</a>
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="created_on">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Created On </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{moment(element.created_on).format('MMM DD, YYYY hh:mm A')}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="date_sold">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Sold On </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.date_sold?moment(element.date_sold).format('MMM DD, YYYY hh:mm A'):''}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="phone_number">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Phone Number </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.phone_number}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="busines_name">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Business Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.busines_name}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="first_name">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> First_Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.first_name}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="last_name">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Last_Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.last_name}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="current_supplier">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Current Supplier </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.current_electricity_supplier}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="new_supplier">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> New Supplier </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.new_supplier}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="contract_end_date">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Contract End Date </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.contract_end_date?moment(element.lead.contract_end_date).format('MMM DD, YYYY hh:mm A'):''}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="supply_number">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> MPAN/MPRN </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.supply_number}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="renewal_acquisition">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Renewal/Acquisition </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.renewal_acquisition}} </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #historyPaginator
+                           [pageSize]="constants.defaultPageSize"
+                           [pageSizeOptions]="constants.pageSizeOptions"
+                           [showFirstLastButtons]="true">
+            </mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

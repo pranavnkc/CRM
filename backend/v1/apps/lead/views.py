@@ -65,7 +65,7 @@ class LeadViewSet(viewsets.ModelViewSet):
         print(ser.validated_data)
         ser.save()
         return Response()
-
+    
     @detail_route(url_path='submit-for-sale', methods=('patch',))
     def sale_submission(self, request, pk):
         instance = self.get_object()
@@ -75,10 +75,10 @@ class LeadViewSet(viewsets.ModelViewSet):
         data = request.data
         data['lead'] = instance.id
         data['sold_by'] = request.user.id
-        ser = serializers.LeadSaleSerializer(data=data, context={"request":request})
+        ser = serializers.LeadSaleSerializer(data=data, context={"request":request, 'from_lead_view':True})
         ser.is_valid(raise_exception=True)
         ser.save()
-        return Response()
+        return Response(ser.data)
 
     @detail_route(url_path='comment', methods=('post','get'))
     def comment(self, request, pk):
@@ -181,3 +181,8 @@ class ReportViewset(mixins.ListModelMixin, viewsets.GenericViewSet):
         filter_q = Q(created_by=self.request.user) | Q(created_by__parent=self.request.user.id) | Q(created_by__parent__parent=self.request.user.id)
         return models.LeadHistory.objects.filter(lead__isnull=False).filter(filter_q).select_related('created_by').order_by('created_on')
     
+
+class LeadSaleViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.LeadSaleSerializer
+    pagination_class = StandardResultsSetPagination
+    queryset = models.LeadSale.objects.select_related('lead')

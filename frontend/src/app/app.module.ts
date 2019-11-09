@@ -80,6 +80,7 @@ import { ReportsComponent } from './components/reports/reports.component';
 import { PrSubmissionComponent } from './components/lead/pr-submission/pr-submission.component';
 import { AlertDialogComponent } from './components/dialogs/alert-dialog/alert-dialog.component';
 import { SaleComponent } from './components/lead/sale/sale.component';
+import { SaleListComponent } from './components/sales/sale-list/sale-list.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -99,6 +100,8 @@ const appRoutes: Routes = [
       { path: 'leads/edit/:id', component: CreateEditLeadComponent, data: { title: 'Edit Lead' } },
       { path: 'leads/details/:id', component: LeadDetailsComponent, data: { title: 'Lead details' } },
       { path: 'reports', canActivate: [AuthGuard], component: ReportsComponent, data: { title: 'Report' } },
+      { path: 'sales', canActivate: [AuthGuard], component: SaleListComponent, data: { title: 'Sale' } },
+      { path: 'sales/edit/:id', canActivate: [AuthGuard], component: SaleComponent, data: { title: 'Sale Edit' } },
       { path: 'settings', component: SettingsComponent, data: { title: 'Settings' } },
       { path: 'profile', component: ProfileComponent, data: { title: 'Profile' } },
       {
@@ -163,6 +166,7 @@ export function get_ip(appLoadService: AppLoadService) {
     PrSubmissionComponent,
     AlertDialogComponent,
     SaleComponent,
+    SaleListComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

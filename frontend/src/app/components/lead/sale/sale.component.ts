@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -28,22 +28,37 @@ export class SaleComponent implements OnInit {
     private service: HttpService,
     public sharedDataService: SharedDataService,
     private leadService: LeadService,
+    private activatedRoute: ActivatedRoute,
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator,
-    public dialogRef: MatDialogRef<SaleComponent>, @Inject(MAT_DIALOG_DATA) public data: any) {
+    @Optional() public dialogRef: MatDialogRef<SaleComponent>, @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
     this.createForm();
     console.log(this);
   }
 
   ngOnInit() {
-    this.editMode = EditMode.Create;
-    this.lead = this.data;
-    this.setLeadData();
-    console.log('EditMode', EditMode[this.editMode], this.editMode);
+    this.activatedRoute.params.subscribe((data) => {
+      if (data.data) {
+        this.editMode = EditMode.Edit;
+        this.lead = JSON.parse(data.data);
+        this.setLeadData();
+      }
+      else {
+        this.editMode = EditMode.Create;
+        this.lead = this.data;
+        this.setLeadData();
+      }
+      console.log('EditMode', EditMode[this.editMode], this.editMode);
+    })
+
   }
 
   private setLeadData() {
     for (let field in this.form.controls['lead']['controls']) {
       this.form.controls['lead']['controls'][field].setValue(this.lead['lead'][field]);
+    }
+    for (let field in this.form.controls) {
+      if (field != 'lead')
+        this.form.controls[field].setValue(this.lead[field]);
     }
   }
   createForm() {
@@ -97,6 +112,7 @@ export class SaleComponent implements OnInit {
         middle_name: [null,],
         last_name: [null,],
         phone_number: [null, Validators.compose([Validators.minLength(10), Validators.maxLength(10)])],
+        busines_name: [null],
         email: [null, Validators.compose([Validators.pattern(constants.EMAIL_REGEXP)])],
         address_1: [null],
         address_2: [null],
@@ -125,12 +141,32 @@ export class SaleComponent implements OnInit {
     console.log(this.form);
     var data = JSON.parse(JSON.stringify(this.form.value));
     if (data.contract_end_date) {
-      data.contract_end_date = data.supply_detail.contract_end_date.split("T")[0]
+      data.contract_end_date = data.contract_end_date.split("T")[0]
     }
-    this.leadService.submitForSale(this.data.lead.id, data).subscribe((res) => {
-      this.router.navigate([this.route.parent.url]);
-    }, (error) => {
-      console.log(error)
-    })
+    if (data.sole_trader_dob) {
+      data.sole_trader_dob = data.sole_trader_dob.split("T")[0]
+    }
+    if (data.start_date) {
+      data.start_date = data.start_date.split("T")[0]
+    }
+
+    if (data.date_sold) {
+      data.date_sold = data.date_sold.split("T")[0]
+    }
+    if (data.lead.supply_number == this.lead.lead.supply_number) {
+      delete data['lead']['supply_number']
+    }
+    if (!this.editMode) {
+      this.leadService.submitForSale(this.data.lead.id, data).subscribe((res) => {
+        this.router.navigate([this.route.parent.url]);
+      }, (error) => {
+        console.log(error)
+      })
+    }
+    else {
+      this.service.patch(`api/sales/${this.lead.id}/`, data).subscribe((res) => {
+
+      })
+    }
   }
 }
