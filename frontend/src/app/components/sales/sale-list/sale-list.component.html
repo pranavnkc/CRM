@@ -18,6 +18,15 @@
                     <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Sold On </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.date_sold?moment(element.date_sold).format('MMM DD, YYYY hh:mm A'):''}} </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="sold_by">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Sold By </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.sold_by}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="quality_status">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Quality Status </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{constants.getElementFromList(sharedDataService.qualityStatusChoices, 'key', element.quality_status, 'display')}} </mat-cell>
+                </ng-container>
+
                 <ng-container matColumnDef="phone_number">
                     <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Phone Number </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead.phone_number}} </mat-cell>

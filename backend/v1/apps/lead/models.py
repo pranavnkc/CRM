@@ -195,8 +195,8 @@ class LeadSale(models.Model):
         (RENEWAL, RENEWAL)
     )
     QUALITY_STATUS_APPROVED = 'approved'
-    QUALITY_STATUS_REJECTED = 'Reject'
-    QUALITY_STATUS_HOLD = 'hold'
+    QUALITY_STATUS_REJECTED = 'rejected'
+    QUALITY_STATUS_HOLD = 'on-hold'
     QUALITY_STATUS_REQUIRE_AUDITING = 'audit'
     QUALITY_STATUS_CHOICES = (
         (QUALITY_STATUS_APPROVED, 'Approved'),
@@ -210,6 +210,8 @@ class LeadSale(models.Model):
     lead = models.ForeignKey(Lead, null=True, on_delete=models.SET_NULL, related_name='sale')
     quality_status =models.CharField(
         choices=QUALITY_STATUS_CHOICES, max_length=30, default=QUALITY_STATUS_REQUIRE_AUDITING)
+    quality_analyst = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="sales")
+    quality_updated_on = models.DateTimeField(null=True, blank=True)
     management_status = models.CharField(
         choices=MANAGEMENT_STATUS_CHOICES, max_length=30, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True) 

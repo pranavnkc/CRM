@@ -11,4 +11,13 @@ export let constants = {
     }
   },
   ipAddress: '',
+  getElementFromList(list, attr, val, retKey?: any) {
+
+    for (let ele of list) {
+      if (eval("ele." + attr) == val) {
+        return retKey ? eval("ele." + retKey) : ele;
+      }
+    }
+    return null;
+  }
 }

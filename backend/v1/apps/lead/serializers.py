@@ -284,4 +284,5 @@ class LeadSaleSerializer(serializers.ModelSerializer):
     def to_representation(self, obj):
         ret = super(LeadSaleSerializer, self).to_representation(obj);
         ret["lead"] = LeadSerializer(obj.lead).data
+        ret['sold_by'] = obj.sold_by.get_full_name()
         return ret

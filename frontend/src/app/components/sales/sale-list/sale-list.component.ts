@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Router } from '@angular/router';
-import { HttpService } from '../../../services/index';
+import { HttpService, SharedDataService } from '../../../services/index';
 import { SpinnerService } from '../../../services';
 import { constants } from '../../../constants';
 import * as moment from 'moment';
@@ -12,14 +12,15 @@ import * as momentTimezone from 'moment-timezone';
   styleUrls: ['./sale-list.component.css']
 })
 export class SaleListComponent implements OnInit {
-  displayedColumns = ['id', "created_on", "date_sold", "phone_number", "busines_name", "first_name", "last_name", "current_supplier", "new_supplier", "contract_end_date", "supply_number", "renewal_acquisition"];
+  displayedColumns = ['id', "created_on", "date_sold", "sold_by", "quality_status", "phone_number", "busines_name", "first_name", "last_name", "current_supplier", "new_supplier", "contract_end_date", "supply_number", "renewal_acquisition"];
   dataSource = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   constants = constants;
   moment = moment;
   constructor(private http: HttpService,
+    public sharedDataService: SharedDataService,
     private spinnerService: SpinnerService,
-    private router: Router) {
+    private router: Router, ) {
   }
 
   ngOnInit() {

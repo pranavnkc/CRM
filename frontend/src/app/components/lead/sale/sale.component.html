@@ -327,11 +327,12 @@
                 <input matInput class="white-text f20 mat-block" placeholder="Comment" formControlName="comment">
             </mat-form-field>
         </div>
-
-
     </div>
     <br />
     <div fxLayout="row" fxLayoutGap="30px" fxLayout.xs="column">
-        <button mat-raised-button type="submit" color="primary">{{editMode?"Update Sale":"Submit"}}</button>
+        <button *ngIf="authService.role!='quality-analyst'" mat-raised-button type="submit" color="primary">{{editMode?"Update Sale":"Submit"}}</button>
+        <button *ngIf="authService.role=='quality-analyst'" mat-raised-button type="button" color="primary" (click)="changeStatus('approved')">Approve</button>
+        <button *ngIf="authService.role=='quality-analyst'" mat-raised-button type="button" color="accent" (click)="changeStatus('on-hold')">On Hold</button>
+        <button *ngIf="authService.role=='quality-analyst'" mat-raised-button type="button" color="warn" (click)="changeStatus('reject')">Reject</button>
     </div>
 </form>

@@ -211,7 +211,7 @@
                                     <a routerLink="/leads/details/{{element.id}}"><button mat-menu-item (click)="null">
                                         Details
                                     </button></a>
-                                    <button *ngIf="role=='sales-person'" mat-menu-item (click)="scheduleCallback(element)">
+                                    <button *ngIf="role=='sales-person' || role=='stage-1'" mat-menu-item (click)="scheduleCallback(element)">
                                         <span>Schedule Callback</span>
                                     </button>
                                     <button mat-menu-item (click)="comment(element)">
@@ -220,13 +220,13 @@
                                     <a routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
                                         Edit
                                     </button></a>
-                                    <button mat-menu-item (click)="submitForPR(element)">
+                                    <button mat-menu-item *ngIf="role!='quality-analyst'" (click)="submitForPR(element)">
                                         <span>PR</span>
                                     </button>
-                                    <button mat-menu-item (click)="submitForPR(element, true)">
+                                    <button mat-menu-item *ngIf="role!='quality-analyst'" (click)="submitForPR(element, true)">
                                         <span>HT</span>
                                     </button>
-                                    <button  mat-menu-item (click)="submitForSale(element)">
+                                    <button  *ngIf="role!='quality-analyst' || role=='stage-1'" mat-menu-item (click)="submitForSale(element)">
                                         <span>Sale</span>
                                     </button>
 

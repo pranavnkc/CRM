@@ -90,7 +90,7 @@ export class CreateEditLeadComponent implements OnInit {
   createLead() {
     var data = JSON.parse(JSON.stringify(this.form.value));
     if (data.contract_end_date) {
-      data.contract_end_date = data.supply_detail.contract_end_date.split("T")[0]
+      data.contract_end_date = data.contract_end_date.split("T")[0]
     }
     (this.editMode ? this.service.updateLead(this.lead.id, data) : this.service.createLead(data)).subscribe((res) => {
       this.router.navigate([this.route.parent.url]);

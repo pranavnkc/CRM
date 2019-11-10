@@ -26,6 +26,7 @@ export class CreateEditUserComponent implements OnInit {
     { 'key': 'stage-1', 'value': 'Stage 1 - Prospector' },
     { 'key': 'team-manager', 'value': 'Team Manager' },
     { 'key': 'company-head', 'value': 'Company Head' },
+    { 'key': 'quality-analyst', 'value': 'Quality Analyst' }
     { 'key': 'admin', 'value': 'Admin' }
   ]
   constructor(private route: ActivatedRoute,

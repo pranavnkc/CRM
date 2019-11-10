@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { HttpService, SharedDataService } from '../../../services/index';
+import { AuthService } from '../../../services/auth.service';
 import { UsernameAlreadyExistsValidator } from '../../../services/auth.service';
 import { matchValidator } from '../../../validators';
 import { constants } from '../../../constants';
@@ -27,6 +28,7 @@ export class SaleComponent implements OnInit {
     private fb: FormBuilder,
     private service: HttpService,
     public sharedDataService: SharedDataService,
+    public authService: AuthService,
     private leadService: LeadService,
     private activatedRoute: ActivatedRoute,
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator,
@@ -168,5 +170,9 @@ export class SaleComponent implements OnInit {
 
       })
     }
+  }
+  changeStatus(status) {
+    this.service.patch(`api/sales/${this.lead.id}/change-status/`, { 'quality_status': status }).subscribe((res) => {
+    });
   }
 }

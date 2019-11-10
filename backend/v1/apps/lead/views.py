@@ -4,6 +4,7 @@ from django.forms import IntegerField, CharField
 from django.db.models.functions import Concat
 from django.db.models import F, Value, Q
 from django.db.models.functions import Lower 
+from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import mixins
@@ -42,7 +43,9 @@ class LeadViewSet(viewsets.ModelViewSet):
         if self.request.user.groups.filter(name='stage-1').exists():
             if self.request.query_params.get('include_raw_leads'):
                 return self.queryset.filter(submission_status='raw')
-            return self.queryset.filter(assigned_to=self.request.user)  
+            return self.queryset.filter(assigned_to=self.request.user)
+        if self.request.user.groups.filter(name='quality-analyst').exists():
+            return self.queryset.filter(assigned_to=self.request.user)
         return self.queryset
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
@@ -54,7 +57,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             'sold_as_choices':[{'key':sac[0], 'display':sac[1]} for  sac in models.LeadSale.SOLD_AS_CHOICES],
             'company_type_choices':[{'key':ctc[0], 'display':ctc[1]} for ctc in models.LeadSale.COMPANY_TYPE_CHOICES],
             'renewal_choices':[{'key':rc[0], 'display':rc[1]} for  rc in models.LeadSale.RENEWAL_CHOICES],
-            'supplier_choices':[{'key':sn, 'display':sn} for sn in Settings.objects.first().supplier_names]
+            'supplier_choices':[{'key':sn, 'display':sn} for sn in Settings.objects.first().supplier_names],
+            'quality_status_choices':[{'key':qs[0], 'display':qs[1]} for qs in models.LeadSale.QUALITY_STATUS_CHOICES]
         })
     @detail_route(url_path='submit-for-pr', methods=('patch',))
     def pr_submission(self, request, pk):
@@ -186,3 +190,28 @@ class LeadSaleViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LeadSaleSerializer
     pagination_class = StandardResultsSetPagination
     queryset = models.LeadSale.objects.select_related('lead')
+
+    def get_queryset(self, *args, **kwargs):
+        qs = models.LeadSale.objects.select_related('lead').order_by('created_on')
+        if self.request.user.groups.filter(name='admin').exists():
+            return qs
+        elif self.request.user.groups.filter(name='company-head').exists():
+            return qs.filter(sold_by=request.user) | qs.filter(sold_by__parent=self.request.user) | qs.filter(sold_by__parent__parent=self.request.user)
+        elif self.request.user.groups.filter(name='team-manger').exists():
+            return qs.filter(sold_by=self.request.user) | qs.filter(sold_by__parent=self.request.user)
+        elif self.request.user.groups.filter(name='sales-person').exists():
+            return qs.filter(sold_by=self.request.user)
+        elif self.request.user.groups.filter(name__in=['quality-analyst', 'quality_manager']).exists():
+            return qs.filter(quality_status__in=[models.LeadSale.QUALITY_STATUS_HOLD, models.LeadSale.QUALITY_STATUS_REQUIRE_AUDITING, models.LeadSale.QUALITY_STATUS_APPROVED])
+        
+    @detail_route(url_path='change-status', methods=('patch', ))
+    def change_quality_status(self, request, pk):
+        instance = self.get_object()
+        print(request.data)
+        ser = self.serializer_class(instance, data=request.data, context={"request":request}, partial=True)
+        ser.is_valid(raise_exception=True)
+        instance.quality_status = ser.validated_data['quality_status']
+        instance.quality_analyst = request.user
+        instance.quality_updated_on  = timezone.now()
+        instance.save()
+        return Response()
