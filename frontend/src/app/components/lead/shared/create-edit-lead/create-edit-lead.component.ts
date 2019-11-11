@@ -94,7 +94,7 @@ export class CreateEditLeadComponent implements OnInit {
     if (data.contract_end_date) {
       data.contract_end_date = data.contract_end_date.split("T")[0]
     }
-    (this.editMode ? this.service.updateLead(this.lead.id, data) : this.service.createLead(data)).subscribe((res) => {
+    (this.editMode ? this.service.updateLead(this.lead.id, data, true) : this.service.createLead(data)).subscribe((res) => {
       this.router.navigate([this.route.parent.url]);
     }, (error) => {
       console.log(error)
