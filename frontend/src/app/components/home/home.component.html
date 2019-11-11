@@ -44,7 +44,7 @@
     </div>
   </section>
 
-  <section>
+  <section *ngIf="false">
     <div class="flex-container">
       <mat-card class="col chart first-chart">
         <mat-card-title>
@@ -87,7 +87,7 @@
     </div>
   </section>
 
-  <section class="progress-metrics">
+  <section class="progress-metrics" *ngIf="false">
     <div class="flex-container">
       <div class="col">
         <h3 class="text-center">Metric 1</h3>
@@ -124,7 +124,7 @@
     </div>
   </section>
 
-  <section class="horizontal-bar">
+  <section class="horizontal-bar" *ngIf="false">
     <div class="flex-container">
       <mat-card class="col chart first-chart">
         <mat-card-title>Horizontal Bar Example</mat-card-title>
@@ -142,7 +142,7 @@
     </div>
   </section>
 
-  <section class="pie-charts">
+  <section class="pie-charts" *ngIf="false">
     <h2 class="text-center">Pie Chart Example</h2>
     <div class="flex-container">
       <div class="col">
@@ -157,13 +157,13 @@
     </div>
   </section>
 
-  <section class="text-center margin-top-40">
+  <section class="text-center margin-top-40" *ngIf="false">
     <svg viewBox="0 0 130 26" width="120" fill="#e7e7e7">
       <use xlink:href="/assets/logo.svg#logo"></use>
     </svg>
   </section>
 
-  <button mat-fab class="fixed-bottom-right" (click)="onRefresh()">
+  <button mat-fab class="fixed-bottom-right" (click)="onRefresh()" *ngIf="false">
     <mat-icon [ngClass]="{'spin-reverse':loading}" aria-label="Refresh">cached</mat-icon>
   </button>
 </div>
