@@ -198,7 +198,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                 for model_field, file_field in self.lead_field_mapping.items():
                     row_data = row.get(file_field)
                     lead_data[model_field] = row_data if row_data!='NA' else None
-                if lead_data['supply_number'] in supply_number_list:
+                if lead_data['supply_number'] and lead_data['supply_number'] in supply_number_list:
                     raise serializers.ValidationError({"lead_hash":"Duplicate supply number {}".format(lead_data['supply_number'])})
                 supply_number_list.append(lead_data['supply_number'])
                 lead_data = self.transform_row(lead_data)

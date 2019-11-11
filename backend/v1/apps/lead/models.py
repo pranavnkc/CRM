@@ -87,7 +87,7 @@ class Lead(models.Model):
     current_electricity_supplier = models.CharField(max_length=100, null=True, blank=True)
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
-    supply_number = models.CharField(unique=True, max_length=100, null=True, blank=True) # this is MPRN/MPAN
+    supply_number = models.CharField(max_length=100, null=True, blank=True) # this is MPRN/MPAN
     
     #new fields as discussed on 10th oct
     can_sell_water = models.BooleanField(default=False)
