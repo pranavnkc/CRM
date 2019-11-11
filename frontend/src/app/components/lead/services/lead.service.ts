@@ -16,7 +16,7 @@ export class LeadService {
     if (includeRaw) {
       url = `api/leads/${id}/?include_raw_leads=true`;
     }
-    return this.http.get(`api/leads/${id}/`);
+    return this.http.get(url);
   }
   updateLead(id: any, data: any, includeRaw?: Boolean) {
     let url = `api/leads/${id}/`;
