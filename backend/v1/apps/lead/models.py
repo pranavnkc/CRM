@@ -34,22 +34,6 @@ class SubmissionStatus(models.Model):
         return  self.display
 
 class Lead(models.Model):
-    MR = "Mr."
-    MRS = "Mrs."
-    MISS = "Miss"
-    DR = "Dr."
-    MS = "Ms."
-    PROF = "Prof."
-    REV = "Rev."
-    SALUTATION_CHOICES= (
-        (MR, MR),
-        (MRS, MRS),
-        (MISS, MISS),
-        (DR, DR),
-        (MS, MS),
-        (PROF, PROF),
-        (REV, REV)
-    )
     GAS = 'gas'
     ELECTRICITY = 'electricity'
     METER_TYPE_CHOICES = (
@@ -65,12 +49,12 @@ class Lead(models.Model):
     assigned_by = models.ForeignKey(User, null=True, blank=True, related_name='have_assigned_leads', on_delete=models.SET_NULL)
     assigned_on = models.DateTimeField(blank=True, null=True, default=timezone.now)
     #lead business deatil fields
-    busines_name = models.CharField(max_length=50, null=True, blank=True)
-    salutation = models.CharField(choices=SALUTATION_CHOICES, max_length=30, null=True, blank=True)
+    busines_name = models.CharField(max_length=200, null=True, blank=True)
+    salutation = models.CharField(max_length=30, null=True, blank=True)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     middle_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
-    phone_number = models.CharField(null=True, blank=True, max_length=10)
+    phone_number = models.CharField(null=True, blank=True, max_length=12)
     email = models.EmailField(null=True, blank=True)
     address_1 = models.CharField(max_length=200, null=True, blank=True)
     address_2 = models.CharField(max_length=200, null=True, blank=True)
@@ -81,7 +65,7 @@ class Lead(models.Model):
     postcode = models.CharField(max_length=10, null=True, blank=True)
     
     #supply detail fields
-    utility_type = models.CharField(choices=METER_TYPE_CHOICES, max_length=30, null=True, blank=True)
+    utility_type = models.CharField(max_length=30, null=True, blank=True)
     amr = models.BooleanField(default=True, null=True, blank=True)
     related_meter = models.BooleanField(default=False, null=True, blank=True)
     current_electricity_supplier = models.CharField(max_length=100, null=True, blank=True)

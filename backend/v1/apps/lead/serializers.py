@@ -175,6 +175,8 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
             row['new_renewal_date'] = row['new_renewal_date'] or None
         if row.get('new_disposition_date') is not None:
             row['new_disposition_date'] = row['new_disposition_date'] or None
+        if row.get('phone_number') and row['phone_number'][0]=='0':
+            row['phone_number'] = row['phone_number'][1:]
         return row
         
     def validate(self, data):
@@ -197,6 +199,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
                 lead_data = {}
                 for model_field, file_field in self.lead_field_mapping.items():
                     row_data = row.get(file_field)
+                    
                     lead_data[model_field] = row_data if row_data!='NA' else None
                 if lead_data['supply_number'] and lead_data['supply_number'] in supply_number_list:
                     raise serializers.ValidationError({"lead_hash":"Duplicate supply number {}".format(lead_data['supply_number'])})
