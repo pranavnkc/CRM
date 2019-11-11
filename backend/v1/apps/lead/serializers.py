@@ -165,7 +165,6 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
         
     }
     def transform_row(self, row):
-        row['utility_type'] = Lead.GAS if row['utility_type'].lower().startswith('g') else Lead.ELECTRICITY
         row['can_sell_water'] = True if row['can_sell_water'].strip().lower()=='yes' else False
         row['is_locked'] = True if row['is_locked'].strip().lower()=='yes' else False
         row['contract_duration'] = row['contract_duration'] if row['contract_duration'] else None
