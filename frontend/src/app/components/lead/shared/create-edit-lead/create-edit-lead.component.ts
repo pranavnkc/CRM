@@ -71,7 +71,7 @@ export class CreateEditLeadComponent implements OnInit {
       address_2: [null],
       address_3: [null],
       address_4: [null],
-      town_or_city: [null],
+      city_or_town: [null],
       county: [null],
       postcode: [null],
       utility_type: [null],
