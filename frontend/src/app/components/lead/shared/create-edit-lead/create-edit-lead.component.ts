@@ -52,7 +52,7 @@ export class CreateEditLeadComponent implements OnInit {
     }
   }
   private getLead(id: any) {
-    this.service.getLead(id).subscribe((data) => {
+    this.service.getLead(id, true).subscribe((data) => {
       this.lead = data
       this.setLeadData();
     });

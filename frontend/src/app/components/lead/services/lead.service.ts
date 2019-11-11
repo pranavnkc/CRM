@@ -11,7 +11,11 @@ export class LeadService {
     return this.http.get('api/leads/', params);
   }
 
-  getLead(id: any) {
+  getLead(id: any, includeRaw?: Boolean) {
+    let url = `api/leads/${id}/`;
+    if (includeRaw) {
+      url = `api/leads/${id}/?include_raw_leads=true`;
+    }
     return this.http.get(`api/leads/${id}/`);
   }
   updateLead(id: any, data: any, includeRaw?: Boolean) {
@@ -52,10 +56,11 @@ export class LeadService {
     }
     return this.http.patch(url, data);
   }
+
   submitForSale(id: any, data: any, includeRaw?: Boolean) {
     let url = `api/leads/${id}/submit-for-sale/`;
     if (includeRaw) {
-      url = `api/leads/${id}/?include_raw_leads=true`;
+      url = `api/leads/${id}/submit-for-sale/?include_raw_leads=true`;
     }
     return this.http.patch(url, data);
   }
