@@ -27,6 +27,9 @@ export class LeadService {
   deleteLead(id: any) {
     return this.http.delete(`api/leads/${id}/`);
   }
+  deleteMultiple(data) {
+    return this.http.post(`api/leads/delete-multiple/`, data);
+  }
   getLeadStatus() {
     return this.http.get(`api/leads/status/`);
   }

@@ -79,6 +79,12 @@
                             {{element.username}}
                         </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="campaign">
+                    <mat-header-cell *matHeaderCellDef> Campaign </mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            {{constants.getElementFromList(sharedDataService.campaignChoices, 'key', element.campaign, 'display')}}
+                        </mat-cell>
+                </ng-container>
 
                 <ng-container matColumnDef="phone_number">
                     <mat-header-cell *matHeaderCellDef> Phone Number </mat-header-cell>

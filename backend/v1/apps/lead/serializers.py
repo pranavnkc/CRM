@@ -254,7 +254,8 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         history.save()
         return instance
 
-class LeadSaleSerializer(serializers.ModelSerializer):    
+class LeadSaleSerializer(serializers.ModelSerializer):
+    
     def __init__(self, *args, **kwargs):
         if not kwargs['context'].get('from_lead_view'):
             self.fields['lead'] = LeadSerializer()
@@ -265,6 +266,7 @@ class LeadSaleSerializer(serializers.ModelSerializer):
     def validate(self, data):
         return data
     def create(self, validated_data):
+        validated_data['campaign'] = self.context['request'].user.campaign
         instance = super(LeadSaleSerializer, self).create(validated_data)
         instance.lead.submission_status = 'sale'
         instance.lead.save()
@@ -278,6 +280,7 @@ class LeadSaleSerializer(serializers.ModelSerializer):
         lead_ser = LeadSerializer(instance.lead, data=lead, context=self.context)
         lead_ser.is_valid(raise_exception=True)
         lead_ser.save()
+        validated_data['quality_status'] = LeadSale.QUALITY_STATUS_REQUIRE_AUDITING
         instance  = super(LeadSaleSerializer, self).update(instance, validated_data)
         return instance
 

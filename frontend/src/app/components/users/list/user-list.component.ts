@@ -3,7 +3,7 @@ import { MatPaginator, MatTableDataSource } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { UserService } from '../services';
 import { constants } from '../../../../app/constants'
-import { SpinnerService } from '../../../services';
+import { SpinnerService, SharedDataService } from '../../../services';
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html',
@@ -19,10 +19,10 @@ export class UserListComponent implements OnInit {
   endDate: Date = null;
   state: string;
   constants = constants;
-  displayedColumns = ['select', 'id', 'name', 'username', 'phone_number', 'role', 'actions'];
+  displayedColumns = ['select', 'id', 'name', 'username', 'campaign', 'phone_number', 'role', 'actions'];
   dataSource = new MatTableDataSource();
   selection = new SelectionModel<any>(true, []);
-  constructor(private service: UserService, private spinnerService: SpinnerService) { }
+  constructor(private service: UserService, private spinnerService: SpinnerService, public sharedDataService: SharedDataService) { }
 
   ngOnInit() {
     console.log(this);

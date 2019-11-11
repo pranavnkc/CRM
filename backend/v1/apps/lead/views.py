@@ -7,10 +7,10 @@ from django.db.models.functions import Lower
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework import mixins
+from rest_framework import mixins, status
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.response import Response
-
+from django.contrib.auth import get_user_model
 from v1.apps.utils.pagination import StandardResultsSetPagination
 from v1.apps.utils.utils import get_file_name, model_to_dict_v2
 from v1.apps.utils.models import Settings
@@ -58,7 +58,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             'company_type_choices':[{'key':ctc[0], 'display':ctc[1]} for ctc in models.LeadSale.COMPANY_TYPE_CHOICES],
             'renewal_choices':[{'key':rc[0], 'display':rc[1]} for  rc in models.LeadSale.RENEWAL_CHOICES],
             'supplier_choices':[{'key':sn, 'display':sn} for sn in Settings.objects.first().supplier_names],
-            'quality_status_choices':[{'key':qs[0], 'display':qs[1]} for qs in models.LeadSale.QUALITY_STATUS_CHOICES]
+            'quality_status_choices':[{'key':qs[0], 'display':qs[1]} for qs in models.LeadSale.QUALITY_STATUS_CHOICES],
+            'campaign_choices':[{'key':qs[0], 'display':qs[1]} for qs in get_user_model().CAMPAIGN_CHOICES]
         })
     @detail_route(url_path='submit-for-pr', methods=('patch',))
     def pr_submission(self, request, pk):
@@ -84,6 +85,18 @@ class LeadViewSet(viewsets.ModelViewSet):
         ser.save()
         return Response(ser.data)
 
+    
+    @list_route(url_path='delete-multiple', methods=('post',))
+    def delete_multiple(self, request):
+        print(request.data)
+        
+        leads = request.data.get('leads') 
+        qs = self.get_queryset().filter(id__in=leads)
+        print(len(leads), len(qs))
+        if not len(leads)==len(qs):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        qs.delete()
+        return Response()
     @detail_route(url_path='comment', methods=('post','get'))
     def comment(self, request, pk):
         instance = self.get_object()

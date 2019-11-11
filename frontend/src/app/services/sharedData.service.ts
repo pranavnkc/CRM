@@ -10,6 +10,7 @@ export class SharedDataService {
   renewalChoices = [];
   supplierChoices = [];
   qualityStatusChoices = [];
+  campaignChoices = [];
   ip = '';
   constructor(private http: HttpService) {
     this.http.get(`api/leads/status/`).subscribe((res) => {
@@ -21,6 +22,8 @@ export class SharedDataService {
       this.renewalChoices = res['renewal_choices'];
       this.supplierChoices = res['supplier_choices'];
       this.qualityStatusChoices = res['quality_status_choices'];
+      this.qualityStatusChoices = res['quality_status_choices'];
+      this.campaignChoices = res['campaign_choices'];
     });
   }
 }

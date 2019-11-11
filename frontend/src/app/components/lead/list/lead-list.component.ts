@@ -6,6 +6,7 @@ import { LeadService } from '../services';
 import { SnackBarService, SpinnerService, FileLoaderService } from '../../../services'
 import { SharedDataService } from '../../../../app/services/sharedData.service';
 import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
+import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
 import { AlertDialogComponent } from '../../dialogs/alert-dialog/alert-dialog.component';
 import { CallbackComponent } from '../callback/callback.component';
 import { LeadAssignComponent } from '../lead-assign/lead-assign.component';
@@ -127,7 +128,7 @@ export class LeadListComponent implements OnInit {
         ]
       },
       { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false, "fieldType": "input" },
-      { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "input" },
+      { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "select", "options": this.sharedDataService.supplierChoices },
       { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true, "fieldType": "date" },
       { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false, "fieldType": "input" },
       { "field": "supply_number", 'filterField': 'supply_number', "display": "MPAN/MPRN", "selected": false, "fieldType": "input" },
@@ -364,9 +365,10 @@ export class LeadListComponent implements OnInit {
       });
       return
     }
+    let title = isHotTransfer ? "Add HT Comment" : "Add PR Comment"
     let dialogRef = this.dialog.open(PromptDialogComponent, {
       width: "50%",
-      data: { okButtonText: 'Add PR', cancelButtonText: 'Cancel', title: 'Add PR Comment', message: 'Add a PR comment.' }
+      data: { okButtonText: isHotTransfer ? "Add HT" : 'Add PR', cancelButtonText: 'Cancel', title: title, message: title }
     });
     dialogRef.afterClosed().subscribe((data) => {
       if (data) {
@@ -388,5 +390,19 @@ export class LeadListComponent implements OnInit {
       height: "90%",
       data: { lead: lead }
     });
+  }
+  deleteMultiple() {
+    let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: "50%",
+      data: { "message": "Do you want to delete selected leads?" }
+    });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        this.service.deleteMultiple({ 'leads': this.selection.selected.map((s) => s.id) }).subscribe((res) => {
+          this.loadLeads();
+          this.selection.clear();
+        })
+      }
+    })
   }
 }

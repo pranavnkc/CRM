@@ -330,7 +330,9 @@
     </div>
     <br />
     <div fxLayout="row" fxLayoutGap="30px" fxLayout.xs="column">
-        <button *ngIf="authService.role!='quality-analyst'" mat-raised-button type="submit" color="primary">{{editMode?"Update Sale":"Submit"}}</button>
+        <button *ngIf="authService.role!='quality-analyst' && !editMode" mat-raised-button type="submit" color="primary">{{"Submit"}}</button>
+        <button *ngIf="authService.role!='quality-analyst' && authService.role!='sales-person' && editMode" mat-raised-button type="submit" color="primary">Update Sale</button>
+        <button *ngIf="authService.role!='quality-analyst' && lead.quality_status=='on-hold' && editMode" mat-raised-button type="submit" color="primary">Submit Again</button>
         <button *ngIf="authService.role=='quality-analyst'" mat-raised-button type="button" color="primary" (click)="changeStatus('approved')">Approve</button>
         <button *ngIf="authService.role=='quality-analyst'" mat-raised-button type="button" color="accent" (click)="changeStatus('on-hold')">On Hold</button>
         <button *ngIf="authService.role=='quality-analyst'" mat-raised-button type="button" color="warn" (click)="changeStatus('reject')">Reject</button>

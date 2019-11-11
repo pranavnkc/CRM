@@ -32,6 +32,11 @@
                 password do not match.</mat-error>
         </mat-form-field>
         <mat-form-field class="mat-block">
+            <mat-select placeholder="Campaign*" formControlName="campaign">
+                <mat-option *ngFor="let c of sharedDataService.campaignChoices" [value]="c.key" >{{c.display}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field class="mat-block">
             <mat-select placeholder="Role*" formControlName="role">
                 <mat-option *ngFor="let role of roleFilterOptions" [value]="role.key" >{{role.value}}</mat-option>
             </mat-select>
@@ -44,6 +49,6 @@
     </div>
     <br />
     <div fxLayout="row" fxLayoutGap="30px" fxLayout.xs="column">
-        <button mat-raised-button type="submit" color="primary">Create</button>
+        <button mat-raised-button type="submit" color="primary">{{editMode?"Update":"Create"}}</button>
     </div>
 </form>

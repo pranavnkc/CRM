@@ -15,10 +15,10 @@
     <button mat-raised-button (click)="onRefresh()">
         <mat-icon>cached</mat-icon>
     </button>
-    <button *ngIf="role!='sales-person'" mat-raised-button routerLink="/leads/new">
+    <button *ngIf="role!='sales-person' || role!='stage-1'" mat-raised-button routerLink="/leads/new">
         <mat-icon>person_add</mat-icon>
     </button>
-    <button *ngIf="role!='sales-person'" mat-raised-button color="warn">
+    <button *ngIf="role!='sales-person' || role!='stage-1'" mat-raised-button color="warn" (click)="deleteMultiple()">
         <mat-icon>delete</mat-icon>
     </button>
 
@@ -181,7 +181,7 @@
                                     <input  *ngIf="column.fieldType=='phone'" [mask]="'0000000000'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
                                     <input  *ngIf="column.fieldType=='input'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
                                     <mat-select *ngIf="column.fieldType=='select'" [formControlName]="column.field" placeholder="{{column.display}}">
-                                        <mat-option *ngFor="let option of (column.field=='status'?sharedDataService.leadStatus:column.options)" [value]="option.key">{{option.value || option.display}}</mat-option>
+                                        <mat-option *ngFor="let option of (column.field=='status'?sharedDataService.leadStatus:column.field=='current_electricity_supplier'?sharedDataService.supplierChoices:column.options)" [value]="option.key">{{option.value || option.display}}</mat-option>
                                     </mat-select>
                                 </mat-form-field>
                                 <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType=='date'" class="mat-block">

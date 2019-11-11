@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { UserService } from '../../services';
 import { AuthService } from '../../../../services/auth.service';
+import { SharedDataService } from '../../../../services/sharedData.service';
 import { UsernameAlreadyExistsValidator } from '../../../../services/auth.service';
 import { matchValidator } from '../../../../validators';
 import { constants } from '../../../../constants';
@@ -34,6 +35,7 @@ export class CreateEditUserComponent implements OnInit {
     private fb: FormBuilder,
     private service: UserService,
     private authService: AuthService,
+    public sharedDataService: SharedDataService,
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator) {
     this.createForm();
     if (this.authService.role == 'company-head') {
@@ -97,6 +99,7 @@ export class CreateEditUserComponent implements OnInit {
       phone_number: [null, Validators.compose([Validators.required, Validators.minLength(10), Validators.maxLength(10)])],
       username: [null, Validators.compose([Validators.required, Validators.pattern(constants.EMAIL_REGEXP)]), this.usernameAlreadyExistsValidator.checkUsername.bind(this.usernameAlreadyExistsValidator)],
       role: [null, Validators.required],
+      campaign: [null, Validators.required],
       password: [null, Validators.compose([Validators.required, Validators.pattern(constants.PASSWORD_REGEX)])],
       confirm_password: [null, Validators.compose([Validators.required, matchValidator("password")])],
     })

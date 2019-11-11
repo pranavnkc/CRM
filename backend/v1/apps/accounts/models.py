@@ -8,6 +8,13 @@ from . import managers
 
 
 class User(AbstractBaseUser,  PermissionsMixin):
+    VALDA_LOGIN_HOUR = 'valda-login-hour'
+    ORMEROD_AND_ADAM = 'ormerod&adam'
+    BROKER = 'broker'
+    CAMPAIGN_CHOICES = ((VALDA_LOGIN_HOUR, 'ValdaLoginHour'),
+                        (ORMEROD_AND_ADAM, 'Armerod & Adam'),
+                        (BROKER, 'Broker'),
+    )
     username = models.CharField(_('Username'), max_length=120, unique=True)
     first_name = models.CharField(_('Firt Name'), max_length=255)
     last_name = models.CharField(_('Last Name'), max_length=255)
@@ -18,6 +25,8 @@ class User(AbstractBaseUser,  PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
+    campaign = models.CharField(
+        choices=CAMPAIGN_CHOICES, max_length=30, null=True, blank=True)
     objects = managers.UserManager()
 
     USERNAME_FIELD = 'username'

@@ -207,7 +207,7 @@ class LeadSale(models.Model):
     MANAGEMENT_STATUS_SUBMITTED_TO_SUPPLIER = 'submitted-to-supplier'
     MANAGEMENT_STATUS_CHOICES = (
         (MANAGEMENT_STATUS_SUBMITTED_TO_SUPPLIER, 'Submitted To Supplier'), )
-    lead = models.ForeignKey(Lead, null=True, on_delete=models.SET_NULL, related_name='sale')
+    lead = models.ForeignKey(Lead, on_delete=models.CASCADE, related_name='sale')
     quality_status =models.CharField(
         choices=QUALITY_STATUS_CHOICES, max_length=30, default=QUALITY_STATUS_REQUIRE_AUDITING)
     quality_analyst = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="sales")
