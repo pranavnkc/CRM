@@ -4,7 +4,7 @@
 <button *ngIf="role!='sales-person'" mat-raised-button routerLink="/leads/edit/{{user?.id}}">
     <mat-icon aria-label="Edit">edit</mat-icon>
 </button>
-<button *ngIf="role!='sales-person'"  mat-raised-button color="warn" (click)="onDelete()">
+<button *ngIf="role!='sales-person' || role!='stage-1'"  mat-raised-button color="warn" (click)="onDelete()">
     <mat-icon aria-label="Delete">delete</mat-icon>
 </button>
 <!--

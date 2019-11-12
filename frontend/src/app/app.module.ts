@@ -6,6 +6,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from "@angular/flex-layout";
 import { NgxMaskModule } from 'ngx-mask';
+import { MAT_DATE_FORMATS } from '@angular/material/core';
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'MM/DD/YYYY',
+  },
+  display: {
+    dateInput: 'MM/DD/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 import {
   MatButtonModule,
   MatButtonToggleModule,
@@ -226,6 +238,7 @@ export function get_ip(appLoadService: AppLoadService) {
       useClass: NgProgressInterceptor,
       multi: true
     },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
   bootstrap: [AppComponent],
   entryComponents: [ConfirmDialogComponent, PromptDialogComponent, AlertDialogComponent, LeadAssignComponent, CallbackComponent, SaleComponent]

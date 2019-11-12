@@ -246,3 +246,4 @@ class LeadSale(models.Model):
     account_sort_code = models.CharField(max_length=100, blank=True, null=True)
     data_source = models.CharField(max_length=100, blank=True, null=True)
     comment = models.CharField(max_length=100, blank=True, null=True)
+    campaign = models.CharField(max_length=100, blank=True, null=True)

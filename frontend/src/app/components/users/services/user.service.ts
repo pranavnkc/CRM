@@ -23,8 +23,8 @@ export class UserService {
   deleteUser(id: any) {
     return this.http.delete(`api/users/${id}/`);
   }
-  getDashboardData(id: any) {
-    return this.http.get(`api/users/${id}/dashboard/`);
+  getDashboardData(id: any, params) {
+    return this.http.get(`api/users/${id}/dashboard/`, params);
   }
 }
 

@@ -139,7 +139,7 @@
                         [disabled]="selection.selected.length==0?true:false" (click)="assign()">
                     Assign
                 </button>
-                <a *ngIf="role!='sales-person'" routerLink="/leads/bulk-create"><button color="primary" mat-raised-button (click)="null">
+                <a *ngIf="role!='sales-person' || role!='stage-1'" routerLink="/leads/bulk-create"><button color="primary" mat-raised-button (click)="null">
                     Bulk Create
                 </button></a>
 

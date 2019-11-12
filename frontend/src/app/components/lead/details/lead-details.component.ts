@@ -9,6 +9,7 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dia
 import { constants } from '../../../constants';
 import * as moment from 'moment';
 import * as momentTimezone from 'moment-timezone';
+
 @Component({
   selector: 'app-lead-details',
   templateUrl: './lead-details.component.html',

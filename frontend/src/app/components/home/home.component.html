@@ -1,169 +1,183 @@
 <div class="home">
+    <form [formGroup]="form">
+        <div fxLayout="row" fxLayoutGap="2%">
+            <mat-form-field fxFlex="20%">
+                <input matInput [matDatepicker]="fromPicker" placeholder="From" (dateChange)="getData()" formControlName="start_date">
+                <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+                <mat-datepicker #fromPicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field fxFlex="20%">
+                <input matInput [matDatepicker]="toPicker" placeholder="To" (dateChange)="getData()" formControlName="end_date">
+                <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+                <mat-datepicker #toPicker></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <mat-divider></mat-divider>
+    </form>
+    <section class="info-cards">
+        <div class="flex-container">
+            <mat-card class="col info-card">
+                <div class="info-card-icon">
+                    <mat-icon>supervisor_account</mat-icon>
+                </div>
+                <div class="info-card-content">
+                    <h3>{{dashboardData.lead_count || 0}}</h3>
+                    Leads
+                </div>
+            </mat-card>
 
-  <section class="info-cards">
-    <div class="flex-container">
-      <mat-card class="col info-card">
-        <div class="info-card-icon">
-          <mat-icon>supervisor_account</mat-icon>
-        </div>
-        <div class="info-card-content">
-          <h3>{{dashboardData.lead_count || 0}}</h3>
-          Leads
-        </div>
-      </mat-card>
+            <mat-card class="col info-card info-card-green">
+                <div class="info-card-icon">
+                    <mat-icon>verified_user</mat-icon>
+                </div>
+                <div class="info-card-content">
+                    <h3>{{dashboardData.pr || 0}}</h3>
+                    PR
+                </div>
+            </mat-card>
 
-      <mat-card class="col info-card info-card-green">
-        <div class="info-card-icon">
-          <mat-icon>verified_user</mat-icon>
-        </div>
-        <div class="info-card-content">
-          <h3>{{dashboardData.work_done}}</h3>
-          Work Done
-        </div>
-      </mat-card>
+            <mat-card class="col info-card info-card-red info-card-link" routerLink="/users">
+                <div class="info-card-icon">
+                    <mat-icon>done_all</mat-icon>
+                </div>
+                <div class="info-card-content">
+                    <h3>{{dashboardData.ht || 0}}</h3>
+                    HT
+                </div>
+            </mat-card>
 
-      <mat-card class="col info-card info-card-red info-card-link" routerLink="/users">
-        <div class="info-card-icon">
-          <mat-icon>done_all</mat-icon>
+            <mat-card class="col info-card info-card-blue info-card-link" routerLink="/users">
+                <div class="info-card-icon">
+                    <mat-icon>person_pin</mat-icon>
+                </div>
+                <div class="info-card-content">
+                    <h3>{{dashboardData.sale || 0}}</h3>
+                    Sale
+                </div>
+            </mat-card>
         </div>
-        <div class="info-card-content">
-          <h3>123</h3>
-          Comments
-        </div>
-      </mat-card>
+    </section>
 
-      <mat-card class="col info-card info-card-blue info-card-link" routerLink="/users">
-        <div class="info-card-icon">
-          <mat-icon>person_pin</mat-icon>
+    <section *ngIf="false">
+        <div class="flex-container">
+            <mat-card class="col chart first-chart">
+                <mat-card-title>
+                    <div flex class="widget-header">
+                        <div fill>Line Chart Example</div>
+                        <div class="hide-md">
+                            <button mat-icon-button>
+                                <mat-icon>refresh</mat-icon>
+                            </button>
+                            <button mat-icon-button>
+                                <mat-icon>more_vert</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </mat-card-title>
+                <mat-card-content>
+                    <canvas baseChart [data]="lineChartData" [colors]="lineChartColors" [labels]="lineChartLabels" [options]="chartOptions" [chartType]="'line'"></canvas>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="col col-x2 chart first-chart">
+                <mat-card-title>
+                    <div class="widget-header">
+                        <div fill>Bar Chart Example</div>
+                        <div class="hide-md">
+                            <button mat-icon-button>
+                                <mat-icon>keyboard_arrow_left</mat-icon>
+                            </button>
+                            <button mat-icon-button>
+                                <mat-icon>keyboard_arrow_right</mat-icon>
+                            </button>
+                            <button mat-button>Today</button>
+                        </div>
+                    </div>
+                </mat-card-title>
+                <mat-card-content>
+                    <canvas *ngIf="barChartData" baseChart [data]="barChartData" [labels]="barChartLabels" [colors]="barChartColors" [options]="chartOptions"
+                            [chartType]="'bar'"></canvas>
+                </mat-card-content>
+            </mat-card>
         </div>
-        <div class="info-card-content">
-          <h3>56</h3>
-          Registered
-        </div>
-      </mat-card>
-    </div>
-  </section>
+    </section>
 
-  <section *ngIf="false">
-    <div class="flex-container">
-      <mat-card class="col chart first-chart">
-        <mat-card-title>
-          <div flex class="widget-header">
-            <div fill>Line Chart Example</div>
-            <div class="hide-md">
-              <button mat-icon-button>
-                <mat-icon>refresh</mat-icon>
-              </button>
-              <button mat-icon-button>
-                <mat-icon>more_vert</mat-icon>
-              </button>
+    <section class="progress-metrics" *ngIf="false">
+        <div class="flex-container">
+            <div class="col">
+                <h3 class="text-center">Metric 1</h3>
+                <div class="progress-wrapper">
+                    <div class="progress-label">70%</div>
+                    <round-progress [current]="70" [color]="'#E53935'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
+                                    [max]="100"></round-progress>
+                </div>
             </div>
-          </div>
-        </mat-card-title>
-        <mat-card-content>
-          <canvas baseChart [data]="lineChartData" [colors]="lineChartColors" [labels]="lineChartLabels" [options]="chartOptions" [chartType]="'line'"></canvas>
-        </mat-card-content>
-      </mat-card>
-      <mat-card class="col col-x2 chart first-chart">
-        <mat-card-title>
-          <div class="widget-header">
-            <div fill>Bar Chart Example</div>
-            <div class="hide-md">
-              <button mat-icon-button>
-                <mat-icon>keyboard_arrow_left</mat-icon>
-              </button>
-              <button mat-icon-button>
-                <mat-icon>keyboard_arrow_right</mat-icon>
-              </button>
-              <button mat-button>Today</button>
+            <div class="col">
+                <h3 class="text-center">Metric 2</h3>
+                <div class="progress-wrapper">
+                    <div class="progress-label">47%</div>
+                    <round-progress [current]="47" [color]="'#FFB300'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
+                                    [max]="100"></round-progress>
+                </div>
             </div>
-          </div>
-        </mat-card-title>
-        <mat-card-content>
-          <canvas *ngIf="barChartData" baseChart [data]="barChartData" [labels]="barChartLabels" [colors]="barChartColors" [options]="chartOptions"
-            [chartType]="'bar'"></canvas>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </section>
-
-  <section class="progress-metrics" *ngIf="false">
-    <div class="flex-container">
-      <div class="col">
-        <h3 class="text-center">Metric 1</h3>
-        <div class="progress-wrapper">
-          <div class="progress-label">70%</div>
-          <round-progress [current]="70" [color]="'#E53935'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
-            [max]="100"></round-progress>
+            <div class="col">
+                <h3 class="text-center">Metric 3</h3>
+                <div class="progress-wrapper">
+                    <div class="progress-label">31%</div>
+                    <round-progress [current]="31" [color]="'#1E88E5'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
+                                    [max]="100"></round-progress>
+                </div>
+            </div>
+            <div class="col">
+                <h3 class="text-center">Metric 4</h3>
+                <div class="progress-wrapper">
+                    <div class="progress-label">12%</div>
+                    <round-progress [current]="12" [color]="'#43A047'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
+                                    [max]="100"></round-progress>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="col">
-        <h3 class="text-center">Metric 2</h3>
-        <div class="progress-wrapper">
-          <div class="progress-label">47%</div>
-          <round-progress [current]="47" [color]="'#FFB300'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
-            [max]="100"></round-progress>
+    </section>
+
+    <section class="horizontal-bar" *ngIf="false">
+        <div class="flex-container">
+            <mat-card class="col chart first-chart">
+                <mat-card-title>Horizontal Bar Example</mat-card-title>
+                <mat-card-content>
+
+                    <mat-tab-group class="tabs-centered no-border">
+                        <mat-tab label="Option 1"></mat-tab>
+                        <mat-tab label="Option 2"></mat-tab>
+                    </mat-tab-group>
+
+                    <canvas *ngIf="versionsData" baseChart [data]="versionsData" [colors]="barChartColors" [options]="chartOptions" [labels]="versionsLabels"
+                            [chartType]="'horizontalBar'"></canvas>
+                </mat-card-content>
+            </mat-card>
         </div>
-      </div>
-      <div class="col">
-        <h3 class="text-center">Metric 3</h3>
-        <div class="progress-wrapper">
-          <div class="progress-label">31%</div>
-          <round-progress [current]="31" [color]="'#1E88E5'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
-            [max]="100"></round-progress>
+    </section>
+
+    <section class="pie-charts" *ngIf="false">
+        <h2 class="text-center">Pie Chart Example</h2>
+        <div class="flex-container">
+            <div class="col">
+                <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [options]="pieChartOptions" [chartType]="'pie'"></canvas>
+            </div>
+            <div class="col">
+                <canvas baseChart [data]="pieChart2Data" [labels]="pieChart2Labels" [options]="pieChartOptions" [chartType]="'pie'" [colors]="pieChart2Colors"></canvas>
+            </div>
+            <div class="col">
+                <canvas baseChart [data]="pieChart3Data" [labels]="pieChart3Labels" [options]="pieChartOptions" [chartType]="'pie'" [colors]="pieChart2Colors"></canvas>
+            </div>
         </div>
-      </div>
-      <div class="col">
-        <h3 class="text-center">Metric 4</h3>
-        <div class="progress-wrapper">
-          <div class="progress-label">12%</div>
-          <round-progress [current]="12" [color]="'#43A047'" [background]="'rgba(0,0,0,0.06)'" [responsive]="true" stroke="5" [radius]="80"
-            [max]="100"></round-progress>
-        </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="horizontal-bar" *ngIf="false">
-    <div class="flex-container">
-      <mat-card class="col chart first-chart">
-        <mat-card-title>Horizontal Bar Example</mat-card-title>
-        <mat-card-content>
+    <section class="text-center margin-top-40" *ngIf="false">
+        <svg viewBox="0 0 130 26" width="120" fill="#e7e7e7">
+            <use xlink:href="/assets/logo.svg#logo"></use>
+        </svg>
+    </section>
 
-          <mat-tab-group class="tabs-centered no-border">
-            <mat-tab label="Option 1"></mat-tab>
-            <mat-tab label="Option 2"></mat-tab>
-          </mat-tab-group>
-
-          <canvas *ngIf="versionsData" baseChart [data]="versionsData" [colors]="barChartColors" [options]="chartOptions" [labels]="versionsLabels"
-            [chartType]="'horizontalBar'"></canvas>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </section>
-
-  <section class="pie-charts" *ngIf="false">
-    <h2 class="text-center">Pie Chart Example</h2>
-    <div class="flex-container">
-      <div class="col">
-        <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [options]="pieChartOptions" [chartType]="'pie'"></canvas>
-      </div>
-      <div class="col">
-        <canvas baseChart [data]="pieChart2Data" [labels]="pieChart2Labels" [options]="pieChartOptions" [chartType]="'pie'" [colors]="pieChart2Colors"></canvas>
-      </div>
-      <div class="col">
-        <canvas baseChart [data]="pieChart3Data" [labels]="pieChart3Labels" [options]="pieChartOptions" [chartType]="'pie'" [colors]="pieChart2Colors"></canvas>
-      </div>
-    </div>
-  </section>
-
-  <section class="text-center margin-top-40" *ngIf="false">
-    <svg viewBox="0 0 130 26" width="120" fill="#e7e7e7">
-      <use xlink:href="/assets/logo.svg#logo"></use>
-    </svg>
-  </section>
-
-  <button mat-fab class="fixed-bottom-right" (click)="onRefresh()" *ngIf="false">
-    <mat-icon [ngClass]="{'spin-reverse':loading}" aria-label="Refresh">cached</mat-icon>
-  </button>
+    <button mat-fab class="fixed-bottom-right" (click)="onRefresh()" *ngIf="false">
+        <mat-icon [ngClass]="{'spin-reverse':loading}" aria-label="Refresh">cached</mat-icon>
+    </button>
 </div>

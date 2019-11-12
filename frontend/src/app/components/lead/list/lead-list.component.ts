@@ -60,7 +60,6 @@ export class LeadListComponent implements OnInit {
     contract_end_date: [null],
     meter_serial_number: [null],
     supply_number: [null],
-    is_locked: [null],
   }
   inlineEditForm: FormGroup;
   inlineEditedID: any;
@@ -138,15 +137,16 @@ export class LeadListComponent implements OnInit {
           { "key": false, "value": "No" },
         ]
       },
-      {
+    ]
+    if (this.authService.role == 'admin') {
+      this.fields[this.fields.length - 1] = {
         "field": "is_locked", 'filterField': 'is_locked', "display": "Locked?", "selected": false, "fieldType": "select", "options": [
           { "key": true, "value": "Yes" },
           { "key": false, "value": "No" },
         ]
-      },
-
-
-    ]
+      }
+      this.inlineFormFields['is_locked'] = [null];
+    }
     this.filterForm = this.fb.group({
       'field': [null, Validators.required],
       'condition': [null, Validators.required],

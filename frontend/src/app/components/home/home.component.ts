@@ -1,15 +1,18 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../components/users/services/user.service';
 import { AuthService } from '../../services/index';
-
+import * as moment from 'moment';
+import * as momentTimezone from 'moment-timezone';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   providers: [UserService]
 })
 export class HomeComponent {
-
+  form: FormGroup;
+  //No use code
   loading: boolean = false;
 
   barChartData: Array<any> = [[27, 33, 32, 34, 48, 42, 30, 37, 23, 33, 6, 7, 9, 17, 7, 10, 10, 10, 16, 6, 9, 18, 24, 8, 11, 10, 23, 31, 22, 26]];
@@ -54,15 +57,26 @@ export class HomeComponent {
     }
   };
   dashboardData: any = {};
-  constructor(private activatedRoute: ActivatedRoute, private authService: AuthService, private userService: UserService) {
-    this.userService.getDashboardData(this.activatedRoute.snapshot.params.id || this.authService.user.id).subscribe((res) => {
+  constructor(private activatedRoute: ActivatedRoute, private authService: AuthService, private userService: UserService, private fb: FormBuilder) {
+
+    this.form = this.fb.group({
+      "start_date": [moment().toDate()],
+      "end_date": [moment().toDate()],
+    });
+    this.getData();
+    console.log(this.form)
+  }
+  getData() {
+    let params = {
+      start_date: moment(this.form.value.start_date).format('YYYY-MM-DD'),
+      end_date: moment(this.form.value.end_date).format('YYYY-MM-DD')
+    }
+    this.userService.getDashboardData(this.activatedRoute.snapshot.params.id || this.authService.user.id, params).subscribe((res) => {
       this.dashboardData = res;
     })
   }
-
   onRefresh() {
     this.loading = true;
-
     setTimeout(() => {
       this.loading = false;
     }, 2000);

@@ -250,7 +250,7 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         return data
     def create(self, validated_data):
         instance = super(ProspectLeadSerializer, self).create(validated_data)
-        instance.lead.submission_status = 'prospect'
+        instance.lead.submission_status = 'ht' if validated_data.get('is_hot_transfer') else 'prospect'
         instance.lead.save()
         history = LeadHistory(lead=instance.lead, action=LeadHistory.ACTION_HT if validated_data.get('is_hot_transfer') else LeadHistory.ACTION_PR, created_by=self.context['request'].user, new_instance_meta={}, old_instance_meta={})
         history.save()

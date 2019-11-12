@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import status
@@ -45,23 +46,39 @@ class UserViewSet(viewsets.ModelViewSet):
     def dashboard_data(self, request, pk):
         ret = {}
         user = self.get_object()
-        qs=None
-        prospect = 0;
-        sale = 0;
-        if user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
-            qs = Lead.objects.filter(assigned_to=self.request.user)
-            prospect = ProspectLead.objects.filter(submitted_by=request.user).count()
-            sale = LeadSale.objects.filter(sold_by=request.user).count()
-        elif user.groups.filter(name='team-manager').exists():
-            qs = Lead.objects.filter(assigned_to__in=models.User.objects.filter(parent=self.request.user))
-        elif user.groups.filter(name='company-head').exists():
-            qs = Lead.objects.filter(assigned_to__in=models.User.objects.filter(parent__parent=self.request.user))
-        else:
-            qs = Lead.objects.all()
-        ret['lead_count'] = qs.count()
         
-        ret['prospect'] = prospect
-        ret['sale'] = sale
+        
+        lead_qs= Lead.objects.all()
+        if request.query_params.get('start_date'):
+            start_date = request.query_params.get('start_date')
+            end_date = request.query_params.get('end_date')
+            prospect_qs = ProspectLead.objects.filter(is_hot_transfer=False, created_on__date__range=(start_date, end_date));
+            sale_qs = LeadSale.objects.filter(created_on__date__range=(start_date, end_date))
+            ht_qs = ProspectLead.objects.filter(is_hot_transfer=True, created_on__date__range=(start_date, end_date));
+        else:
+            prospect_qs = ProspectLead.objects.filter(is_hot_transfer=False);
+            sale_qs = LeadSale.objects.all()
+            ht_qs = ProspectLead.objects.filter(is_hot_transfer=True);
+        if user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
+            lead_qs = lead_qs.filter(assigned_to=self.request.user)
+            prospect_qs = prospect_qs.filter(submitted_by=request.user)
+            ht_qs = ht_qs.filter(submitted_by=request.user)
+            sale_qs = sale_qs.filter(sold_by=request.user)
+        elif user.groups.filter(name='team-manager').exists():
+            lead_qs = lead_qs.filter(assigned_to__in=models.User.objects.filter(parent=self.request.user))
+            prospect_qs = prospect_qs.filter(submitted_by=request.user) | prospect_qs.filter(submitted_by__parent=request.user)
+            ht_qs = ht_qs.filter(submitted_by=request.user) | ht_qs.filter(submitted_by__parent=request.user) 
+            sale_qs = sale_qs.filter(sold_by=request.user)  | sale_qs.filter(sold_by__parent=request.user) 
+        elif user.groups.filter(name='company-head').exists():
+            lead_qs = lead_qs.filter(assigned_to__in=models.User.objects.filter(parent__parent=self.request.user))
+            prospect_qs = prospect_qs.filter(submitted_by=request.user) | prospect_qs.filter(submitted_by__parent=request.user) | prospect_qs.filter(submitted_by__parent__parent=request.user)
+            ht_qs = ht_qs.filter(submitted_by=request.user) | ht_qs.filter(submitted_by__parent=request.user)  | ht_qs.filter(submitted_by__parent__parent=request.user) 
+            sale_qs = sale_qs.filter(sold_by=request.user)  | sale_qs.filter(sold_by__parent=request.user)  | sale_qs.filter(sold_by__parent__parent=request.user)
+            
+        ret['lead_count'] = lead_qs.count()
+        ret['pr'] = prospect_qs.count()
+        ret['ht'] = ht_qs.count()
+        ret['sale'] = sale_qs.count()
         return Response(ret)
 
     
