@@ -62,7 +62,7 @@ export class CallbackComponent implements OnInit {
       dateTime.hours(this.dateTimePickerForm.value.hour);
     }
     this.spinnerService.showSpinner = true;
-    this.httpService.post(`api/leads/${this.data.lead.id}/callback/include_raw_leads=true`, { datetime: dateTime }).finally(() => {
+    this.httpService.post(`api/leads/${this.data.lead.id}/callback/?include_raw_leads=true`, { datetime: dateTime }).finally(() => {
       this.spinnerService.showSpinner = false;
     }).subscribe((rs) => {
       this.snackbarService.open("Callback Scheduled.");

@@ -75,7 +75,7 @@ export class LeadDetailsComponent implements OnInit {
   }
 
   private getUser(id: any) {
-    this.service.getLead(id).subscribe((data) => {
+    this.service.getLead(id, true).subscribe((data) => {
       this.user = data;
       this.getHistoryData();
     });

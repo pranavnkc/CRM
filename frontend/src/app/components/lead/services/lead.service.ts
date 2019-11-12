@@ -38,16 +38,16 @@ export class LeadService {
     return this.http.get(`api/leads/status/`);
   }
   addComment(id: any, data: any) {
-    return this.http.post(`api/leads/${id}/comment/`, data);
+    return this.http.post(`api/leads/${id}/comment/?include_raw_leads=true`, data);
   }
   getComments(id: any) {
-    return this.http.get(`api/leads/${id}/comment/`);
+    return this.http.get(`api/leads/${id}/comment/?include_raw_leads=true`);
   }
   getLeadExport(params: any) {
-    return this.http.get(`api/leads/lead-export/`, params);
+    return this.http.get(`api/leads/lead-export/?include_raw_leads=true`, params);
   }
   getLeadHistory(id: any, params: any) {
-    return this.http.get(`api/leads/${id}/history/`, params);
+    return this.http.get(`api/leads/${id}/history/?include_raw_leads=true`, params);
   }
   submitForPR(id: any, data: any, includeRaw?: Boolean) {
     let url = `api/leads/${id}/submit-for-pr/`;
