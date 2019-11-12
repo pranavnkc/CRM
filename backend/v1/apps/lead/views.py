@@ -27,6 +27,7 @@ class LeadViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         sortBy = self.request.query_params.get('sortBy')
         sortOrder = self.request.query_params.get('sortOrder')
+        filter_q = Q()
         if sortBy:
             fields = {field.name:type(field) for field in models.Lead._meta.fields}
             fields.update({"callbacks__"+field.name:type(field) for field in models.Callback._meta.fields})
@@ -37,16 +38,20 @@ class LeadViewSet(viewsets.ModelViewSet):
                 sortAttr = sortBy if sortOrder=='asc' else "-"+sortBy
             self.queryset = self.queryset.order_by(sortAttr)
         else:
-            self.queryset = self.queryset.order_by('-id')
+            self.queryset = self.queryset.order_by('-id')    
         if self.request.user.groups.filter(name='sales-person').exists():
-            return self.queryset.filter(assigned_to=self.request.user)
-        if self.request.user.groups.filter(name='stage-1').exists():
-            if self.request.query_params.get('include_raw_leads'):
-                return self.queryset.filter(submission_status='raw') | self.queryset.filter(assigned_to=self.request.user)
-            return self.queryset.filter(assigned_to=self.request.user)
-        if self.request.user.groups.filter(name='quality-analyst').exists():
-            return self.queryset.filter(assigned_to=self.request.user)
-        return self.queryset
+            filter_q = Q(assigned_to=self.request.user)
+        elif self.request.user.groups.filter(name='stage-1').exists():
+            filter_q = Q(assigned_to=self.request.user)
+        elif self.request.user.groups.filter(name='quality-analyst').exists():
+            filter_q = Q(assigned_to=self.request.user)
+        elif self.request.user.groups.filter(name='team-manager').exists():
+            filter_q = Q(assigned_to=self.request.user) | Q(assigned_to__parent=self.request.user)
+        elif self.request.user.groups.filter(name='company-head').exists():
+            filter_q = Q(assigned_to=self.request.user) | Q(assigned_to__parent=self.request.user) | Q(assigned_to__parent__parent=self.request.user)
+        if self.request.query_params.get('include_raw_leads'):
+            filter_q = filter_q | Q(submission_status='raw')
+        return self.queryset.filter(filter_q)
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
     def status(self, request):
