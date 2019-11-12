@@ -42,7 +42,6 @@ class LeadViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(assigned_to=self.request.user)
         if self.request.user.groups.filter(name='stage-1').exists():
             if self.request.query_params.get('include_raw_leads'):
-                print("asdasd")
                 return self.queryset.filter(submission_status='raw') | self.queryset.filter(assigned_to=self.request.user)
             return self.queryset.filter(assigned_to=self.request.user)
         if self.request.user.groups.filter(name='quality-analyst').exists():
