@@ -72,7 +72,7 @@ export class LeadListComponent implements OnInit {
   ];
   conditions: any;
   fields = [];
-  dateFields = ['created_on', 'contract_end_date'];
+  dateFields = ['created_on', 'contract_end_date', 'latest_callback'];
   role: any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();

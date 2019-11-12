@@ -122,7 +122,7 @@
             <mat-form-field fxFlex="29%">
                 <input matInput class="white-text f20 mat-block" placeholder="Bilge EAC" formControlName="bilge_eac">
             </mat-form-field>
-            <mat-form-field fxFlex="28%">
+            <mat-form-field fxFlex="28%" *ngIf="authService.role=='admin'">
                 <mat-select placeholder="Locked" formControlName="is_locked">
                     <mat-option [value]=true>YES</mat-option>
                     <mat-option [value]=false>No</mat-option>

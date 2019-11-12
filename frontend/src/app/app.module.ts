@@ -9,10 +9,10 @@ import { NgxMaskModule } from 'ngx-mask';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 export const MY_FORMATS = {
   parse: {
-    dateInput: 'MM/DD/YYYY',
+    dateInput: 'DD/MM/YYYY',
   },
   display: {
-    dateInput: 'MM/DD/YYYY',
+    dateInput: 'DD/MM/YYYY',
     monthYearLabel: 'MMM YYYY',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM YYYY',

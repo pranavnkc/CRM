@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { LeadService } from '../../services';
+import { AuthService } from '../../../../../app/services/auth.service';
 import { SharedDataService } from '../../../../services/sharedData.service';
 import { UsernameAlreadyExistsValidator } from '../../../../services/auth.service';
 import { matchValidator } from '../../../../validators';
@@ -25,6 +26,7 @@ export class CreateEditLeadComponent implements OnInit {
     private fb: FormBuilder,
     private service: LeadService,
     public sharedDataService: SharedDataService,
+    public authService: AuthService,
     private usernameAlreadyExistsValidator: UsernameAlreadyExistsValidator) {
     this.createForm();
   }
