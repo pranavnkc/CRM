@@ -358,10 +358,10 @@ export class LeadListComponent implements OnInit {
   }
 
   submitForPR(lead, isHotTransfer?: Boolean) {
-    if (!lead.contract_end_date || !lead.current_electricity_supplier) {
+    if (!lead.contract_end_date || !lead.current_electricity_supplier || !lead.utility_type) {
       this.dialog.open(AlertDialogComponent, {
         width: "50%",
-        data: { "msg": "Need to fill current supplier and contract End Date before PR." }
+        data: { "msg": "Need to fill current supplier, contract End Date and Utility Date before PR." }
       });
       return
     }
