@@ -6,6 +6,7 @@ import { SharedDataService } from '../../../../services/sharedData.service';
 import { UsernameAlreadyExistsValidator } from '../../../../services/auth.service';
 import { matchValidator } from '../../../../validators';
 import { constants } from '../../../../constants';
+import * as moment from 'moment';
 export enum EditMode {
   Create = 0,
   Edit = 1
@@ -20,6 +21,7 @@ export class CreateEditLeadComponent implements OnInit {
   lead: any;
   editMode: EditMode = EditMode.Create;
   form: FormGroup;
+  moment = moment;
   constructor(private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
@@ -30,6 +32,7 @@ export class CreateEditLeadComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this);
     this.route.params.subscribe(params => {
       let id = params['id'];
       if (id) {
@@ -92,7 +95,7 @@ export class CreateEditLeadComponent implements OnInit {
   createLead() {
     var data = JSON.parse(JSON.stringify(this.form.value));
     if (data.contract_end_date) {
-      data.contract_end_date = data.contract_end_date.split("T")[0]
+      data.contract_end_date = moment(data.contract_end_date).format('YYYY-MM-DD');
     }
     (this.editMode ? this.service.updateLead(this.lead.id, data, true) : this.service.createLead(data)).subscribe((res) => {
       this.router.navigate([this.route.parent.url]);

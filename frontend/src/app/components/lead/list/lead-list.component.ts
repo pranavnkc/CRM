@@ -349,7 +349,7 @@ export class LeadListComponent implements OnInit {
   update() {
     var data = JSON.parse(JSON.stringify(this.inlineEditForm.value));
     if (data.contract_end_date) {
-      data.contract_end_date = data.contract_end_date.split("T")[0]
+      data.contract_end_date = moment(data.contract_end_date).format('YYYY-MM-DD');
     }
     this.service.updateLead(this.inlineEditedID, data, this.include_raw_leads).subscribe((res) => {
       this.inlineEditedID = null;
