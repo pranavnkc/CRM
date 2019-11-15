@@ -18,5 +18,9 @@ export let constants = {
       }
     }
     return null;
+  },
+
+  filterList(list, val) {
+    return list.filter((ele) => ele == val);
   }
 }

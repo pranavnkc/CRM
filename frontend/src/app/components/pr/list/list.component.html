@@ -1,0 +1,43 @@
+<mat-card>
+    <mat-card-title> {{prOrHt?"Prospects":"HT"}} </mat-card-title>
+    <mat-card-content>
+        <div class="table-container">
+            <mat-table #table [dataSource]="dataSource">
+                <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef fxFlex="5%">ID </mat-header-cell>
+                    <mat-cell *matCellDef="let element;let index=index;" fxFlex="5%">
+                        <a class="cursor-pointer" (click)="false && edit(element)">{{element.id}}</a>
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="lead_id">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Lead ID </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.lead}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="created_on">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Created On </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{moment(element.created_on).format('MMM DD, YYYY hh:mm A')}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="submitted_by">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Submitted By </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.submitted_by}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="quality_status">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Quality Status </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{constants.getElementFromList(sharedDataService.qualityStatusChoices, 'key', element.quality_status, 'display')}} </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="campaign">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Campaign </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.campaign}} </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+            </mat-table>
+            <mat-paginator #paginator
+                           [pageSize]="constants.defaultPageSize"
+                           [pageSizeOptions]="constants.pageSizeOptions"
+                           [showFirstLastButtons]="true">
+            </mat-paginator>
+        </div>
+    </mat-card-content>
+</mat-card>

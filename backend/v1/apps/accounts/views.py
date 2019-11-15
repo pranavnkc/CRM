@@ -78,7 +78,7 @@ class UserViewSet(viewsets.ModelViewSet):
         ret['lead_count'] = lead_qs.count()
         ret['pr'] = prospect_qs.count()
         ret['ht'] = ht_qs.count()
-        ret['sale'] = sale_qs.count()
+        ret['sale'] = list(sale_qs.values_list('quality_status', flat=True))
         return Response(ret)
 
     

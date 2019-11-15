@@ -106,6 +106,8 @@ class ProspectLead(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     comment = models.TextField()
     campaign = models.CharField(max_length=100, blank=True, null=True)
+    quality_analyst = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="prospects")
+    quality_updated_on = models.DateTimeField(null=True, blank=True)
     is_hot_transfer = models.BooleanField(default=False)
     
 class Callback(models.Model):

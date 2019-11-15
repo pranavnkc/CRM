@@ -214,7 +214,7 @@ class LeadSaleViewSet(viewsets.ModelViewSet):
         if self.request.user.groups.filter(name='admin').exists():
             return qs
         elif self.request.user.groups.filter(name='company-head').exists():
-            return qs.filter(sold_by=request.user) | qs.filter(sold_by__parent=self.request.user) | qs.filter(sold_by__parent__parent=self.request.user)
+            return qs.filter(sold_by=self.request.user) | qs.filter(sold_by__parent=self.request.user) | qs.filter(sold_by__parent__parent=self.request.user)
         elif self.request.user.groups.filter(name='team-manger').exists():
             return qs.filter(sold_by=self.request.user) | qs.filter(sold_by__parent=self.request.user)
         elif self.request.user.groups.filter(name='sales-person').exists():
@@ -231,5 +231,39 @@ class LeadSaleViewSet(viewsets.ModelViewSet):
         instance.quality_status = ser.validated_data['quality_status']
         instance.quality_analyst = request.user
         instance.quality_updated_on  = timezone.now()
+        instance.save()
+        return Response()
+
+class ProspectLeadViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.ProspectLeadSerializer
+    pagination_class = StandardResultsSetPagination
+    queryset = models.ProspectLead.objects.select_related('lead')
+    
+    def get_queryset(self, *args, **kwargs):
+        if int(self.request.query_params.get('pr', 0)):
+            qs = models.ProspectLead.objects.filter(is_hot_transfer=False).select_related('lead').order_by('created_on')
+        else:
+            qs = models.ProspectLead.objects.filter(is_hot_transfer=True).select_related('lead').order_by('created_on')
+        if self.request.user.groups.filter(name='admin').exists():
+            return qs
+        elif self.request.user.groups.filter(name='company-head').exists():
+            return qs.filter(submitted_by=self.request.user) | qs.filter(submitted_by__parent=self.request.user) | qs.filter(submitted_by__parent__parent=self.request.user)
+        elif self.request.user.groups.filter(name='team-manger').exists():
+            return qs.filter(submitted_by=self.request.user) | qs.filter(submitted_by__parent=self.request.user)
+        elif self.request.user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
+            return qs.filter(submitted_by=self.request.user)
+        elif self.request.user.groups.filter(name__in=['quality-analyst', 'quality_manager']).exists():
+            return qs.filter(quality_status__in=[models.ProspectLead.QUALITY_STATUS_HOLD, models.ProspectLead.QUALITY_STATUS_REQUIRE_AUDITING, models.ProspectLead.QUALITY_STATUS_APPROVED])
+        else:
+            return []
+        
+    @detail_route(url_path='change-status', methods=('patch', ))
+    def change_quality_status(self, request, pk):
+        instance = self.get_object()
+        ser = self.serializer_class(instance, data=request.data, context={"request":request}, partial=True)
+        ser.is_valid(raise_exception=True)
+        instance.quality_status = ser.validated_data['quality_status']
+        instance.quality_analyst = request.user
+        instance.quality_updated_on = timezone.now()
         instance.save()
         return Response()

@@ -51,7 +51,7 @@
                     <mat-icon>person_pin</mat-icon>
                 </div>
                 <div class="info-card-content">
-                    <h3>{{dashboardData.sale || 0}}</h3>
+                    <h3>{{(dashboardData.sale || []).length || 0}}</h3>
                     Sale
                 </div>
             </mat-card>

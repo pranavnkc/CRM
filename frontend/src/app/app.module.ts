@@ -93,6 +93,7 @@ import { PrSubmissionComponent } from './components/lead/pr-submission/pr-submis
 import { AlertDialogComponent } from './components/dialogs/alert-dialog/alert-dialog.component';
 import { SaleComponent } from './components/lead/sale/sale.component';
 import { SaleListComponent } from './components/sales/sale-list/sale-list.component';
+import { PrListComponent } from './components/pr/list/list.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -113,6 +114,8 @@ const appRoutes: Routes = [
       { path: 'leads/details/:id', component: LeadDetailsComponent, data: { title: 'Lead details' } },
       { path: 'reports', canActivate: [AuthGuard], component: ReportsComponent, data: { title: 'Report' } },
       { path: 'sales', canActivate: [AuthGuard], component: SaleListComponent, data: { title: 'Sale' } },
+      { path: 'pr', canActivate: [AuthGuard], component: PrListComponent, data: { title: 'PR' } },
+      { path: 'ht', canActivate: [AuthGuard], component: PrListComponent, data: { title: 'HT' } },
       { path: 'sales/edit/:id', canActivate: [AuthGuard], component: SaleComponent, data: { title: 'Sale Edit' } },
       { path: 'settings', component: SettingsComponent, data: { title: 'Settings' } },
       { path: 'profile', component: ProfileComponent, data: { title: 'Profile' } },
@@ -179,6 +182,7 @@ export function get_ip(appLoadService: AppLoadService) {
     AlertDialogComponent,
     SaleComponent,
     SaleListComponent,
+    PrListComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),

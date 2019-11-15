@@ -239,7 +239,8 @@ class LeadHistorySerializer(serializers.ModelSerializer):
         ret['created_by'] = obj.created_by.get_full_name() if obj.created_by else None
         return ret
 
-class ProspectLeadSerializer(serializers.ModelSerializer):    
+class ProspectLeadSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = ProspectLead
         fields = '__all__'
@@ -248,16 +249,34 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         if not data['lead'].current_electricity_supplier or not data['lead'].contract_end_date:
             raise serializers.ValidationError({"required":"Need to fill current supplier and contract End Date before PR."})
         return data
+    
     def create(self, validated_data):
+        validated_data['campaign'] = self.context['request'].user.campaign
         instance = super(ProspectLeadSerializer, self).create(validated_data)
         instance.lead.submission_status = 'ht' if validated_data.get('is_hot_transfer') else 'prospect'
         instance.lead.save()
         history = LeadHistory(lead=instance.lead, action=LeadHistory.ACTION_HT if validated_data.get('is_hot_transfer') else LeadHistory.ACTION_PR, created_by=self.context['request'].user, new_instance_meta={}, old_instance_meta={})
         history.save()
         return instance
-
-class LeadSaleSerializer(serializers.ModelSerializer):
     
+    def update(self, instance, validated_data):
+        lead = validated_data.pop('lead')
+        validated_data['lead'] = instance.lead
+        lead_ser = LeadSerializer(instance.lead, data=lead, context=self.context)
+        lead_ser.is_valid(raise_exception=True)
+        lead_ser.save()
+        validated_data['quality_status'] = LeadSale.QUALITY_STATUS_REQUIRE_AUDITING
+        instance  = super(ProspectLeadSerializer, self).update(instance, validated_data)
+        return instance
+
+    def to_representation(self, obj):
+        ret = super(ProspectLeadSerializer, self).to_representation(obj);
+        if self.context['request'].query_params.get('include_lead'):
+            ret["lead"] = LeadSerializer(obj.lead).data
+        ret['submitted_by'] = obj.submitted_by.get_full_name()
+        return ret
+
+class LeadSaleSerializer(serializers.ModelSerializer):    
     def __init__(self, *args, **kwargs):
         if not kwargs['context'].get('from_lead_view'):
             self.fields['lead'] = LeadSerializer()
