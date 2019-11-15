@@ -8,6 +8,7 @@ import { UsernameAlreadyExistsValidator } from '../../../services/auth.service';
 import { matchValidator } from '../../../validators';
 import { constants } from '../../../constants';
 import { LeadService } from '../services/lead.service';
+import * as moment from 'moment';
 export enum EditMode {
   Create = 0,
   Edit = 1
@@ -143,17 +144,16 @@ export class SaleComponent implements OnInit {
     console.log(this.form);
     var data = JSON.parse(JSON.stringify(this.form.value));
     if (data.contract_end_date) {
-      data.contract_end_date = data.contract_end_date.split("T")[0]
+      data.contract_end_date = moment(data.contract_end_date).format('YYYY-MM-DD');
     }
     if (data.sole_trader_dob) {
-      data.sole_trader_dob = data.sole_trader_dob.split("T")[0]
+      data.sole_trader_dob = moment(data.sole_trader_dob).format('YYYY-MM-DD');
     }
     if (data.start_date) {
-      data.start_date = data.start_date.split("T")[0]
+      data.start_date = moment(data.start_date).format('YYYY-MM-DD');
     }
-
     if (data.date_sold) {
-      data.date_sold = data.date_sold.split("T")[0]
+      data.date_sold = moment(data.date_sold).format('YYYY-MM-DD');
     }
     if (data.lead.supply_number == this.lead.lead.supply_number) {
       delete data['lead']['supply_number']
