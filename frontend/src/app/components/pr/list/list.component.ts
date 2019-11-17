@@ -37,7 +37,7 @@ export class PrListComponent implements OnInit {
       "quality_status": [false],
       "campaign": [false],
     });
-    if (this.authService.role == 'quality-analyst') {
+    if (this.authService.role == 'quality-analyst' || this.authService.role == 'admin') {
       this.displayedColumns[this.displayedColumns.length] = 'actions'
     }
     this.prOrHt = this.activatedRoute.snapshot.data.title == 'PR' ? 1 : 0;
