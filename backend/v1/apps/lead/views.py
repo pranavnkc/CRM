@@ -16,7 +16,7 @@ from v1.apps.utils.utils import get_file_name, model_to_dict_v2
 from v1.apps.utils.models import Settings
 from . import serializers
 from . import models
-from .filters import LeadFilter, LeadHistoryFilter
+from .filters import LeadFilter, LeadHistoryFilter, ProspectLeadFilter
 
 class LeadViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.LeadSerializer
@@ -51,6 +51,8 @@ class LeadViewSet(viewsets.ModelViewSet):
             filter_q = Q(assigned_to=self.request.user) | Q(assigned_to__parent=self.request.user) | Q(assigned_to__parent__parent=self.request.user)
         if self.request.query_params.get('include_raw_leads'):
             filter_q = filter_q | Q(submission_status='raw')
+        if self.request.user.groups.filter(name='admin').exists():
+            return self.queryset
         return self.queryset.filter(filter_q)
     
     @list_route(url_path='status', methods=('get', ), permission_classes=[permissions.AllowAny])
@@ -64,7 +66,7 @@ class LeadViewSet(viewsets.ModelViewSet):
             'renewal_choices':[{'key':rc[0], 'display':rc[1]} for  rc in models.LeadSale.RENEWAL_CHOICES],
             'supplier_choices':[{'key':sn, 'display':sn} for sn in Settings.objects.first().supplier_names],
             'quality_status_choices':[{'key':qs[0], 'display':qs[1]} for qs in models.LeadSale.QUALITY_STATUS_CHOICES],
-            'campaign_choices':[{'key':qs[0], 'display':qs[1]} for qs in get_user_model().CAMPAIGN_CHOICES]
+            'campaign_choices':[{'key':qs[0], 'display':qs[1]} for qs in get_user_model().CAMPAIGN_CHOICES],
         })
     @detail_route(url_path='submit-for-pr', methods=('patch',))
     def pr_submission(self, request, pk):
@@ -238,22 +240,25 @@ class ProspectLeadViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProspectLeadSerializer
     pagination_class = StandardResultsSetPagination
     queryset = models.ProspectLead.objects.select_related('lead')
-    
+    filter_class = ProspectLeadFilter
     def get_queryset(self, *args, **kwargs):
-        if int(self.request.query_params.get('pr', 0)):
-            qs = models.ProspectLead.objects.filter(is_hot_transfer=False).select_related('lead').order_by('created_on')
+        if 'pr' in self.request.query_params:
+            if int(self.request.query_params.get('pr', 0)):
+                qs = models.ProspectLead.objects.filter(is_hot_transfer=False).select_related('lead').order_by('created_on')
+            else:
+                qs = models.ProspectLead.objects.filter(is_hot_transfer=True).select_related('lead').order_by('created_on')
         else:
-            qs = models.ProspectLead.objects.filter(is_hot_transfer=True).select_related('lead').order_by('created_on')
+            qs = self.queryset
         if self.request.user.groups.filter(name='admin').exists():
             return qs
         elif self.request.user.groups.filter(name='company-head').exists():
             return qs.filter(submitted_by=self.request.user) | qs.filter(submitted_by__parent=self.request.user) | qs.filter(submitted_by__parent__parent=self.request.user)
-        elif self.request.user.groups.filter(name='team-manger').exists():
+        elif self.request.user.groups.filter(name='team-manager').exists():
             return qs.filter(submitted_by=self.request.user) | qs.filter(submitted_by__parent=self.request.user)
         elif self.request.user.groups.filter(name__in=['sales-person', 'stage-1']).exists():
             return qs.filter(submitted_by=self.request.user)
         elif self.request.user.groups.filter(name__in=['quality-analyst', 'quality_manager']).exists():
-            return qs.filter(quality_status__in=[models.ProspectLead.QUALITY_STATUS_HOLD, models.ProspectLead.QUALITY_STATUS_REQUIRE_AUDITING, models.ProspectLead.QUALITY_STATUS_APPROVED])
+            return qs
         else:
             return []
         

@@ -88,10 +88,9 @@ class Lead(models.Model):
         return "{} {} {}".format(self.first_name, self.middle_name, self.last_name)
 
 class ProspectLead(models.Model):
-
     QUALITY_STATUS_APPROVED = 'approved'
-    QUALITY_STATUS_REJECTED = 'Reject'
-    QUALITY_STATUS_HOLD = 'hold'
+    QUALITY_STATUS_REJECTED = 'rejected'
+    QUALITY_STATUS_HOLD = 'on-hold'
     QUALITY_STATUS_REQUIRE_AUDITING = 'audit'
     QUALITY_STATUS_CHOICES = (
         (QUALITY_STATUS_APPROVED, 'Approved'),
@@ -108,6 +107,7 @@ class ProspectLead(models.Model):
     campaign = models.CharField(max_length=100, blank=True, null=True)
     quality_analyst = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="prospects")
     quality_updated_on = models.DateTimeField(null=True, blank=True)
+    quality_comment = models.CharField(max_length=400, blank=True, null=True)
     is_hot_transfer = models.BooleanField(default=False)
     
 class Callback(models.Model):
@@ -247,5 +247,6 @@ class LeadSale(models.Model):
     account_number = models.CharField(max_length=100, blank=True, null=True)
     account_sort_code = models.CharField(max_length=100, blank=True, null=True)
     data_source = models.CharField(max_length=100, blank=True, null=True)
-    comment = models.CharField(max_length=100, blank=True, null=True)
+    comment = models.CharField(max_length=400, blank=True, null=True)
+    quality_comment = models.CharField(max_length=400, blank=True, null=True)
     campaign = models.CharField(max_length=100, blank=True, null=True)

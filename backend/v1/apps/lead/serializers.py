@@ -50,15 +50,15 @@ class LeadSerializer(serializers.ModelSerializer):
             history_obj.save()
         elif history_obj.new_instance_meta:
             history_obj.save()
-        if old_submission_status == 'raw' and self.context['request'].user.groups.filter(name='stage-1').exists():
-            history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_ASSIGN_CHANGED, created_by=self.context['request'].user)
-            history_obj.old_instance_meta = {"assinee":instance.assigned_to_id}
-            history_obj.new_instance_meta = {"assinee":self.context['request'].user.id}
-            history_obj.save()
-            instance.assigned_to = self.context['request'].user
-            instance.assigned_by = self.context['request'].user
-            instance.assigned_on = timezone.now()
-            instance.save() 
+        # if old_submission_status == 'raw' and self.context['request'].user.groups.filter(name='stage-1').exists():
+        #     history_obj = LeadHistory(lead=instance, action=LeadHistory.ACTION_ASSIGN_CHANGED, created_by=self.context['request'].user)
+        #     history_obj.old_instance_meta = {"assinee":instance.assigned_to_id}
+        #     history_obj.new_instance_meta = {"assinee":self.context['request'].user.id}
+        #     history_obj.save()
+        #     instance.assigned_to = self.context['request'].user
+        #     instance.assigned_by = self.context['request'].user
+        #     instance.assigned_on = timezone.now()
+        #     instance.save() 
         return instance
 
     def to_representation(self, obj):
@@ -245,8 +245,7 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         model = ProspectLead
         fields = '__all__'
     def validate(self, data):
-        print(data['lead'].current_electricity_supplier, data['lead'].contract_end_date)
-        if not data['lead'].current_electricity_supplier or not data['lead'].contract_end_date:
+        if data.get('lead') and (not data['lead'].current_electricity_supplier or not data['lead'].contract_end_date):
             raise serializers.ValidationError({"required":"Need to fill current supplier and contract End Date before PR."})
         return data
     
