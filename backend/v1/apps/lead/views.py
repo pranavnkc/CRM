@@ -79,6 +79,7 @@ class LeadViewSet(viewsets.ModelViewSet):
         ser.is_valid(raise_exception=True)
         print(ser.validated_data)
         ser.save()
+        instance.submission_status = 'prospect';
         history_obj = models.LeadHistory(lead=instance, action=models.LeadHistory.ACTION_ASSIGN_CHANGED, created_by=request.user)
         history_obj.old_instance_meta = {"assinee":instance.assigned_to_id}
         history_obj.new_instance_meta = {"assinee":request.user.id}
