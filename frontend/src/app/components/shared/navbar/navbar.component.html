@@ -31,7 +31,7 @@
         <span>HT</span>
     </a>
 
-    <ul>
+    <ul *ngIf="role=='admin'">
       <li [ngClass]="{'expanded-parent': ngInit.value}">
         <a (click)="ngInit.value = !ngInit.value" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">
           <mat-icon>devices</mat-icon>
