@@ -52,7 +52,7 @@ export class LeadService {
   submitForPR(id: any, data: any, includeRaw?: Boolean) {
     let url = `api/leads/${id}/submit-for-pr/`;
     if (includeRaw) {
-      url = `api/leads/${id}/?include_raw_leads=true`;
+      url = `api/leads/${id}/submit-for-pr/?include_raw_leads=true`;
     }
     return this.http.patch(url, data);
   }
