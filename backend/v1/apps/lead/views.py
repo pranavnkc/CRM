@@ -36,7 +36,7 @@ class LeadViewSet(viewsets.ModelViewSet):
                 sortAttr = getattr(sortAttr, sortOrder)() if hasattr(sortAttr, sortOrder) else sortAttr.asc()
             else:
                 sortAttr = sortBy if sortOrder=='asc' else "-"+sortBy
-            self.queryset = self.queryset.order_by(sortAttr)
+                self.queryset = self.queryset.order_by(sortAttr)
         else:
             self.queryset = self.queryset.order_by('-id')    
         if self.request.user.groups.filter(name='sales-person').exists():
@@ -149,8 +149,8 @@ class LeadViewSet(viewsets.ModelViewSet):
                 history_obj.old_instance_meta = {"assinee":l.assigned_to_id}
                 history_obj.new_instance_meta = {"assinee":assinee}
                 history_objs.append(history_obj)
-            leads.update(assigned_to_id=assinee)
-            models.LeadHistory.objects.bulk_create(history_objs)
+                leads.update(assigned_to_id=assinee)
+                models.LeadHistory.objects.bulk_create(history_objs)
         return Response()
 
     @list_route(url_path='bulk-create', methods=('post',))
@@ -179,12 +179,12 @@ class LeadViewSet(viewsets.ModelViewSet):
                 row = {}
                 for field in fields:
                     if field in ['latest_callback']:
-                         row['latest_callback'] = getattr(models.Callback.objects.filter(lead=l).last(), 'datetime', '')
+                        row['latest_callback'] = getattr(models.Callback.objects.filter(lead=l).last(), 'datetime', '')
                     else:
                         row[field] = getattr(l, field)
-                writer.writerow(row)
+                        writer.writerow(row)
         return Response({'file':file_name})
-
+    
 
     
     @detail_route(url_path='history', methods=('post','get'))
@@ -267,8 +267,63 @@ class ProspectLeadViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         ser = self.serializer_class(instance, data=request.data, context={"request":request}, partial=True)
         ser.is_valid(raise_exception=True)
+        print(ser.validated_data)
         instance.quality_status = ser.validated_data['quality_status']
+        instance.quality_comment = ser.validated_data['quality_comment']
         instance.quality_analyst = request.user
         instance.quality_updated_on = timezone.now()
         instance.save()
         return Response()
+
+    @list_route(url_path='pr-ht-report', methods=('get',))
+    def pr_ht_report(self, request):
+        pr_ot_ht =  request.query_params.get('pr', 0)
+        file_name = get_file_name(file_type='pr_report' if pr_ot_ht else 'ht_report')
+        fields = ["ID", "Source", "Created On", "Status", "Submission Status", "Business Name","Salutation", "First Name","Middle Name", "Last Name", "Phone Number","Email", "Address 1", "Address 2", "Address 3", "Address 4", "City Or Town", "County", "Postcode", "Utility Type", "AMr", "Related Meter", "Current SUpplier", "Contract End Date", "Meter Serial Number", "MPAN/MPRN", "Can Sell Water", "Contract Duration", "S&R3 Status", "Bilge Eac", "IS Locked", "PR Date", "Pr Campaign", "PR Status", "PR BY Username", "Pr By Name","Comment", "Quality Comment"]
+        with open(file_name, 'w', newline='') as csvfile:
+            qs = self.filter_queryset(self.get_queryset())
+            writer = csv.DictWriter(csvfile, fieldnames=fields)
+            writer.writeheader()
+            for pr in qs:
+                row = {
+                    "ID":pr.id,
+                    "Source":pr.lead.source,
+                    "Created On":pr.lead.created_on,
+                    "Status":pr.lead.status,
+                    "Submission Status":pr.lead.submission_status,
+                    "Business Name":pr.lead.busines_name,
+                    "Salutation":pr.lead.salutation,
+                    "First Name":pr.lead.first_name,
+                    "Middle Name":pr.lead.middle_name,
+                    "Last Name":pr.lead.last_name,
+                    "Phone Number":pr.lead.phone_number,
+                    "Email":pr.lead.email,
+                    "Address 1":pr.lead.address_1,
+                    "Address 2":pr.lead.address_2,
+                    "Address 3":pr.lead.address_3,
+                    "Address 4":pr.lead.address_4,
+                    "City Or Town":pr.lead.city_or_town,
+                    "County":pr.lead.county,
+                    "Postcode":pr.lead.postcode,
+                    "Utility Type":pr.lead.utility_type,
+                    "AMr":pr.lead.amr,
+                    "Related Meter":pr.lead.related_meter,
+                    "Current SUpplier":pr.lead.current_electricity_supplier,
+                    "Contract End Date":pr.lead.contract_end_date,
+                    "Meter Serial Number":pr.lead.meter_serial_number,
+                    "MPAN/MPRN":pr.lead.supply_number,
+                    "Can Sell Water":pr.lead.can_sell_water,
+                    "Contract Duration":pr.lead.contract_duration,
+                    "S&R3 Status":pr.lead.s_andr3_status,
+                    "Bilge Eac":pr.lead.bilge_eac,
+                    "IS Locked":pr.lead.is_locked,
+                    "PR Date":pr.created_on,
+                    "Pr Campaign":pr.campaign,
+                    "PR Status":pr.quality_status,
+                    "PR BY Username":pr.submitted_by.username,
+                    "Pr By Name":pr.submitted_by.get_full_name(),
+                    "Comment":pr.comment,
+                    "Quality Comment": pr.quality_comment,
+                }
+                writer.writerow(row)
+        return Response({'file':file_name})

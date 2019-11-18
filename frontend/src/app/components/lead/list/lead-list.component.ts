@@ -87,12 +87,13 @@ export class LeadListComponent implements OnInit {
     console.log(this);
     this.fields = [
       { "field": "id", "display": "Lead ID", "selected": true },
-      { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+      { "field": "source", "display": "Source", "selected": true },
+      // { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
       {
-        "field": "status", "display": "Status", "selected": true, "fieldType": "select", "options": this.sharedDataService.leadStatus
+        "field": "status", "display": "Disposition", "selected": true, "fieldType": "select", "options": this.sharedDataService.leadStatus
       },
       {
-        "field": "submission_status", "display": "Submission Status", "selected": true
+        "field": "submission_status", "display": "Stage", "selected": true
       },
 
       { "field": "assigned_to", "display": "Assigned To", "selected": true },
@@ -308,7 +309,6 @@ export class LeadListComponent implements OnInit {
     });
   }
   scheduleCallback(lead) {
-
     let dialogRef = this.dialog.open(CallbackComponent, {
       width: "50%",
       data: { lead: lead, dateTime: moment(), allMinuteOptions: true }

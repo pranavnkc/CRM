@@ -38,7 +38,7 @@ export class LeadBulkCreateComponent implements OnInit {
     this.http.post('api/leads/bulk-create/', formData).subscribe((response: any) => {
       this.spinnerService.showSpinner = false;
       this.officersUploaderror = null;
-      this.snackBarService.open(successMsg);
+      this.snackBarService.open(successMsg, 10000);
     }, (error) => {
       if (error.error.data_error) {
         this.fileLoader.downloadFile('/' + error.error.data_error[0]);

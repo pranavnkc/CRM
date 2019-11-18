@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService, SharedDataService } from '../../../services/index';
 import { AuthService } from '../../../services/auth.service';
 import { SpinnerService } from '../../../services';
+import { PromptDialogComponent } from '../../dialogs/prompt-dialog/prompt-dialog.component';
 import { constants } from '../../../constants';
 import * as moment from 'moment';
 import * as momentTimezone from 'moment-timezone';
@@ -25,6 +26,7 @@ export class PrListComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
+    private dialog: MatDialog,
     public sharedDataService: SharedDataService,
     private spinnerService: SpinnerService,
     private router: Router,
@@ -75,8 +77,16 @@ export class PrListComponent implements OnInit {
     });
   }
   changeStatus(prId, status) {
-    this.http.patch(`api/prospects/${prId}/change-status/`, { 'quality_status': status }).subscribe((res) => {
-      this.getData();
+    let dialogRef = this.dialog.open(PromptDialogComponent, {
+      width: "50%",
+      data: { okButtonText: 'Add Comment', cancelButtonText: 'Cancel', title: 'Add Comment', message: 'Add a comment about this lead.' }
     });
+    dialogRef.afterClosed().subscribe((data) => {
+      if (data) {
+        this.http.patch(`api/prospects/${prId}/change-status/`, { 'quality_status': status, 'quality_comment': data }).subscribe((res) => {
+          this.getData();
+        });
+      }
+    })
   }
 }

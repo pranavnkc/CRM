@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="getReport()">
+    <div fxLayout="row" fxLayoutGap="2%">
+        <mat-form-field fxFlex="20%">
+            <input matInput [matDatepicker]="fromPicker" placeholder="From" formControlName="start_date">
+            <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field fxFlex="20%">
+            <input matInput [matDatepicker]="toPicker" placeholder="To" formControlName="end_date">
+            <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field fxFlex="20%">
+            <mat-select placeholder="Quality Status" formControlName="quality_status">
+                <mat-option [value]="false">All</mat-option>
+                <mat-option *ngFor="let la of sharedDataService.qualityStatusChoices" [value]="la.key">{{la.display}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field fxFlex="20%">
+            <mat-select placeholder="Campaign" formControlName="campaign">
+                <mat-option [value]="false">All</mat-option>
+                <mat-option *ngFor="let la of sharedDataService.campaignChoices" [value]="la.key">{{la.display}}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div fxFlex="">
+            <button mat-raised-button type="submit" color="primary">Get Report</button>
+        </div>
+    </div>
+</form>

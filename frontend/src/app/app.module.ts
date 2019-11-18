@@ -94,6 +94,7 @@ import { AlertDialogComponent } from './components/dialogs/alert-dialog/alert-di
 import { SaleComponent } from './components/lead/sale/sale.component';
 import { SaleListComponent } from './components/sales/sale-list/sale-list.component';
 import { PrListComponent } from './components/pr/list/list.component';
+import { PrHtSalesReportComponent } from './components/reports/pr-ht-sales-report/pr-ht-sales-report.component';
 const appRoutes: Routes = [
   {
     path: '',
@@ -112,7 +113,8 @@ const appRoutes: Routes = [
       { path: 'leads/bulk-create', component: LeadBulkCreateComponent, data: { title: ' Bulk Create Lead' } },
       { path: 'leads/edit/:id', component: CreateEditLeadComponent, data: { title: 'Edit Lead' } },
       { path: 'leads/details/:id', component: LeadDetailsComponent, data: { title: 'Lead details' } },
-      { path: 'reports', canActivate: [AuthGuard], component: ReportsComponent, data: { title: 'Report' } },
+      { path: 'logs', canActivate: [AuthGuard], component: ReportsComponent, data: { title: 'Logs' } },
+      { path: 'report/:report_type', canActivate: [AuthGuard], component: PrHtSalesReportComponent, data: { title: 'Reports' } },
       { path: 'sales', canActivate: [AuthGuard], component: SaleListComponent, data: { title: 'Sale' } },
       { path: 'pr', canActivate: [AuthGuard], component: PrListComponent, data: { title: 'PR' } },
       { path: 'ht', canActivate: [AuthGuard], component: PrListComponent, data: { title: 'HT' } },
@@ -183,6 +185,7 @@ export function get_ip(appLoadService: AppLoadService) {
     SaleComponent,
     SaleListComponent,
     PrListComponent,
+    PrHtSalesReportComponent,
   ],
   imports: [
     RouterModule.forRoot(appRoutes),
