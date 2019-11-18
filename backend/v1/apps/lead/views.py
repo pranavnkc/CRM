@@ -4,6 +4,7 @@ from django.forms import IntegerField, CharField
 from django.db.models.functions import Concat
 from django.db.models import F, Value, Q
 from django.db.models.functions import Lower 
+from django.db import transaction
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -68,7 +69,9 @@ class LeadViewSet(viewsets.ModelViewSet):
             'quality_status_choices':[{'key':qs[0], 'display':qs[1]} for qs in models.LeadSale.QUALITY_STATUS_CHOICES],
             'campaign_choices':[{'key':qs[0], 'display':qs[1]} for qs in get_user_model().CAMPAIGN_CHOICES],
         })
+    
     @detail_route(url_path='submit-for-pr', methods=('patch',))
+    @transaction.atomic
     def pr_submission(self, request, pk):
         instance = self.get_object()
         data = {"lead":instance.id, "submitted_by":request.user.id, "comment": request.data.get('comment'), "is_hot_transfer":request.data.get('is_hot_transfer', False)}
@@ -76,6 +79,14 @@ class LeadViewSet(viewsets.ModelViewSet):
         ser.is_valid(raise_exception=True)
         print(ser.validated_data)
         ser.save()
+        history_obj = models.LeadHistory(lead=instance, action=models.LeadHistory.ACTION_ASSIGN_CHANGED, created_by=request.user)
+        history_obj.old_instance_meta = {"assinee":instance.assigned_to_id}
+        history_obj.new_instance_meta = {"assinee":request.user.id}
+        history_obj.save()
+        instance.assigned_to = request.user
+        instance.assigned_by = request.user
+        instance.assigned_on = timezone.now()
+        instance.save()
         return Response()
     
     @detail_route(url_path='submit-for-sale', methods=('patch',))
