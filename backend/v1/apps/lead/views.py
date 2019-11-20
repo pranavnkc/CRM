@@ -45,7 +45,7 @@ class LeadViewSet(viewsets.ModelViewSet):
         elif self.request.user.groups.filter(name='stage-1').exists():
             filter_q = Q(assigned_to=self.request.user)
         elif self.request.user.groups.filter(name='quality-analyst').exists():
-            filter_q = Q(assigned_to=self.request.user)
+            filter_q = Q(assigned_to=self.request.user) | Q(prospect__isnull=False)
         elif self.request.user.groups.filter(name='team-manager').exists():
             filter_q = Q(assigned_to=self.request.user) | Q(assigned_to__parent=self.request.user)
         elif self.request.user.groups.filter(name='company-head').exists():
