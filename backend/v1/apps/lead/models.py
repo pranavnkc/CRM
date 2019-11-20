@@ -74,7 +74,7 @@ class Lead(models.Model):
     supply_number = models.CharField(max_length=100, null=True, blank=True) # this is MPRN/MPAN
     
     #new fields as discussed on 10th oct
-    can_sell_water = models.BooleanField(default=False)
+    can_sell_water = models.BooleanField(null=True, blank=True)
     initial_disposition_date = models.DateField(blank=True, null=True)
     new_renewal_date = models.DateField(null=True, blank=True)
     agent_name = models.CharField(max_length=200, null=True, blank=True)
@@ -194,7 +194,7 @@ class LeadSale(models.Model):
     MANAGEMENT_STATUS_CHOICES = (
         (MANAGEMENT_STATUS_SUBMITTED_TO_SUPPLIER, 'Submitted To Supplier'), )
     lead = models.ForeignKey(Lead, on_delete=models.CASCADE, related_name='sale')
-    quality_status =models.CharField(
+    quality_status = models.CharField(
         choices=QUALITY_STATUS_CHOICES, max_length=30, default=QUALITY_STATUS_REQUIRE_AUDITING)
     quality_analyst = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="sales")
     quality_updated_on = models.DateTimeField(null=True, blank=True)

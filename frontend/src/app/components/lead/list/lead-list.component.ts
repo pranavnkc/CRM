@@ -184,6 +184,7 @@ export class LeadListComponent implements OnInit {
     this.sort.sortChange.subscribe((s) => {
       this.loadLeads();
     })
+
     let selectedItems = (JSON.parse(localStorage.getItem('selectedLeadFields')) || []).filter((sf) => this.fields.find((f) => f.field == sf) || ['edit', 'select', 'actions'].indexOf(sf) != -1);
     if (selectedItems.length && selectedItems.length != JSON.parse(localStorage.getItem('selectedLeadFields')).length) {
       localStorage.setItem('selectedLeadFields', JSON.stringify(selectedItems));
@@ -197,15 +198,14 @@ export class LeadListComponent implements OnInit {
       }
     }
     else {
-      selectedItems = ['edit', 'select'].concat(this.fields.filter(field => field.selected).map((field) => field.field));
+      selectedItems = ['edit', 'select', 'actions'].concat(this.fields.filter(field => field.selected).map((field) => field.field));
     }
     this.displayedColumns = selectedItems;
     this.buildInlineForm();
   }
 
   private selectedFieldsChanged() {
-    this.displayedColumns = ['edit', 'select'].concat(this.fields.filter(field => field.selected).map(field => field.field));
-    this.displayedColumns.push('actions');
+    this.displayedColumns = ['edit', 'select', 'actions'].concat(this.fields.filter(field => field.selected).map(field => field.field));
     localStorage.setItem('selectedLeadFields', JSON.stringify(this.displayedColumns));
     this.buildInlineForm();
   }
@@ -403,6 +403,17 @@ export class LeadListComponent implements OnInit {
           this.selection.clear();
         })
       }
+    })
+  }
+  raplicate(lead) {
+    this.service.raplicate(lead.id).subscribe((res) => {
+      let dialogRef = this.dialog.open(AlertDialogComponent, {
+        width: "50%",
+        data: { "msg": "Replicated lead ID is " + res['id'] }
+      });
+      dialogRef.afterClosed().subscribe((data) => {
+        this.loadLeads();
+      })
     })
   }
 }

@@ -276,6 +276,7 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         return ret
 
 class LeadSaleSerializer(serializers.ModelSerializer):    
+
     def __init__(self, *args, **kwargs):
         if not kwargs['context'].get('from_lead_view'):
             self.fields['lead'] = LeadSerializer()

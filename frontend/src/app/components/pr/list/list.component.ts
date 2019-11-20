@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
-import { MatDialog, MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpService, SharedDataService } from '../../../services/index';
 import { AuthService } from '../../../services/auth.service';
@@ -20,6 +20,7 @@ export class PrListComponent implements OnInit {
   displayedColumns = ['id', "lead_id", 'quality_status', 'submitted_by', 'created_on', 'campaign'];
   dataSource = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
   constants = constants;
   moment = moment;
   prOrHt = 0;
@@ -34,7 +35,7 @@ export class PrListComponent implements OnInit {
     private authService: AuthService,
   ) {
     this.form = this.fb.group({
-      "start_date": [moment().subtract('days', 7).toDate()],
+      "start_date": [moment().toDate()],
       "end_date": [moment().toDate()],
       "quality_status": [false],
       "campaign": [false],
@@ -43,13 +44,17 @@ export class PrListComponent implements OnInit {
       this.displayedColumns[this.displayedColumns.length] = 'actions'
     }
     this.prOrHt = this.activatedRoute.snapshot.data.title == 'PR' ? 1 : 0;
-    this.getData();
+
   }
 
   ngOnInit() {
     this.paginator.page.subscribe((val) => {
       this.getData({ pageIndex: this.paginator.pageIndex, pageSize: this.paginator.pageSize });
     })
+    this.sort.sortChange.subscribe((s) => {
+      this.getData();
+    })
+    this.getData();
   }
 
   getData(pageConfig?: any) {
@@ -61,6 +66,10 @@ export class PrListComponent implements OnInit {
       end_date: moment(this.form.value.end_date).format('YYYY-MM-DD'),
       pr: this.prOrHt,
     };
+    if (this.sort.direction) {
+      params['sortBy'] = this.sort.active;
+      params['sortOrder'] = this.sort.direction;
+    }
     if (this.form.controls.quality_status.value) {
       params['quality_status'] = this.form.controls.quality_status.value;
     }

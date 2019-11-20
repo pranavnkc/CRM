@@ -64,4 +64,9 @@ export class LeadService {
     }
     return this.http.patch(url, data);
   }
+
+  raplicate(id: any) {
+    let url = `api/leads/${id}/raplicate/?include_raw_leads=true`;
+    return this.http.patch(url, {});
+  }
 }

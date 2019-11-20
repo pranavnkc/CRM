@@ -38,7 +38,7 @@ export class PrHtSalesReportComponent implements OnInit {
 
   getReport() {
     let report_type = this.activatedRoute.snapshot.params.report_type;
-    let url = report_type == 'pr' || report_type == 'ht' ? 'api/prospects/pr-ht-report/' : '';
+    let url = report_type == 'pr' || report_type == 'ht' ? 'api/prospects/pr-ht-report/' : 'api/sales/sales-report/';
     this.spinnerService.showSpinner = true;
     let params = {
       start_date: moment(this.form.value.start_date).format('YYYY-MM-DD'),
