@@ -202,11 +202,12 @@ class LeadViewSet(viewsets.ModelViewSet):
     @detail_route(url_path='raplicate', methods=('patch', ))
     def raplicate(self, request, pk):
         instance = self.get_object()
-        exclude_fields_while_raplication = ['supply_number', 'meter_serial_number', 'utility_type', 'current_electricity_supplier', 'contract_end_date', 'bilge_eac', 's_andr3_status', 'is_locked', 'can_sell_water']
+        exclude_fields_while_raplication = ['supply_number', 'meter_serial_number', 'utility_type', 'current_electricity_supplier', 'contract_end_date', 'bilge_eac', 's_andr3_status', 'is_locked', 'can_sell_water', 'status']
         lead_dict = model_to_dict_v2(instance)
         del lead_dict['id']
         lead_dict.update({f:None for f in exclude_fields_while_raplication})
         lead_dict['is_locked'] = False
+        lead_dict['submission_status'] = 'raw'
         ser = self.serializer_class(data=lead_dict, context={'request':request})
         ser.is_valid(raise_exception=True)
         instance = ser.save()
