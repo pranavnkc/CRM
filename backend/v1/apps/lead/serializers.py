@@ -221,12 +221,12 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
     @transaction.atomic
     def create(self, validated_data):
         history_objs = []
-        Lead.objects.bulk_create(validated_data['lead_objects'])
+        Lead.objects.bulk_create(validated_data['lead_objects'], 500)
         for index, l in enumerate(Lead.objects.filter(supply_number__in=[l.supply_number for l in validated_data['lead_objects']])):
             history_obj = LeadHistory(lead=l, action=LeadHistory.ACTION_CREATED, created_by=self.context['request'].user, old_instance_meta={})
             history_obj.new_instance_meta = model_to_dict_v2(l)
             history_objs.append(history_obj)
-        LeadHistory.objects.bulk_create(history_objs)
+        LeadHistory.objects.bulk_create(history_objs, 500)
 
 class LeadHistorySerializer(serializers.ModelSerializer):    
     class Meta:
