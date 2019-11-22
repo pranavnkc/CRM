@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
+import { MatTableDataSource } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../components/users/services/user.service';
 import { AuthService } from '../../services/index';
@@ -12,6 +13,10 @@ import * as momentTimezone from 'moment-timezone';
 })
 export class HomeComponent {
   form: FormGroup;
+  displayedColumns = ['username', "waiting_for_audit", "approved", "hold", "rejected", 'total'];
+  prDataSource = new MatTableDataSource();
+  htDataSource = new MatTableDataSource();
+  saleDataSource = new MatTableDataSource();
   //No use code
   loading: boolean = false;
 
@@ -71,8 +76,43 @@ export class HomeComponent {
       start_date: moment(this.form.value.start_date).format('YYYY-MM-DD'),
       end_date: moment(this.form.value.end_date).format('YYYY-MM-DD')
     }
+    console.log(this);
     this.userService.getDashboardData(this.activatedRoute.snapshot.params.id || this.authService.user.id, params).subscribe((res) => {
       this.dashboardData = res;
+      let prData = [];
+      for (let u in this.dashboardData.pr) {
+        prData.push({
+          username: u,
+          audit: this.dashboardData.pr[u]['audit'],
+          approved: this.dashboardData.pr[u]['approved'],
+          hold: this.dashboardData.pr[u]['on-hold'],
+          rejected: this.dashboardData.pr[u]['rejected'],
+        });
+      }
+      this.prDataSource.data = prData;
+      let htData = [];
+      for (let u in this.dashboardData.ht) {
+        htData.push({
+          username: u,
+          audit: this.dashboardData.ht[u]['audit'],
+          approved: this.dashboardData.ht[u]['approved'],
+          hold: this.dashboardData.ht[u]['on-hold'],
+          rejected: this.dashboardData.ht[u]['rejected'],
+        });
+      }
+      this.htDataSource.data = htData;
+      let saleData = [];
+      for (let u in this.dashboardData.sale) {
+        saleData.push({
+          username: u,
+          audit: this.dashboardData.sale[u]['audit'],
+          approved: this.dashboardData.sale[u]['approved'],
+          hold: this.dashboardData.sale[u]['on-hold'],
+          rejected: this.dashboardData.sale[u]['rejected'],
+        });
+      }
+      this.saleDataSource.data = saleData;
+
     })
   }
   onRefresh() {
@@ -81,4 +121,13 @@ export class HomeComponent {
       this.loading = false;
     }, 2000);
   }
-}
+
+  getTotal(obj) {
+    let total = 0;
+    for (let k1 in obj) {
+      for (let k2 in obj[k1]) {
+        total += obj[k1][k2];
+      }
+    }
+    return total;
+  }

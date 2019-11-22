@@ -31,7 +31,7 @@
                     <mat-icon>verified_user</mat-icon>
                 </div>
                 <div class="info-card-content">
-                    <h3>{{dashboardData.pr || 0}}</h3>
+                    <h3>{{getTotal(dashboardData.pr)}}</h3>
                     PR
                 </div>
             </mat-card>
@@ -41,7 +41,7 @@
                     <mat-icon>done_all</mat-icon>
                 </div>
                 <div class="info-card-content">
-                    <h3>{{dashboardData.ht || 0}}</h3>
+                    <h3>{{getTotal(dashboardData.ht)}}</h3>
                     HT
                 </div>
             </mat-card>
@@ -51,13 +51,134 @@
                     <mat-icon>person_pin</mat-icon>
                 </div>
                 <div class="info-card-content">
-                    <h3>{{(dashboardData.sale || []).length || 0}}</h3>
+                    <h3>{{getTotal(dashboardData.sale)}}</h3>
                     Sale
                 </div>
             </mat-card>
         </div>
     </section>
+    <section>
+        <div fxLayout="row" fxLayoutGap="2%">
+            <mat-card fxFlex="49%" fxclass="col chart first-chart">
+                <mat-card-title>
+                    PR
+                </mat-card-title>
+                <mat-card-content>
+                    <div class="table-container">
+                        <mat-table #table [dataSource]="prDataSource">
+                            <ng-container matColumnDef="username">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Username </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.username}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="waiting_for_audit">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="25%"> Waiting For Audit </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="25%" class="capitalize"> {{element.audit || 0}} </mat-cell>
+                            </ng-container>
 
+                            <ng-container matColumnDef="approved">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Approved </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.approved || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="hold">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> On Hold </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{element.hold || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="rejected">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Rejected </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.rejected || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="total">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> Total </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.pr)}} </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card fxFlex="49%" fxclass="col chart first-chart">
+                <mat-card-title>
+                    HT
+                </mat-card-title>
+                <mat-card-content>
+                    <div class="table-container">
+                        <mat-table #table [dataSource]="htDataSource">
+                            <ng-container matColumnDef="username">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Username </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.username}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="waiting_for_audit">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="25%"> Waiting For Audit </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="25%" class="capitalize"> {{element.audit || 0}} </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="approved">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Approved </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.approved || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="hold">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> On Hold </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{element.hold || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="rejected">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Rejected </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.rejected || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="total">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> Total </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.ht)}} </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </section>
+        <section>
+        <div fxLayout="row">
+            <mat-card class="col chart first-chart">
+                <mat-card-title>
+                    Sale
+                </mat-card-title>
+                <mat-card-content>
+                    <div class="table-container">
+                        <mat-table #table [dataSource]="saleDataSource">
+                            <ng-container matColumnDef="username">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Username </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.username}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="waiting_for_audit">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="25%"> Waiting For Audit </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="25%" class="capitalize"> {{element.audit || 0}} </mat-cell>
+                            </ng-container>
+
+                            <ng-container matColumnDef="approved">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Approved </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.approved || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="hold">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> On Hold </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{element.hold || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="rejected">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Rejected </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.rejected || 0}} </mat-cell>
+                            </ng-container>
+                            <ng-container matColumnDef="total">
+                                <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> Total </mat-header-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.sale)}} </mat-cell>
+                            </ng-container>
+                            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                        </mat-table>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </section>
     <section *ngIf="false">
         <div class="flex-container">
             <mat-card class="col chart first-chart">

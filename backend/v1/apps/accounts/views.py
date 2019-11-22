@@ -12,7 +12,7 @@ from . import serializer
 from . import models
 from .filters import UserFilter
 from v1.apps.lead.models import Lead, LeadHistory, ProspectLead, LeadSale
-
+from collections import Counter
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializer.GroupSerializer
     queryset = Group.objects.all().order_by('name')
@@ -44,10 +44,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @detail_route(url_path="dashboard", methods=['get', ])
     def dashboard_data(self, request, pk):
-        ret = {}
+        ret = {'pr':{}, 'ht':{}, 'sale':{}};
         user = self.get_object()
-        
-        
+        users = self.get_queryset()
         lead_qs= Lead.objects.all()
         if request.query_params.get('start_date'):
             start_date = request.query_params.get('start_date')
@@ -64,21 +63,39 @@ class UserViewSet(viewsets.ModelViewSet):
             prospect_qs = prospect_qs.filter(submitted_by=request.user)
             ht_qs = ht_qs.filter(submitted_by=request.user)
             sale_qs = sale_qs.filter(sold_by=request.user)
-        elif user.groups.filter(name='team-manager').exists():
-            lead_qs = lead_qs.filter(assigned_to__in=models.User.objects.filter(parent=self.request.user))
-            prospect_qs = prospect_qs.filter(submitted_by=request.user) | prospect_qs.filter(submitted_by__parent=request.user)
-            ht_qs = ht_qs.filter(submitted_by=request.user) | ht_qs.filter(submitted_by__parent=request.user) 
-            sale_qs = sale_qs.filter(sold_by=request.user)  | sale_qs.filter(sold_by__parent=request.user) 
-        elif user.groups.filter(name='company-head').exists():
-            lead_qs = lead_qs.filter(assigned_to__in=models.User.objects.filter(parent__parent=self.request.user))
-            prospect_qs = prospect_qs.filter(submitted_by=request.user) | prospect_qs.filter(submitted_by__parent=request.user) | prospect_qs.filter(submitted_by__parent__parent=request.user)
-            ht_qs = ht_qs.filter(submitted_by=request.user) | ht_qs.filter(submitted_by__parent=request.user)  | ht_qs.filter(submitted_by__parent__parent=request.user) 
-            sale_qs = sale_qs.filter(sold_by=request.user)  | sale_qs.filter(sold_by__parent=request.user)  | sale_qs.filter(sold_by__parent__parent=request.user)
-            
+        elif user.groups.filter(name__in=['team-manager', 'company-head']).exists():
+            lead_qs = lead_qs.filter(assigned_to__in=users)
+            prospect_qs = prospect_qs.filter(submitted_by__in=users)
+            ht_qs = ht_qs.filter(submitted_by__in=users)
+            sale_qs = sale_qs.filter(sold_by__in=users) 
+
         ret['lead_count'] = lead_qs.count()
-        ret['pr'] = prospect_qs.count()
-        ret['ht'] = ht_qs.count()
-        ret['sale'] = list(sale_qs.values_list('quality_status', flat=True))
+        for user, status in prospect_qs.values_list('submitted_by__username', 'quality_status'):
+            print(user, status)
+            if ret['pr'].get(user):
+                if ret['pr'][user].get(status):
+                    ret['pr'][user][status] = ret['pr'][user][status]+1
+                else:
+                    ret['pr'][user][status] = 1
+            else:
+                ret['pr'][user]= {status:1}
+        for user, status in ht_qs.values_list('submitted_by__username', 'quality_status'):
+            if ret['ht'].get(user):
+                if ret['ht'][user].get(status):
+                    ret['ht'][user][status] = ret['ht'][user][status]+1
+                else:
+                    ret['ht'][user][status] = 1
+            else:
+                ret['ht'][user]= {status:1}
+                
+        for user, status in sale_qs.values_list('sold_by__username', 'quality_status'):
+            if ret['sale'].get(user):
+                if ret['sale'][user].get(status):
+                    ret['sale'][user][status] = ret['sale'][user][status]+1
+                else:
+                    ret['sale'][user][status] = 1
+            else:
+                ret['sale'][user]= {status:1}
         return Response(ret)
 
     
