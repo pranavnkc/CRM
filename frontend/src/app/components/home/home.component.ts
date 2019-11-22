@@ -131,3 +131,4 @@ export class HomeComponent {
     }
     return total;
   }
+}
