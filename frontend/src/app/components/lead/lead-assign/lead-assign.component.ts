@@ -20,7 +20,7 @@ export class LeadAssignComponent implements OnInit {
 
   ngOnInit() {
     console.log(this);
-    this.httpService.get('api/users/?groups=sales-person,stage-1').subscribe((res: any) => {
+    this.httpService.get('api/users/').subscribe((res: any) => {
       this.salesPersons = res.results;
     })
   }

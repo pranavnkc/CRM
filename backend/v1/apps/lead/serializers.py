@@ -32,7 +32,9 @@ class LeadSerializer(serializers.ModelSerializer):
             validated_data['assigned_to'] = self.context['request'].user
         validated_data['submission_status'] = "raw"
         validated_data['created_by'] = self.context['request'].user
-        return super(LeadSerializer, self).create(validated_data)
+        instance  = super(LeadSerializer, self).create(validated_data)
+        LeadHistory(lead=instance, action=LeadHistory.ACTION_CREATED, created_by=self.context['request'].user, old_instance_meta={}, new_instance_meta=model_to_dict_v2(instance)).save()
+        return instance
     
     @transaction.atomic
     def update(self, instance, validated_data):

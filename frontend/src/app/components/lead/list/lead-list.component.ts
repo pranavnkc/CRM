@@ -88,7 +88,8 @@ export class LeadListComponent implements OnInit {
     this.fields = [
       { "field": "id", "display": "Lead ID", "selected": true },
       { "field": "source", "display": "Source", "selected": true },
-      // { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+
+      { "field": "created_on", "display": "Created Date", "selected": false, "fxFlex": "10%", "cell": (element: any) => `${element.created_on ? moment(element.created_on).format('MMM DD, YYYY ddd hh:mm A') : ''}` },
       {
         "field": "status", "display": "Disposition", "selected": true, "fieldType": "select", "options": this.sharedDataService.leadStatus
       },
@@ -280,8 +281,8 @@ export class LeadListComponent implements OnInit {
       data: { okButtonText: 'Add Comment', cancelButtonText: 'Cancel', title: 'Add Comment', message: 'Add a comment about this lead.' }
     });
     dialogRef.afterClosed().subscribe((data) => {
-      this.spinnerService.showSpinner = true;
       if (data) {
+        this.spinnerService.showSpinner = true;
         this.service.addComment(lead.id, { "comment": data }).subscribe((res) => {
           this.spinnerService.showSpinner = false;
           this.snackBarService.open("Comment added successfully.")
@@ -371,6 +372,7 @@ export class LeadListComponent implements OnInit {
       data: { okButtonText: isHotTransfer ? "Add HT" : 'Add PR', cancelButtonText: 'Cancel', title: title, message: title }
     });
     dialogRef.afterClosed().subscribe((data) => {
+      console.log(data);
       if (data) {
         this.service.submitForPR(lead.id, { "comment": data, "is_hot_transfer": isHotTransfer || false }, this.include_raw_leads).subscribe((res) => {
           this.loadLeads();
