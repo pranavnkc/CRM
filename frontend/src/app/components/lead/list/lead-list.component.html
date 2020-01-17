@@ -211,7 +211,7 @@
                                     <a routerLink="/leads/details/{{element.id}}"><button mat-menu-item (click)="null">
                                         Details
                                     </button></a>
-                                    <button *ngIf="role=='sales-person' || role=='stage-1'" mat-menu-item (click)="scheduleCallback(element)">
+                                    <button mat-menu-item (click)="scheduleCallback(element)">
                                         <span>Schedule Callback</span>
                                     </button>
                                     <button mat-menu-item (click)="comment(element)">
