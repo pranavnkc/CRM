@@ -131,4 +131,11 @@ export class HomeComponent {
     }
     return total;
   }
+  getTotalForUser(obj) {
+    let total = 0;
+    for (let k1 in obj) {
+      total += obj[k1];
+    }
+    return total;
+  }
 }
