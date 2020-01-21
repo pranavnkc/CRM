@@ -89,7 +89,7 @@
                             </ng-container>
                             <ng-container matColumnDef="total">
                                 <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> Total </mat-header-cell>
-                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.pr)}} </mat-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.pr[element.username])}} </mat-cell>
                             </ng-container>
                             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -127,7 +127,7 @@
                             </ng-container>
                             <ng-container matColumnDef="total">
                                 <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> Total </mat-header-cell>
-                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.ht)}} </mat-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.ht[element.username])}} </mat-cell>
                             </ng-container>
                             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
@@ -169,7 +169,7 @@
                             </ng-container>
                             <ng-container matColumnDef="total">
                                 <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="10%"> Total </mat-header-cell>
-                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.sale)}} </mat-cell>
+                                <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="10%" class="capitalize"> {{getTotal(dashboardData.sale[element.username])}} </mat-cell>
                             </ng-container>
                             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                             <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
