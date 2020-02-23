@@ -9,6 +9,7 @@ class IPAddressCheckMiddleware(object):
         # Code to be executed for each request before
         # the view (and later middleware) are called
         #print(request.META.get('HTTP_CLIENT_IP'), request.META)
+        
         if Settings.objects.filter(is_ip_restriction_active=True).exists() and request.META.get('HTTP_CLIENT_IP') and not IPAddress.objects.filter(ip=request.META.get('HTTP_CLIENT_IP'), active=True).exists():
             return HttpResponseForbidden()
         response = self.get_response(request)

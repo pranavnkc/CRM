@@ -62,3 +62,8 @@ class User(AbstractBaseUser,  PermissionsMixin):
 
     def __str__(self):
         return f'{self.username}'
+
+class UserLoginHistory(models.Model):
+    user = models.CharField(max_length=100)
+    result = models.BooleanField()
+    ip = models.GenericIPAddressField(_('Ip Address'))

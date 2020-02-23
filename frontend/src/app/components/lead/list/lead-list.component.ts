@@ -97,7 +97,7 @@ export class LeadListComponent implements OnInit {
         "field": "submission_status", "display": "Stage", "selected": true
       },
 
-      { "field": "assigned_to", "display": "Assigned To", "selected": true },
+      { "field": "assigned_to", "display": "Assigned To", filterField: 'assigned_to__username', "selected": true },
       { "field": "busines_name", 'filterField': 'busines_name', "display": "Business Name", "selected": true, "fieldType": "input" },
       {
         "field": "salutation", 'filterField': 'salutation', "display": "Salutation", "selected": false, "fieldType": "select", "options": [

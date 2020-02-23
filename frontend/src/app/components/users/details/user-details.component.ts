@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { UserService } from '../services';
 import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dialog.component';
-
+import { MatPaginator, MatTableDataSource } from '@angular/material';
 @Component({
   selector: 'app-user-details',
   templateUrl: './user-details.component.html',
@@ -11,7 +11,8 @@ import { ConfirmDialogComponent } from '../../dialogs/confirm-dialog/confirm-dia
 })
 export class UserDetailsComponent implements OnInit {
   user: any;
-
+  loginHistoryDataSource = new MatTableDataSource();
+  displayedColumns = ['user', 'ip', 'result'];
   constructor(private route: ActivatedRoute, private router: Router, private service: UserService, private dialog: MatDialog) { }
 
   ngOnInit() {
@@ -22,7 +23,12 @@ export class UserDetailsComponent implements OnInit {
   }
 
   private getUser(id: any) {
-    this.service.getUser(id).subscribe(data => this.user = data);
+    this.service.getUser(id).subscribe((data) => {
+      this.user = data;
+      this.service.getLoginHistory(id).subscribe((data) => {
+        this.loginHistoryDataSource.data = data;
+      })
+    });
   }
 
   onDelete(): void {

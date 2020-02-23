@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { constants } from '../../constants';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html'
@@ -21,7 +22,11 @@ export class LoginComponent {
     })
   }
   login() {
-    this.http.post('api/auth/', this.loginForm.value).subscribe((res) => {
+    let headers = new HttpHeaders();
+    headers = headers.set('client-ip', `${constants.ipAddress ? constants.ipAddress : ''}`);
+    this.http.post('api/auth/', this.loginForm.value, {
+      headers: headers
+    }).subscribe((res) => {
       this.authService.setAuthentication(res);
       this.router.navigate(['home']);
     }, (error) => {

@@ -62,7 +62,6 @@ export class HttpService {
    * @param data Post data.
    */
   post(url: string, data: any, contentType?: any): Observable<any> {
-
     return this.http.post(`${this.baseUrl}${url}`, data, {
       headers: this.getHeaders(contentType)
     }).catch(error => this.onError(error));

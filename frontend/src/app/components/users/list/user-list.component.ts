@@ -66,4 +66,9 @@ export class UserListComponent implements OnInit {
       this.users[i].selected = this.allUsersChecked;
     }
   }
+  forceLogout(userID) {
+    this.service.forceLogout(userID).subscribe((res) => {
+
+    });
+  }
 }

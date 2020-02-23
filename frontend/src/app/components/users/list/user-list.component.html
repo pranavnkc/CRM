@@ -105,6 +105,11 @@
                             <a routerLink="/users/{{element.id}}/dashboard">
                                 <mat-icon aria-label="Dashboard">subject</mat-icon>
                             </a>
+                            <mat-icon class="cursor-pointer danger" (click)="forceLogout(element.id)">power_settings_new</mat-icon>
+                            <a routerLink="/users/details/{{element.id}}">
+                                <mat-icon aria-label="Login History">remove_red_eye</mat-icon>
+                            </a>
+
                         </mat-cell>
                 </ng-container>
                 <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

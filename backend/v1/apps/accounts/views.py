@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import list_route, detail_route
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from v1.apps.utils.pagination import StandardResultsSetPagination 
@@ -41,7 +42,7 @@ class UserViewSet(viewsets.ModelViewSet):
         if user.exists():
             return Response({'username': ['A user with that email address already exists.']}, status=status.HTTP_400_BAD_REQUEST)
         return Response()
-
+    
     @detail_route(url_path="dashboard", methods=['get', ])
     def dashboard_data(self, request, pk):
         ret = {'pr':{}, 'ht':{}, 'sale':{}};
@@ -98,4 +99,16 @@ class UserViewSet(viewsets.ModelViewSet):
                 ret['sale'][user]= {status:1}
         return Response(ret)
 
+    
+    @detail_route(url_path="force-logout", methods=['delete', ])
+    def dashboard_data(self, request, pk):
+        user = self.get_object()
+        Token.objects.filter(user=user).delete()
+        return Response(status=204)
+    
+
+    @detail_route(url_path="login-history", methods=['get', ])
+    def login_history(self, request, pk):
+        user = self.get_object()
+        return Response(models.UserLoginHistory.objects.filter(user__iexact=user.username).values())
     

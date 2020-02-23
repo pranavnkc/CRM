@@ -208,7 +208,7 @@
                                     <mat-icon>more_vert</mat-icon>
                                 </button>
                                 <mat-menu #menu="matMenu">
-                                    <a routerLink="/leads/details/{{element.id}}"><button mat-menu-item (click)="null">
+                                    <a routerLink="/leads/details/{{element.id}}" target='_blank'><button mat-menu-item (click)="null">
                                         Details
                                     </button></a>
                                     <button mat-menu-item (click)="scheduleCallback(element)">
@@ -217,7 +217,7 @@
                                     <button mat-menu-item (click)="comment(element)">
                                         <span>Comment</span>
                                     </button>
-                                    <a routerLink="/leads/edit/{{element.id}}"><button mat-menu-item (click)="null">
+                                    <a routerLink="/leads/edit/{{element.id}}" target='_blank'><button mat-menu-item (click)="null">
                                         Edit
                                     </button></a>
                                     <button mat-menu-item *ngIf="role!='quality-analyst'" (click)="submitForPR(element)">

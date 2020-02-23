@@ -26,6 +26,13 @@ export class UserService {
   getDashboardData(id: any, params) {
     return this.http.get(`api/users/${id}/dashboard/`, params);
   }
+  forceLogout(id: any) {
+    return this.http.delete(`api/users/${id}/force-logout/`);
+  }
+  getLoginHistory(id: any) {
+    return this.http.get(`api/users/${id}/login-history/`);
+  }
+
 }
 
 
