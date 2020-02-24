@@ -27,6 +27,9 @@ class User(AbstractBaseUser,  PermissionsMixin):
     parent = models.ForeignKey("self", null=True, on_delete=models.CASCADE)
     campaign = models.CharField(
         choices=CAMPAIGN_CHOICES, max_length=30, null=True, blank=True)
+    has_ip_restriction = models.BooleanField(default=False)
+    view_raw_leads = models.BooleanField(default=True)
+    advance_search_enable = models.BooleanField(default=True)
     objects = managers.UserManager()
 
     USERNAME_FIELD = 'username'

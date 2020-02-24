@@ -95,7 +95,7 @@
             </mat-form-field>
 
             <mat-form-field fxFlex="29%">
-                <mat-select placeholder="Current Supplier" formControlName="current_electricity_supplier">
+                <mat-select placeholder="Current Supplier" formControlName="current_electricity_supplier_new">
                     <mat-option *ngFor="let ch of sharedDataService.supplierChoices" [value]="ch.key">{{ch.display}}</mat-option>
                 </mat-select>
             </mat-form-field>

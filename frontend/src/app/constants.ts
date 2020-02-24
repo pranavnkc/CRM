@@ -7,7 +7,7 @@ export let constants = {
   'PASSWORD_REGEX': new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*\.\,\\\;\'\"])(?=.{8,})"),
   'formatPhone': (val) => {
     if (val) {
-      return val.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')
+      return val.replace(/(\d{4})(\d{6})/, '($1) $2')
     }
   },
   ipAddress: '',
@@ -19,8 +19,7 @@ export let constants = {
     }
     return null;
   },
-
   filterList(list, val) {
     return list.filter((ele) => ele == val);
-  }
+  },
 }

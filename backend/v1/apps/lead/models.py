@@ -5,7 +5,7 @@ from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from phonenumber_field.modelfields import PhoneNumberField
-
+from v1.apps.utils.models import BusinessNames 
 # Create your models here.
 User = get_user_model()
 
@@ -69,6 +69,7 @@ class Lead(models.Model):
     amr = models.BooleanField(default=True, null=True, blank=True)
     related_meter = models.BooleanField(default=False, null=True, blank=True)
     current_electricity_supplier = models.CharField(max_length=100, null=True, blank=True)
+    current_electricity_supplier_new = models.ForeignKey(BusinessNames, related_name='leads', on_delete=models.CASCADE, default=None, null=True)
     contract_end_date = models.DateField(null=True, blank=True)
     meter_serial_number = models.CharField(max_length=100, null=True, blank=True)
     supply_number = models.CharField(max_length=100, null=True, blank=True) # this is MPRN/MPAN
@@ -83,9 +84,12 @@ class Lead(models.Model):
     bilge_eac = models.CharField(max_length=200, null=True, blank=True)
     new_disposition_date = models.DateField(null=True, blank=True)
     is_locked = models.BooleanField(default=False) # if lead is locked then it assigned_to can not be changed
+
     @property
     def name(self):
         return "{} {} {}".format(self.first_name, self.middle_name, self.last_name)
+    def __str__(self):
+        return f'{self.id}-{self.phone_number}'
 
 class ProspectLead(models.Model):
     QUALITY_STATUS_APPROVED = 'approved'
@@ -109,18 +113,25 @@ class ProspectLead(models.Model):
     quality_updated_on = models.DateTimeField(null=True, blank=True)
     quality_comment = models.CharField(max_length=400, blank=True, null=True)
     is_hot_transfer = models.BooleanField(default=False)
-    
+
+    def __str__(self):
+        return f'Lead({self.lead_id})-{self.id}-Submitted By({self.submitted_by.get_full_name()})-{self.quality_status}'
+
 class Callback(models.Model):
     lead = models.ForeignKey(Lead, related_name='callbacks', on_delete=models.CASCADE, default=None, null=True)
     datetime = models.DateTimeField()
     scheduled_by = models.ForeignKey(User, related_name='scheduled_callbacks', on_delete=models.CASCADE)
     is_dialed = models.BooleanField(default=False)
-    
+    def __str__(self):
+        return f'Lead({self.lead_id})-Scheduled By({self.scheduled_by.get_full_name()})-{self.datetime.strftime("%m/%d/%Y %I:%M %p")}'
+
 class Comment(models.Model):
     lead = models.ForeignKey(Lead, related_name='comments', on_delete=models.CASCADE, default=None, null=True)
     comment = models.TextField(null=True, blank=True)
     created_by = models.ForeignKey(User, related_name='comments', on_delete=models.CASCADE,default=None, null=True)
     created_on = models.DateTimeField(auto_now_add=True) 
+    def __str__(self):
+        return f'Lead({self.lead_id})-{self.created_by.get_full_name()}-{self.comment}'
 
 
 class LeadHistory(models.Model):
@@ -155,6 +166,9 @@ class LeadHistory(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     old_instance_meta = JSONField(blank=True, null=True)
     new_instance_meta = JSONField(blank=True, null=True)
+
+    def __str__(self):
+        return f'Lead({self.lead_id})-{self.id}-{self.action}'
 
 from v1.apps.utils.models import Settings
 from django.core.validators import RegexValidator, MinValueValidator
@@ -219,6 +233,7 @@ class LeadSale(models.Model):
     renewal_acquisition = models.CharField(
         choices=RENEWAL_CHOICES, max_length=30, null=True, blank=True)
     new_supplier = models.CharField(max_length=100, null=True, blank=True)
+    new_supplier_new = models.ForeignKey(BusinessNames, related_name='sales_new_supplier', on_delete=models.CASCADE, default=None, null=True)
     top_row = models.CharField(max_length=100, blank=True, null=True)
     bottom_row  =models.CharField(max_length=100, blank=True, null=True)
     start_date = models.DateField(null=True, blank=True)
@@ -250,3 +265,6 @@ class LeadSale(models.Model):
     comment = models.CharField(max_length=400, blank=True, null=True)
     quality_comment = models.CharField(max_length=400, blank=True, null=True)
     campaign = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f'Lead({self.lead_id})-{self.id}-Management Status({self.management_status})-Quality Status({self.quality_status})'

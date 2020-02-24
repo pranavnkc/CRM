@@ -148,7 +148,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
         'related_meter':'RelatedMeter',
         'amr':'AMR',
         'utility_type':'Utility(Elec / Gas)',
-        'current_electricity_supplier':'CurrentElectricitySupplier',
+        'current_electricity_supplier_new':"New Supplier / Current Supplier (PR's)",
         'contract_end_day':'contractEndDay',
         'contract_end_month':'contractEndMonth',
         'contract_end_year':'contractEndYear',
@@ -167,7 +167,7 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
         
     }
     def transform_row(self, row):
-        row['can_sell_water'] = True if row['can_sell_water'].strip().lower()=='yes' else False
+        row['can_sell_water'] = True if row['can_sell_water'] and row['can_sell_water'].strip().lower()=='yes' else False
         row['is_locked'] = True if row['is_locked'].strip().lower()=='yes' else False
         row['contract_duration'] = row['contract_duration'] if row['contract_duration'] else None
         if row.get('initial_disposition_date') is not None:
@@ -178,6 +178,8 @@ class BulkLeadCreateSerrializer(serializers.Serializer):
             row['new_disposition_date'] = row['new_disposition_date'] or None
         if row.get('phone_number') and row['phone_number'][0]=='0':
             row['phone_number'] = row['phone_number'][1:]
+        row['current_electricity_supplier_new'] = BusinessNames.objects.filter(name__iexact=row['current_electricity_supplier_new']).first()
+        row['current_electricity_supplier_new'] = row['current_electricity_supplier_new'].id if row['current_electricity_supplier_new'] else row['current_electricity_supplier_new']
         return row
         
     def validate(self, data):

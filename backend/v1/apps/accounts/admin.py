@@ -38,10 +38,10 @@ class MyUserAdmin(AuthUserAdmin):
     fieldsets = (
             ('User Profile', {'fields': ('username', 'password')}),
             ('Personal info', {'fields': ('first_name', 'last_name',)},),
-            ('Permissions', {'fields': ('is_active',  'is_superuser', 'groups',)},),
+            ('Permissions', {'fields': ('is_active',  'is_superuser', 'groups', 'has_ip_restriction', 'view_raw_leads', 'advance_search_enable')},),
             ('Important dates', {'fields': []},),
     )
-    list_display = ('username', 'first_name', 'is_superuser', 'is_active')
+    list_display = ('username', 'first_name', 'is_superuser', 'is_active', 'has_ip_restriction', 'view_raw_leads', 'advance_search_enable')
     search_fields = ['username']
     list_filter = ['groups']
     save_on_top = True

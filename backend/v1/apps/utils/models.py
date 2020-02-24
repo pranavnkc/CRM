@@ -15,3 +15,8 @@ class Settings(models.Model):
     supplier_names = ArrayField(
         models.CharField(max_length=50, blank=True),
     )
+
+class BusinessNames(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    def __str__(self):
+        return f"{self.name}"

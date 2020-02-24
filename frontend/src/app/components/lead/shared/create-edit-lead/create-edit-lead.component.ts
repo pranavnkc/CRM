@@ -86,7 +86,7 @@ export class CreateEditLeadComponent implements OnInit {
       s_andr3_status: [null],
       bilge_eac: [null],
       related_meter: [null],
-      current_electricity_supplier: [null],
+      current_electricity_supplier_new: [null],
       contract_end_date: [null],
       meter_serial_number: [null],
       supply_number: [null],

@@ -53,7 +53,7 @@ export class LeadListComponent implements OnInit {
     utility_type: [null],
     related_meter: [null],
     can_sell_water: [null],
-    current_electricity_supplier: [null],
+    current_electricity_supplier_new: [null],
     contract_duration: [null],
     s_andr3_status: [null],
     bilge_eac: [null],
@@ -111,8 +111,8 @@ export class LeadListComponent implements OnInit {
         ]
       },
       { "field": "name", 'filterField': 'full_name', "display": "Name", "selected": false, "cell": (element: any) => `${element.first_name} ${element.middle_name || ""} ${element.last_name}`, "fieldType": "input" },
-      { "field": "latest_callback", 'filterField': 'callbacks__datetime', "display": "Upcoming Callback", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
-      { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? element.phone_number : ''}`, "fieldType": "phone" },
+      { "field": "latest_callback", 'filterField': 'callbacks__datetime', "sortField": "callbacks__datetime", "display": "Next action date", "selected": false, "cell": (element: any) => `${element.latest_callback ? moment(element.latest_callback).format('MMM DD, YYYY dddd hh:mm A') : ''}` },
+      { "field": "phone_number", 'filterField': 'phone_number', "display": "Phone Number", "selected": true, "cell": (element: any) => `${element.phone_number ? constants.formatPhone(element.phone_number) : ''}`, "fieldType": "phone" },
       { "field": "email", 'filterField': 'email', "display": "Email", "selected": false, "fieldType": "input" },
       { "field": "address_1", 'filterField': 'address_1', "display": "Address 1", "selected": false, "fieldType": "input" },
       { "field": "address_2", 'filterField': 'address_2', "display": "Address 2", "selected": false, "fieldType": "input" },
@@ -129,7 +129,7 @@ export class LeadListComponent implements OnInit {
         ]
       },
       { "field": "amr", 'filterField': 'amr', "display": "AMR", "selected": false, "fieldType": "input" },
-      { "field": "current_electricity_supplier", 'filterField': 'current_electricity_supplier', "display": "Current Supplier", "selected": true, "fieldType": "select", "options": this.sharedDataService.supplierChoices },
+      { "field": "current_electricity_supplier_new", 'filterField': 'current_electricity_supplier_new', "display": "Current Supplier", "selected": true, "fieldType": "select", "options": this.sharedDataService.supplierChoices, cell: (element: any) => `${constants.getElementFromList(this.sharedDataService.supplierChoices, 'key', element.current_electricity_supplier_new, 'display')}` },
       { "field": "contract_end_date", 'filterField': 'contract_end_date', "display": "Contract End Date", "selected": true, "fieldType": "date" },
       { "field": "meter_serial_number", 'filterField': 'meter_serial_number', "display": "Meter Serial", "selected": false, "fieldType": "input" },
       { "field": "supply_number", 'filterField': 'supply_number', "display": "MPAN/MPRN", "selected": false, "fieldType": "input" },
@@ -333,7 +333,7 @@ export class LeadListComponent implements OnInit {
       filterField = this.filterForm.value.field + (this.filterForm.value.field != 'contract_end_date' ? "__date__" : '__') + this.filterForm.value.condition;
     }
     else {
-      filterField = this.filterForm.value.field + "__" + this.filterForm.value.condition;
+      filterField = (this.filterForm.value.field) + "__" + this.filterForm.value.condition;
       value = this.filterForm.value.value;
     }
     let param = JSON.stringify({ [filterField]: value })
@@ -359,7 +359,7 @@ export class LeadListComponent implements OnInit {
   }
 
   submitForPR(lead, isHotTransfer?: Boolean) {
-    if (!lead.contract_end_date || !lead.current_electricity_supplier || !lead.utility_type) {
+    if (!lead.contract_end_date || !lead.current_electricity_supplier_new || !lead.utility_type) {
       this.dialog.open(AlertDialogComponent, {
         width: "50%",
         data: { "msg": "Need to fill current supplier, contract End Date and Utility Date before PR." }

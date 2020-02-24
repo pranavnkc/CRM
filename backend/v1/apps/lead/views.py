@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from v1.apps.utils.pagination import StandardResultsSetPagination
 from v1.apps.utils.utils import get_file_name, model_to_dict_v2
-from v1.apps.utils.models import Settings
+from v1.apps.utils.models import Settings, BusinessNames
 from . import serializers
 from . import models
 from .filters import LeadFilter, LeadHistoryFilter, ProspectLeadFilter, LeadSaleFilter
@@ -50,7 +50,7 @@ class LeadViewSet(viewsets.ModelViewSet):
             filter_q = Q(assigned_to=self.request.user) | Q(assigned_to__parent=self.request.user)
         elif self.request.user.groups.filter(name='company-head').exists():
             filter_q = Q(assigned_to=self.request.user) | Q(assigned_to__parent=self.request.user) | Q(assigned_to__parent__parent=self.request.user)
-        if self.request.query_params.get('include_raw_leads'):
+        if self.request.query_params.get('include_raw_leads') and self.request.user.view_raw_leads:
             filter_q = filter_q | Q(submission_status='raw')
         if self.request.user.groups.filter(name='admin').exists():
             return self.queryset
@@ -65,7 +65,7 @@ class LeadViewSet(viewsets.ModelViewSet):
             'sold_as_choices':[{'key':sac[0], 'display':sac[1]} for  sac in models.LeadSale.SOLD_AS_CHOICES],
             'company_type_choices':[{'key':ctc[0], 'display':ctc[1]} for ctc in models.LeadSale.COMPANY_TYPE_CHOICES],
             'renewal_choices':[{'key':rc[0], 'display':rc[1]} for  rc in models.LeadSale.RENEWAL_CHOICES],
-            'supplier_choices':[{'key':sn, 'display':sn} for sn in Settings.objects.first().supplier_names],
+            'supplier_choices':[{'key':sn.id, 'display':sn.name} for sn in BusinessNames.objects.all()],
             'quality_status_choices':[{'key':qs[0], 'display':qs[1]} for qs in models.LeadSale.QUALITY_STATUS_CHOICES],
             'campaign_choices':[{'key':qs[0], 'display':qs[1]} for qs in get_user_model().CAMPAIGN_CHOICES],
         })
