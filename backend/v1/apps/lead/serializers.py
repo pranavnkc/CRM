@@ -244,12 +244,12 @@ class LeadHistorySerializer(serializers.ModelSerializer):
         return ret
 
 class ProspectLeadSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = ProspectLead
         fields = '__all__'
+        
     def validate(self, data):
-        if data.get('lead') and (not data['lead'].current_electricity_supplier or not data['lead'].contract_end_date):
+        if data.get('lead') and (not data['lead'].current_electricity_supplier_new or not data['lead'].contract_end_date):
             raise serializers.ValidationError({"required":"Need to fill current supplier and contract End Date before PR."})
         return data
     
@@ -280,7 +280,6 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         return ret
 
 class LeadSaleSerializer(serializers.ModelSerializer):    
-
     def __init__(self, *args, **kwargs):
         if not kwargs['context'].get('from_lead_view'):
             self.fields['lead'] = LeadSerializer()

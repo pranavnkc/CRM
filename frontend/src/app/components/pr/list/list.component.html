@@ -40,9 +40,35 @@
                 <ng-container matColumnDef="lead_id">
                     <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%" mat-sort-header="lead_id"> Lead ID </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
-                        <a class="cursor-pointer" routerLink="/leads/edit/{{element.lead}}">{{element.lead}}</a>
+                        <a class="cursor-pointer" routerLink="/leads/edit/{{element.lead.id}}">{{element.lead.id}}</a>
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="business_name">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Business Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                       {{element.lead.busines_name}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="phone_number">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Phone Number </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                       {{element.lead.phone_number}}
+                    </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="qa_name">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> QA Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                       {{element.lead.quality_analyst}}
+                    </mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="qa_comment">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> QA Comment </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                       {{element.lead.quality_comment}}
+                    </mat-cell>
+                </ng-container>
+
                 <ng-container matColumnDef="created_on">
                     <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%" mat-sort-header="created_on"> Created On </mat-header-cell>
                     <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{moment(element.created_on).format('MMM DD, YYYY hh:mm A')}} </mat-cell>

@@ -17,20 +17,50 @@
         <mat-icon>report</mat-icon>
         <span>Logs</span>
     </a>
-    <a mat-list-item routerLink="/sales" routerLinkActive="active">
-        <mat-icon>report</mat-icon>
-        <span>Sales</span>
-    </a>
-    <a mat-list-item routerLink="/pr" routerLinkActive="active">
-        <mat-icon>report</mat-icon>
-        <span>PR</span>
-    </a>
+    <ul>
+        <li [ngClass]="{'expanded-parent': ngInit.salevalue}">
+            <a (click)="ngInit.salevalue = !ngInit.salevalue" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">
+                <mat-icon>today</mat-icon>
+                <span fill>Sales</span><mat-icon class="expand-icon" [ngClass]="{'expand':!ngInit.salevalue, 'collapse': ngInit.salevalue}"></mat-icon>
+            </a>
+            <ul [ngClass]="{'collapsed':!ngInit.salevalue, 'expanded': ngInit.salevalue}">
+                <li><a mat-list-item routerLink="/sales/audit" routerLinkActive="active"><span>Requires Auditing</span></a></li>
+                <li><a mat-list-item routerLink="/sales/approved" routerLinkActive="active"><span>Approved</span></a></li>
+                <li><a mat-list-item routerLink="/sales/on-hold" routerLinkActive="active"><span>Hold</span></a></li>
+                <li><a mat-list-item routerLink="/sales/rejected" routerLinkActive="active"><span>Rejected</span></a></li>
+            </ul>
+        </li>
+    </ul>
 
-    <a mat-list-item routerLink="/ht" routerLinkActive="active">
-        <mat-icon>report</mat-icon>
-        <span>HT</span>
-    </a>
+    <ul>
+        <li [ngClass]="{'expanded-parent': ngInit.prvalue}">
+            <a (click)="ngInit.prvalue = !ngInit.prvalue" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">
+                <mat-icon>today</mat-icon>
+                <span fill>PR</span><mat-icon class="expand-icon" [ngClass]="{'expand':!ngInit.prvalue, 'collapse': ngInit.prvalue}"></mat-icon>
+            </a>
+            <ul [ngClass]="{'collapsed':!ngInit.prvalue, 'expanded': ngInit.prvalue}">
+                <li><a mat-list-item routerLink="/pr/audit" routerLinkActive="active"><span>Requires Auditing</span></a></li>
+                <li><a mat-list-item routerLink="/pr/approved" routerLinkActive="active"><span>Approved</span></a></li>
+                <li><a mat-list-item routerLink="/pr/on-hold" routerLinkActive="active"><span>Hold</span></a></li>
+                <li><a mat-list-item routerLink="/pr/rejected" routerLinkActive="active"><span>Rejected</span></a></li>
+            </ul>
+        </li>
+    </ul>
 
+    <ul>
+        <li [ngClass]="{'expanded-parent': ngInit.value}">
+            <a (click)="ngInit.value = !ngInit.value" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">
+                <mat-icon>today</mat-icon>
+                <span fill>HT</span><mat-icon class="expand-icon" [ngClass]="{'expand':!ngInit.value, 'collapse': ngInit.value}"></mat-icon>
+            </a>
+            <ul [ngClass]="{'collapsed':!ngInit.value, 'expanded': ngInit.value}">
+                <li><a mat-list-item routerLink="/ht/audit" routerLinkActive="active"><span>Requires Auditing</span></a></li>
+                <li><a mat-list-item routerLink="/ht/approved" routerLinkActive="active"><span>Approved</span></a></li>
+                <li><a mat-list-item routerLink="/ht/on-hold" routerLinkActive="active"><span>Hold</span></a></li>
+                <li><a mat-list-item routerLink="/ht/rejected" routerLinkActive="active"><span>Rejected</span></a></li>
+            </ul>
+        </li>
+    </ul>
     <ul *ngIf="role=='admin'">
       <li [ngClass]="{'expanded-parent': ngInit.value}">
         <a (click)="ngInit.value = !ngInit.value" ngInit [value]="false" #ngInit="ngInit" mat-list-item href="javascript:void(0)">

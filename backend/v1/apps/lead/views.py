@@ -373,7 +373,7 @@ class ProspectLeadViewSet(viewsets.ModelViewSet):
                 qs = models.ProspectLead.objects.filter(is_hot_transfer=True).select_related('lead')
         else:
             qs = self.queryset
-            
+        qs = qs.select_related('lead')
         sortBy = self.request.query_params.get('sortBy')
         sortOrder = self.request.query_params.get('sortOrder')
         if sortBy:
