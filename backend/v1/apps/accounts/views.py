@@ -101,7 +101,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     
     @detail_route(url_path="force-logout", methods=['delete', ])
-    def dashboard_data(self, request, pk):
+    def force_logout(self, request, pk):
         user = self.get_object()
         Token.objects.filter(user=user).delete()
         return Response(status=204)
