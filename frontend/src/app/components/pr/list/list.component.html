@@ -68,6 +68,12 @@
                        {{element.lead.quality_comment}}
                     </mat-cell>
                 </ng-container>
+                <ng-container matColumnDef="agent_comment">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Agent Comment </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                       {{element.comment}}
+                    </mat-cell>
+                </ng-container>
 
                 <ng-container matColumnDef="created_on">
                     <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%" mat-sort-header="created_on"> Created On </mat-header-cell>

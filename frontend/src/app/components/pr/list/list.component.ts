@@ -17,7 +17,7 @@ import * as momentTimezone from 'moment-timezone';
 })
 export class PrListComponent implements OnInit {
   form: FormGroup;
-  displayedColumns = ['id', "lead_id", 'quality_status', 'submitted_by', "business_name", "phone_number", "qa_name", "qa_comment", 'created_on', 'campaign'];
+  displayedColumns = ['id', "lead_id", 'quality_status', 'submitted_by', "business_name", "phone_number", "qa_name", "qa_comment", 'agent_comment', 'created_on', 'campaign'];
   dataSource = new MatTableDataSource();
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
