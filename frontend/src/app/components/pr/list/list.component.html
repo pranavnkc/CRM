@@ -29,68 +29,69 @@
                 </div>
             </form>
         </div>
-        <div class="table-container">
+
+        <div class="overflow-auto">
             <mat-table #table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="id">
-                    <mat-header-cell *matHeaderCellDef fxFlex="5%" mat-sort-header="id">ID </mat-header-cell>
-                    <mat-cell *matCellDef="let element;let index=index;" fxFlex="5%">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header="id">ID </mat-header-cell>
+                    <mat-cell *matCellDef="let element;let index=index;" >
                         <a class="cursor-pointer" (click)="false && edit(element)">{{element.id}}</a>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="lead_id">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%" mat-sort-header="lead_id"> Lead ID </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"  mat-sort-header="lead_id"> Lead ID </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize">
                         <a class="cursor-pointer" routerLink="/leads/edit/{{element.lead.id}}">{{element.lead.id}}</a>
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="business_name">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Business Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"> Business Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%"  class="capitalize">
                        {{element.lead.busines_name}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="phone_number">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Phone Number </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"> Phone Number </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize">
                        {{element.lead.phone_number}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="qa_name">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> QA Name </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"> QA Name </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize">
                        {{element.lead.quality_analyst}}
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="qa_comment">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> QA Comment </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"> QA Comment </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize">
                        {{element.lead.quality_comment}}
                     </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="agent_comment">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"> Agent Comment </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize">
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"> Agent Comment </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize">
                        {{element.comment}}
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="created_on">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%" mat-sort-header="created_on"> Created On </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{moment(element.created_on).format('MMM DD, YYYY hh:mm A')}} </mat-cell>
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"  mat-sort-header="created_on"> Created On </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize"> {{moment(element.created_on).format('MMM DD, YYYY hh:mm A')}} </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="submitted_by">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"  mat-sort-header="submitted_by"> Submitted By </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{element.submitted_by}} </mat-cell>
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"  mat-sort-header="submitted_by"> Submitted By </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize"> {{element.submitted_by}} </mat-cell>
                 </ng-container>
                 <ng-container matColumnDef="quality_status">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"  mat-sort-header="quality_status"> Quality Status </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{constants.getElementFromList(sharedDataService.qualityStatusChoices, 'key', element.quality_status, 'display')}} </mat-cell>
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"  mat-sort-header="quality_status"> Quality Status </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize"> {{constants.getElementFromList(sharedDataService.qualityStatusChoices, 'key', element.quality_status, 'display')}} </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="campaign">
-                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%" fxFlex="15%"  mat-sort-header="campaign"> Campaign </mat-header-cell>
-                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" fxFlex="15%" class="capitalize"> {{constants.getElementFromList(sharedDataService.campaignChoices, 'key', element.campaign, 'display')}}  </mat-cell>
+                    <mat-header-cell *matHeaderCellDef fxFlexOffset="1%"  mat-sort-header="campaign"> Campaign </mat-header-cell>
+                    <mat-cell *matCellDef="let element" fxFlexOffset="1%" class="capitalize"> {{constants.getElementFromList(sharedDataService.campaignChoices, 'key', element.campaign, 'display')}}  </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
