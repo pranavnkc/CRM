@@ -277,6 +277,7 @@ class ProspectLeadSerializer(serializers.ModelSerializer):
         if self.context['request'].query_params.get('include_lead'):
             ret["lead"] = LeadSerializer(obj.lead).data
         ret['submitted_by'] = obj.submitted_by.get_full_name()
+        ret['quality_analyst'] = obj.quality_analyst.get_full_name()
         return ret
 
 class LeadSaleSerializer(serializers.ModelSerializer):    

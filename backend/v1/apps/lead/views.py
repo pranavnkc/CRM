@@ -363,7 +363,7 @@ class LeadSaleViewSet(viewsets.ModelViewSet):
 class ProspectLeadViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProspectLeadSerializer
     pagination_class = StandardResultsSetPagination
-    queryset = models.ProspectLead.objects.select_related('lead')
+    queryset = models.ProspectLead.objects.select_related('lead', 'quality_analyst')
     filter_class = ProspectLeadFilter
     def get_queryset(self, *args, **kwargs):
         if 'pr' in self.request.query_params:
