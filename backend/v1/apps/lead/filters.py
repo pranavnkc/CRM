@@ -6,22 +6,23 @@ from .models import Lead, LeadHistory, ProspectLead, LeadSale
 
 class LeadFilter(django_filters.FilterSet):
     q = django_filters.CharFilter(method='q_filter')
-        
+    
     def q_filter(self, queryset, name, val):
         try:
             val=val.replace("'", '"')
-            filter_q = json.loads(val)
-            if 'created_on__date__range' in filter_q.keys():
-                filter_q['created_on__date__range'] = filter_q['created_on__date__range'].split(",")
-            if 'contract_end_date__range' in filter_q.keys():
-                filter_q['contract_end_date__range'] = filter_q['contract_end_date__range'].split(",")
+            filter_q =Q()
+            for key, val in json.loads(val).items():
+                if key in ['created_on__date__range', 'contract_end_date__range']:
+                    filter_q = filter_q & Q(**{key:val.split(",")}) 
+                else:      
+                    filter_q = filter_q & Q(**{key:val})
         except Exception as e:
             print("Exception in filter", e)
             return queryset
         return queryset.annotate(
                 full_name=Concat(
                     F('first_name'), Value(" "), F('middle_name'), Value(" "), F('last_name'))
-            ).filter(**filter_q)
+            ).filter(filter_q)
     class Meta:
         model = Lead
         fields = ('q',)

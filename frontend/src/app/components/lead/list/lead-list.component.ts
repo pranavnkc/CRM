@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormControlName } from '@angular/forms';
-import { MatDialog, MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatPaginator, MatSort, MatMenuTrigger } from '@angular/material';
 import { SelectionModel } from '@angular/cdk/collections';
 import { LeadService } from '../services';
 import { SnackBarService, SpinnerService, FileLoaderService } from '../../../services'
@@ -20,6 +20,11 @@ import { AuthService } from '../../../../app/services/auth.service';
   providers: [LeadService]
 })
 export class LeadListComponent implements OnInit {
+  templateFor: any;
+  onFilterClick(templateFor: string) {
+    console.log(templateFor);
+    this.templateFor = templateFor;
+  }
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   private allUsersChecked: boolean = false;
@@ -76,6 +81,8 @@ export class LeadListComponent implements OnInit {
   role: any;
   displayedColumns = [];
   dataSource = new MatTableDataSource();
+  public searchValue: any = {};
+  public searchCondition: any = {};
   constructor(private dialog: MatDialog,
     private fb: FormBuilder,
     private service: LeadService,
@@ -321,6 +328,28 @@ export class LeadListComponent implements OnInit {
     })
   }
   buildFilterAndGetLeads() {
+    let param = {};
+    for (let key in this.searchValue) {
+      let value;
+      let filterField;
+      if (this.dateFields.indexOf(key) != -1) {
+        let start_date = moment(this.searchValue[key]).format('YYYY-MM-DD')
+        let end_date = moment(this.searchValue[key]).format('YYYY-MM-DD')
+        value = `${start_date},${end_date}`;
+        filterField = key + (key != 'contract_end_date' ? "__date__" : '__') + this.searchCondition[key];
+      }
+      else {
+        filterField = key + "__" + this.searchCondition[key];
+        value = this.searchValue[key];
+      }
+      param[filterField] = value;
+    }
+    console.log(param);
+    return JSON.stringify(param);
+
+  }
+
+  buildFilterAndGetLeads1() {
     if (!this.filterForm.valid) {
       return undefined;
     }
@@ -417,5 +446,9 @@ export class LeadListComponent implements OnInit {
         this.loadLeads();
       })
     })
+  }
+  clearSearch(field) {
+    delete this.searchCondition[field];
+    delete this.searchValue[field];
   }
 }

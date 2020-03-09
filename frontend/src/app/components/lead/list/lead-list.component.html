@@ -7,8 +7,8 @@
      width:max-content;
  }
  .mat-cell, .mat-header-cell {
-    word-wrap: break-word;
-    width: 1%;
+     word-wrap: break-word;
+     width: 1%;
  }
 </style>
 <div class="user-list-container">
@@ -82,39 +82,39 @@
                     </div>
                 </div>
                 <br/>
-                <br/>
-                <form *ngIf="authService.user.advance_search_enable" fxLayout="row" fxLayoutGap="5%" [formGroup]="filterForm" (ngSubmit)="filterForm.valid && loadLeads(0)">
-                    <mat-form-field>
-                        <mat-select placeholder="Fields" formControlName="field">
-                            <mat-option *ngFor="let field of fields" [value]="field.filterField || field.field">
-                                {{ field.display }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-select placeholder="Condition" formControlName="condition">
-                            <mat-option *ngFor="let cond of conditions" [value]="cond.key">
-                                {{ cond.val }}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field  *ngIf="filterForm.controls.value">
-                        <input matInput placeholder="Value" formControlName="value">
-                    </mat-form-field>
-                    <mat-form-field *ngIf="filterForm.controls.start_date">
-                        <input matInput [matDatepicker]="startDatepicker" placeholder="Start Date" formControlName="start_date">
-                        <mat-datepicker-toggle matSuffix [for]="startDatepicker"></mat-datepicker-toggle>
-                        <mat-datepicker #startDatepicker></mat-datepicker>
-                    </mat-form-field>
-                    <mat-form-field *ngIf="filterForm.controls.end_date">
-                        <input matInput [matDatepicker]="endDatepicker" placeholder="End Date" formControlName="end_date">
-                        <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
-                        <mat-datepicker #endDatepicker></mat-datepicker>
-                    </mat-form-field>
-                    <div>
-                        <button mat-raised-button type="submit" color="primary">Apply Filter</button>
-                    </div>
-                </form>
+                <br/><!--
+                          <form *ngIf="authService.user.advance_search_enable" fxLayout="row" fxLayoutGap="5%" [formGroup]="filterForm" (ngSubmit)="filterForm.valid && loadLeads(0)">
+                          <mat-form-field>
+                          <mat-select placeholder="Fields" formControlName="field">
+                          <mat-option *ngFor="let field of fields" [value]="field.filterField || field.field">
+                          {{ field.display }}
+                          </mat-option>
+                          </mat-select>
+                          </mat-form-field>
+                          <mat-form-field>
+                          <mat-select placeholder="Condition" formControlName="condition">
+                          <mat-option *ngFor="let cond of conditions" [value]="cond.key">
+                          {{ cond.val }}
+                          </mat-option>
+                          </mat-select>
+                          </mat-form-field>
+                          <mat-form-field  *ngIf="filterForm.controls.value">
+                          <input matInput placeholder="Value" formControlName="value">
+                          </mat-form-field>
+                          <mat-form-field *ngIf="filterForm.controls.start_date">
+                          <input matInput [matDatepicker]="startDatepicker" placeholder="Start Date" formControlName="start_date">
+                          <mat-datepicker-toggle matSuffix [for]="startDatepicker"></mat-datepicker-toggle>
+                          <mat-datepicker #startDatepicker></mat-datepicker>
+                          </mat-form-field>
+                          <mat-form-field *ngIf="filterForm.controls.end_date">
+                          <input matInput [matDatepicker]="endDatepicker" placeholder="End Date" formControlName="end_date">
+                          <mat-datepicker-toggle matSuffix [for]="endDatepicker"></mat-datepicker-toggle>
+                          <mat-datepicker #endDatepicker></mat-datepicker>
+                          </mat-form-field>
+                          <div>
+                          <button mat-raised-button type="submit" color="primary">Apply Filter</button>
+                          </div>
+                          </form> -->
                 <div *ngIf="authService.role!='quality-analyst' && authService.user.view_raw_leads">
                     <mat-checkbox [(ngModel)]="include_raw_leads" [ngModelOptions]="{standalone: true}" (ngModelChange)="loadLeads()">Include All Raw Leads</mat-checkbox>
                 </div>
@@ -175,30 +175,57 @@
                             </mat-cell>
                         </ng-container>
                         <ng-container *ngFor="let column of fields" [matColumnDef]="column.field">
-                            <mat-header-cell *matHeaderCellDef [mat-sort-header]="column.sortField || column.field" style="margin-right:1%"> {{ column.display }} </mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef style="margin-right:1%">
+                                {{column.display}}
+                                <div class="header">
+                                    <button mat-button class="btn-toggle" [matMenuTriggerFor]="menu">
+                                        <mat-icon>keyboard_arrow_down</mat-icon>
+                                    </button>
+                                </div>
+                                <mat-menu #menu>
+                                    <div mat-menu-item mat-filter-item [disableRipple]="true" class="menu-title">
+                                        {{column.display}}
+                                    </div>
+                                    <div mat-menu-item mat-filter-item [disableRipple]="true">
+                                        <mat-form-field>
+                                            <mat-select [panelClass]="'mat-elevation-z10'" placeholder='Conditions' [(ngModel)]="searchCondition[column.filterField || column.field]" [ngModelOptions]="{standalone: true}">
+                                                <mat-option *ngFor="let condition of allConditions" [value]="condition.key">{{condition.val}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div mat-menu-item mat-filter-item [disableRipple]="true">
+                                        <mat-form-field>
+                                            <input matInput placeholder="Value" [(ngModel)]="searchValue[column.filterField || column.field]" [ngModelOptions]="{standalone: true}">
+                                        </mat-form-field>
+                                    </div>
+                                    <div mat-menu-item mat-filter-item [disableRipple]="true">
+                                        <button mat-raised-button (click)="clearSearch(column.filterField || column.field)">Clear</button>
+                                        <button mat-raised-button color="primary" (click)="loadLeads(0)">Search</button>
+                                    </div>
+                                </mat-menu>
+                            </mat-header-cell>
                             <mat-cell *matCellDef="let element" style="margin-right:1%">
-                                <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType!='date'" class="mat-block">
-                                    <input  *ngIf="column.fieldType=='phone'" [mask]="'0000000000'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
-                                    <input  *ngIf="column.fieldType=='input'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
-                                    <mat-select *ngIf="column.fieldType=='select'" [formControlName]="column.field" placeholder="{{column.display}}">
-                                        <mat-option *ngFor="let option of (column.field=='status'?sharedDataService.leadStatus:column.field=='current_electricity_supplier_new'?sharedDataService.supplierChoices:column.options)" [value]="option.key">{{option.value || option.display}}</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                                <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType=='date'" class="mat-block">
-                                    <input matInput [matDatepicker]="conEndpicker" [formControlName]="column.field" placeholder="{{column.display}}">
-                                    <mat-datepicker-toggle  matSuffix [for]="conEndpicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #conEndpicker></mat-datepicker>
-                                </mat-form-field>
-                                <span *ngIf="!inlineEditForm.controls[column.field] || element.id!=inlineEditedID">
-                                    <span *ngIf="column.field!='phone_number'">
-                                        {{ column.cell?column.cell(element):element[column.field]}}
-                                    </span>
-                                    <span *ngIf="column.field=='phone_number'">
-                                        <a href="skype:+44{{element.phone_number}}?call">{{column.cell(element)}}</a>
-                                    </span>
-                                </span>
-                            </mat-cell>
-
+                                        <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType!='date'" class="mat-block">
+                                            <input  *ngIf="column.fieldType=='phone'" [mask]="'0000000000'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                                            <input  *ngIf="column.fieldType=='input'" matInput type="text" [formControlName]="column.field" placeholder="{{column.display}}">
+                                            <mat-select *ngIf="column.fieldType=='select'" [formControlName]="column.field" placeholder="{{column.display}}">
+                                                <mat-option *ngFor="let option of (column.field=='status'?sharedDataService.leadStatus:column.field=='current_electricity_supplier_new'?sharedDataService.supplierChoices:column.options)" [value]="option.key">{{option.value || option.display}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                        <mat-form-field *ngIf="element.id==inlineEditedID && inlineEditForm.controls[column.field] && column.fieldType=='date'" class="mat-block">
+                                            <input matInput [matDatepicker]="conEndpicker" [formControlName]="column.field" placeholder="{{column.display}}">
+                                            <mat-datepicker-toggle  matSuffix [for]="conEndpicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #conEndpicker></mat-datepicker>
+                                        </mat-form-field>
+                                        <span *ngIf="!inlineEditForm.controls[column.field] || element.id!=inlineEditedID">
+                                            <span *ngIf="column.field!='phone_number'">
+                                                {{ column.cell?column.cell(element):element[column.field]}}
+                                            </span>
+                                            <span *ngIf="column.field=='phone_number'">
+                                                <a href="skype:+44{{element.phone_number}}?call">{{column.cell(element)}}</a>
+                                            </span>
+                                        </span>
+                                    </mat-cell>
                         </ng-container>
 
                         <!-- <mat-select *ngIf="column.field=='status'" placeholder="Status*" [(value)]="element.status" (selectionChange)='changeStatus(element)'>
