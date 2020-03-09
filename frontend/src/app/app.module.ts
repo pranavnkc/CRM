@@ -95,7 +95,6 @@ import { SaleComponent } from './components/lead/sale/sale.component';
 import { SaleListComponent } from './components/sales/sale-list/sale-list.component';
 import { PrListComponent } from './components/pr/list/list.component';
 import { PrHtSalesReportComponent } from './components/reports/pr-ht-sales-report/pr-ht-sales-report.component';
-import { FilterTemplateComponent } from './components/lead/filter-template/filter-template.component';
 import { FilterItemDirective } from './components/lead/filter-item.directive.directive';
 const appRoutes: Routes = [
   {
@@ -188,7 +187,6 @@ export function get_ip(appLoadService: AppLoadService) {
     SaleListComponent,
     PrListComponent,
     PrHtSalesReportComponent,
-    FilterTemplateComponent,
     FilterItemDirective,
   ],
   imports: [
@@ -252,6 +250,6 @@ export function get_ip(appLoadService: AppLoadService) {
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
   bootstrap: [AppComponent],
-  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, AlertDialogComponent, LeadAssignComponent, CallbackComponent, SaleComponent, FilterTemplateComponent]
+  entryComponents: [ConfirmDialogComponent, PromptDialogComponent, AlertDialogComponent, LeadAssignComponent, CallbackComponent, SaleComponent]
 })
 export class AppModule { }
