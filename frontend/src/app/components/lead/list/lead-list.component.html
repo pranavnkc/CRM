@@ -199,6 +199,14 @@
                                         </mat-form-field>
                                     </div>
                                     <div mat-menu-item mat-filter-item [disableRipple]="true">
+                                        <mat-form-field>
+                                            <mat-select [panelClass]="'mat-elevation-z10'" placeholder='Operator' [(ngModel)]="searchOperator[column.filterField || column.field]" [ngModelOptions]="{standalone: true}">
+                                                <mat-option value="or">OR</mat-option>
+                                                <mat-option value="and">AND</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div mat-menu-item mat-filter-item [disableRipple]="true">
                                         <button mat-raised-button (click)="clearSearch(column.filterField || column.field)">Clear</button>
                                         <button mat-raised-button color="primary" (click)="loadLeads(0)">Search</button>
                                     </div>

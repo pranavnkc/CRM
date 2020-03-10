@@ -13,9 +13,15 @@ class LeadFilter(django_filters.FilterSet):
             filter_q =Q()
             for key, val in json.loads(val).items():
                 if key in ['created_on__date__range', 'contract_end_date__range']:
-                    filter_q = filter_q & Q(**{key:val.split(",")}) 
-                else:      
-                    filter_q = filter_q & Q(**{key:val})
+
+                    q_obj = Q(**{key:val[0].split(",")}) 
+                else:
+                    
+                    q_obj = Q(**{key:val[0]})
+                if val[1]=="or":
+                    filter_q =  filter_q | q_obj
+                else:
+                    filter_q =  filter_q & q_obj
         except Exception as e:
             print("Exception in filter", e)
             return queryset

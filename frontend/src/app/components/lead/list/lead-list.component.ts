@@ -83,6 +83,8 @@ export class LeadListComponent implements OnInit {
   dataSource = new MatTableDataSource();
   public searchValue: any = {};
   public searchCondition: any = {};
+  public searchOperator: any = {};
+
   constructor(private dialog: MatDialog,
     private fb: FormBuilder,
     private service: LeadService,
@@ -332,17 +334,19 @@ export class LeadListComponent implements OnInit {
     for (let key in this.searchValue) {
       let value;
       let filterField;
-      if (this.dateFields.indexOf(key) != -1) {
-        let start_date = moment(this.searchValue[key]).format('YYYY-MM-DD')
-        let end_date = moment(this.searchValue[key]).format('YYYY-MM-DD')
-        value = `${start_date},${end_date}`;
-        filterField = key + (key != 'contract_end_date' ? "__date__" : '__') + this.searchCondition[key];
+      if (this.searchCondition[key] && this.searchOperator[key]) {
+        if (this.dateFields.indexOf(key) != -1) {
+          let start_date = moment(this.searchValue[key]).format('YYYY-MM-DD')
+          let end_date = moment(this.searchValue[key]).format('YYYY-MM-DD')
+          value = `${start_date},${end_date}`;
+          filterField = key + (key != 'contract_end_date' ? "__date__" : '__') + this.searchCondition[key];
+        }
+        else {
+          filterField = key + "__" + this.searchCondition[key];
+          value = this.searchValue[key];
+        }
+        param[filterField] = [value, this.searchOperator[key]];
       }
-      else {
-        filterField = key + "__" + this.searchCondition[key];
-        value = this.searchValue[key];
-      }
-      param[filterField] = value;
     }
     console.log(param);
     return JSON.stringify(param);
@@ -450,5 +454,6 @@ export class LeadListComponent implements OnInit {
   clearSearch(field) {
     delete this.searchCondition[field];
     delete this.searchValue[field];
+    delete this.searchOperator[field];
   }
 }
